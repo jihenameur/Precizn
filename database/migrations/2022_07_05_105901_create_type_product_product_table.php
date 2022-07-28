@@ -20,7 +20,7 @@ class CreateTypeProductProductTable extends Migration
 
             $table->foreign('type_product_id')
             ->references('id')
-            ->on('typeProduct')
+            ->on('typeproduct')
             ->onDelete('cascade');
 
         $table->foreign('product_id')
