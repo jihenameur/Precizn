@@ -1,0 +1,497 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\BaseModel\Result;
+use App\Helpers\ReqHelper;
+use App\Models\Category;
+use App\Models\Product;
+use App\Models\Role;
+use App\Models\Supplier;
+use App\Models\User;
+use Carbon\Carbon;
+use Exception;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+
+class SupplierController extends Controller
+{
+    protected $controller;
+
+    public function __construct(
+        Request $request,
+        Supplier $model,
+        LocationController $locationController,
+        Result $res,
+        ReqHelper $reqHelper
+
+    ) {
+        $this->model = $model;
+        $this->locationController = $locationController;
+        $this->res = $res;
+        $this->reqHelper = $reqHelper;
+    }
+
+    public function create(Request $request)
+    {
+        $res = new Result();
+        try {
+            $validator = Validator::make($request->all(), [
+                'name' => 'required',
+                //'email' => 'required|email|unique:users,email',   // required and email format validation
+                'email' => 'email|unique:users,email',   // required and email format validation
+
+                'password' => 'required|min:8', // required and number field validation
+                'confirm_password' => 'required|same:password',
+                'firstName' => 'required',
+                'lastName' => 'required',
+                'tel' => 'required|unique:users,tel',
+                'region' => 'required',
+                'city' => 'required',
+                'postcode' => 'required',
+
+            ]); // create the validations
+
+
+            if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
+            {
+                // return $validator->errors();
+                throw new Exception($validator->errors());
+
+                //return back()->withInput()->withErrors($validator);
+                // validation failed redirect back to form
+            }
+            // } else {
+            $role_id = Role::where('short_name', config('roles.backadmin.supplier'))->first()->id;
+
+            $latlong = $this->locationController->GetLocationWithAdresse($request->street, $request->postcode, $request->city, $request->region);
+            if (is_array($latlong) && $latlong[0]['long'] > 0) {
+                $request['lat'] = $latlong[0]['lat'];
+                $request['long'] = $latlong[0]['long'];
+            } else {
+                throw new Exception("Err: address not found");
+            }
+            $allRequestAttributes = $request->all();
+            $user = new User($allRequestAttributes);
+            $user->password = bcrypt($request->password);
+            /** @var Supplier $Supplier */
+            //dd($request->hasFile('image'));
+
+            // if ($request->hasFile('image')) {
+            //     $filename = $request->image->getClientOriginalName();
+            //     $request->image->storeAs('images', $filename, 'public');
+            //     //Auth()->user()->update(['image'=>$filename]);
+            // }
+            //$supplier = $this->model->create($allRequestAttributes);
+            $supplier = new Supplier();
+            $supplier->name = $request->name;
+            $supplier->firstName = $request->firstName;
+            $supplier->lastName = $request->lastName;
+            //$supplier->tel = $request->tel;
+            $supplier->starttime = $request->starttime;
+            $supplier->closetime = $request->closetime;
+
+            $supplier->star = $request->star;
+            $supplier->qantityVente = $request->qantityVente;
+            $supplier->delivery = $request->delivery;
+            $supplier->take_away = $request->take_away;
+            $supplier->on_site = $request->on_site;
+            $supplier->street = $request->street;
+            $supplier->postcode = $request->postcode;
+            $supplier->city = $request->city;
+            $supplier->region = $request->region;
+            $supplier->commission = $request->commission;
+            $supplier->lat = $request->lat;
+            $supplier->long = $request->long;
+            $user->status_id = 4;
+
+            if ($request->file('image')) {
+                $file = $request->file('image');
+                $filename = $file->getClientOriginalName();
+                //dd( $filename);
+
+                $file->move(public_path('public/Suppliers'), $filename);
+                $supplier['image'] = $filename;
+            }
+            if ($request->file('photo_couv')) {
+                $file = $request->file('photo_couv');
+                $filename = $file->getClientOriginalName();
+                //dd( $filename);
+
+                $file->move(public_path('public/SuppliersCouverture'), $filename);
+                $supplier['photo_couv'] = $filename;
+            }
+            $supplier->save();
+            $supplier->user()->save($user);
+            // $user->sendApiEmailVerificationNotification();
+            $supplier = $this->model->find($supplier->id);
+            $role = Role::find($role_id);
+            $user->roles()->attach($role);
+            $categories = $request->category;
+            if (!is_array($categories)) {
+                $categories = json_decode($request->category);
+            }
+            foreach ($categories as $key => $value) {
+                $category = Category::find($value);
+                $supplier->categorys()->attach($category);
+            }
+
+
+            //     return $supplier;
+            // }
+            $response['supplier'] = [
+                "id"         =>  $supplier->id,
+                "name"      =>  $supplier->name,
+                "firstName"     =>  $supplier->firstName,
+                "lastName"     =>  $supplier->lastName
+
+            ];
+
+            $res->success($response);
+        } catch (\Exception $exception) {
+            $res->fail($exception->getMessage());
+        }
+        return new JsonResponse($res, $res->code);
+    }
+
+    /**
+     * Filter or get all
+     *
+     * @return Collection|Model[]|mixed|void
+     */
+    public function all($per_page, Request $request)
+    {
+        $res = new Result();
+        try {
+
+            $keyword = $request->has('keyword') ? $request->get('keyword') : null;
+            $suppliers = Supplier::paginate($per_page);
+            // $suppliers = User::where('userable_type', '=', 'App\Models\Supplier')
+            //     ->get();
+            $i = 0;
+            foreach ($suppliers as $key => $supplier) {
+                $product = Product::whereHas('suppliers', function ($q) use ($supplier) {
+                    $q->where('supplier_id', $supplier->id);
+                })->get();
+                $supp[$i] = ['supplier', $supplier, 'product', $product];
+                $i++;
+            }
+            if ($keyword !== null) {
+                $keyword = $this->cleanKeywordSpaces($keyword);
+
+                return ($this->getFilterByKeywordClosure($keyword));
+            }
+            //return $suppliers;
+            $res->success($suppliers);
+        } catch (\Exception $exception) {
+            $res->fail($exception->getMessage());
+        }
+        return new JsonResponse($res, $res->code);
+    }
+
+    /**
+     * Filter or get By Id
+     *
+     * @return Collection|Model[]|mixed|void
+     */
+    public function getById($id)
+    {
+        $res = new Result();
+        try {
+
+            $supplier = Supplier::where('id', '=', $id)->first();
+            $res->success($supplier);
+        } catch (\Exception $exception) {
+            $res->fail($exception->getMessage());
+        }
+        return new JsonResponse($res, $res->code);
+    }
+
+    /**
+     * Clean keyword from extra spaces
+     *
+     * @param $keyword
+     * @return string|string[]|null
+     */
+    private function cleanKeywordSpaces($keyword)
+    {
+        $keyword = trim($keyword);
+        $keyword = preg_replace('/\s+/', ' ', $keyword);
+        return $keyword;
+    }
+
+    /**
+     * Get filter by keyword
+     *
+     * @param $keyword
+     * @return \Closure
+     */
+    private function getFilterByKeywordClosure($keyword)
+    {
+        $res = new Result();
+        try {
+
+            $supplier =  Supplier::where('name', 'like', "%$keyword%")
+                // User::where('userable_type', '=', 'App\Models\Supplier')
+                // ->where('name', 'like', "%$keyword%")
+                // ->orWhere('lastname', 'like', "%$keyword%")
+                // ->orWhereRaw("CONCAT(lastname,' ',firstname) like '%$keyword%'")
+                // ->orWhereRaw("CONCAT(firstname,' ',lastname) like '%$keyword%'")
+                // ->orWhere('email', 'like', "%$keyword%")
+                ->get();
+
+            // return $supplier;
+            $res->success($supplier);
+        } catch (\Exception $exception) {
+            $res->fail($exception->getMessage());
+        }
+        return new JsonResponse($res, $res->code);
+    }
+    /**
+     * @inheritDoc
+     *
+     * @param null $id
+     * @param null $params
+     * @return Supplier|mixed|void
+     */
+    public function update($id, Request $request)
+    {
+        $res = new Result();
+        try {
+            $user = User::where('userable_id', $id)
+                ->where('userable_type', 'App\Models\Supplier')->first();
+            $supplier=Supplier::find($id);
+            if ($request->street && $request->postcode && $request->city && $request->region) {
+                $latlong = $this->locationController->GetLocationWithAdresse($request->street, $request->postcode, $request->city, $request->region);
+                if (is_array($latlong) && $latlong[0]['long'] > 0) {
+                    $request['lat'] = $latlong[0]['lat'];
+                    $request['long'] = $latlong[0]['long'];
+                } else {
+                    throw new Exception("Err: address not found");
+                }
+            }
+            $allRequestAttributes = $request->all();
+            //$user = new User($allRequestAttributes);
+            $user->password = bcrypt($request->password);
+
+            //$supplier = new Supplier();
+            $supplier->name = $request->name;
+            $supplier->firstName = $request->firstName;
+            $supplier->lastName = $request->lastName;
+            $supplier->starttime = $request->starttime;
+            $supplier->closetime = $request->closetime;
+
+            $supplier->star = $request->star;
+            $supplier->qantityVente = $request->qantityVente;
+            $supplier->delivery = $request->delivery;
+            $supplier->take_away = $request->take_away;
+            $supplier->on_site = $request->on_site;
+            $supplier->street = $request->street;
+            $supplier->postcode = $request->postcode;
+            $supplier->city = $request->city;
+            $supplier->region = $request->region;
+            $supplier->commission = $request->commission;
+            $supplier->lat = $request->lat;
+            $supplier->long = $request->long;
+            $user->status_id = 4;
+            $user->email  = $request->email;
+            $user->tel  = $request->tel;
+
+            if ($request->file('image') ) {
+                $file = $request->file('image');
+                $filename = $file->getClientOriginalName();
+                //dd( $filename);
+
+                $file->move(public_path('public/Suppliers'), $filename);
+                $supplier['image'] = $filename;
+            }
+            if ($request->file('photo_couv')) {
+                $file = $request->file('photo_couv');
+                $filename = $file->getClientOriginalName();
+                //dd( $filename);
+
+                $file->move(public_path('public/SuppliersCouverture'), $filename);
+                $supplier['photo_couv'] = $filename;
+            }
+            $supplier->update();
+            $user->update();
+            // $user->sendApiEmailVerificationNotification();
+            $supplier = $this->model->find($supplier->id);
+
+            $categories = $request->category;
+            if (!is_array($categories)) {
+                $categories = json_decode($request->category);
+                $supplier->categorys()->detach();
+
+            }
+            foreach ($categories as $key => $value) {
+                $category = Category::find($value);
+                $supplier->categorys()->attach($category);
+            }
+
+
+            //     return $supplier;
+            // }
+            $response['supplier'] = [
+                "id"         =>  $supplier->id,
+                "name"      =>  $supplier->name,
+                "firstName"     =>  $supplier->firstName,
+                "lastName"     =>  $supplier->lastName
+
+            ];
+
+            $res->success($response);
+        } catch (\Exception $exception) {
+            $res->fail($exception->getMessage());
+        }
+        return new JsonResponse($res, $res->code);
+    }
+    /**
+     * @inheritDoc
+     *
+     * @param null $id
+     * @return bool|mixed|void
+     */
+    public function delete($id)
+    {
+        $res = new Result();
+        try {
+            /** @var Supplier $supplier */
+            $supplier = Supplier::find($id);
+
+            $supplier->user->delete();
+            $supplier->delete();
+
+            $res->success($supplier);
+        } catch (\Exception $exception) {
+            $res->fail($exception->getMessage());
+        }
+        return new JsonResponse($res, $res->code);
+    }
+    public function resetPWSupplier(Request $request)
+    {
+        $res = new Result();
+        try {
+            $user = User::where('tel', $request->tel)
+                ->where('userable_type', 'App\Models\Supplier')->first();
+            //$this->verificationApiController->toOrange($user->id, $user->tel);
+            $token = Str::random(64);
+
+            DB::table('password_resets')->insert([
+                'email' => $user->email,
+                'token' => $token,
+                'created_at' => Carbon::now()
+            ]);
+            $clt['client'] = [
+                'email' => $user['email'],
+                'tel' => $user['tel']
+            ];
+            $res->success($clt);
+        } catch (\Exception $exception) {
+            $res->fail($exception->getMessage());
+        }
+        return new JsonResponse($res, $res->code);
+    }
+    public function verifySmsResetPW(Request $request)
+    {
+
+        $res = new Result();
+        try {
+
+            $validator = Validator::make($request->all(), [
+                'code' => 'size:6',
+                'password' => 'required|min:8', // required and number field validation
+                'confirm_password' => 'required|same:password',
+
+            ]); // create the validations
+            if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
+            {
+                // return $validator->errors();
+                throw new Exception($validator->errors());
+            }
+            $user = User::where('tel', $request->tel)->first();
+            if ($request['code'] == $user->smscode) {
+                $user->update(['password' => bcrypt($request->password)]);
+
+                DB::table('password_resets')->where(['email' => $request->email])->delete();
+                $supplier = Supplier::find($user->userable_id);
+                $role = Role::whereHas('admins', function ($q) use ($user) {
+                    $q->where('user_id', $user->id);
+                })->first();
+
+                $supp = [
+                    'id' => $supplier['id'],
+                    'firstname' => $supplier['firstname'],
+                    'lastname' => $supplier['lastname'],
+                    'image' => $supplier['image'],
+                    'email' => $user['email'],
+                    'status' => $user['status_id'],
+                    'tel' => $user['tel'],
+                    'role' => $role['id']
+                ];
+                $response = [
+                    'token' => $user['token'],
+                    // 'token_type' => 'bearer',
+                    // 'expires_in' => auth()->factory()->getTTL() * 60,
+                    'supplier' => $supp
+                ];
+                $res->success($response);
+            } else {
+                $res->fail('Code not verified');
+            }
+        } catch (\Exception $exception) {
+            $res->fail($exception->getMessage());
+        }
+        return new JsonResponse($res, $res->code);
+
+        //  $date = date_create();
+        //  DB::table('users')->where('id', Auth::id())->update(['phone_verified_at' => date_format($date, 'Y-m-d H:i:s')]);
+
+    }
+    public function statusSupplier($id, Request $request)
+    {
+        $res = new Result();
+        try {
+            $user = User::where('userable_id', $id)
+                ->where('userable_type', 'App\Models\Supplier')->first();
+            User::where('id', $user->id)->update([
+                'status_id' => $request->status_id
+            ]);
+
+
+            $res->success($user);
+        } catch (\Exception $exception) {
+            $res->fail($exception->getMessage());
+        }
+        return new JsonResponse($res, $res->code);
+    }
+    /**
+  * deleted supplier
+  */
+  public function deleteSupplier($id)
+  {
+      $res = new Result();
+      try {
+           $user = User::where('userable_id', $id)
+               ->where('userable_type', 'App\Models\Supplier')->first();
+        $supplier=Supplier::find($user->userable_id);
+          $user->delete();
+          $products = Product::whereHas('suppliers', function ($q) use ($user) {
+            $q->where('supplier_id', $user->userable_id);
+        })->get();
+        foreach($products as $product){
+            $product->suppliers()->detach();
+            $product->delete();
+        }
+          $supplier->delete();
+
+          $res->success($user);
+      } catch (\Exception $exception) {
+          $res->fail($exception->getMessage());
+      }
+      return new JsonResponse($res, $res->code);
+  }
+}
