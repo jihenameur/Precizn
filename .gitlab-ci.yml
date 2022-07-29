@@ -7,11 +7,15 @@ build-job:
 
 test-job1:
   stage: test
+  only:
+    - stage
   script:
     - echo "This job tests something"
 
 deploy-prod:
   stage: deploy
+  only:
+    - stage
   script:
     - cd $APP_PATH
     - git pull origin $CI_DEPLOY_BRANCH
