@@ -27,6 +27,7 @@
                             </div>
                             <div class="flex-1 text-right md:text-center">
                                 <h5 class="font-bold uppercase text-gray-500">Latest trade</h5>
+								<h1> hello from CI CD</h1>
                                 <h3 class="font-bold text-3xl">
                                     <p>
                                         <span id="name_user"></span>: <span id="latest_trade_user"></span>
