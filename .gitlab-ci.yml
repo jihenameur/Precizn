@@ -1,0 +1,24 @@
+build-job:
+  stage: build
+  only:
+    - main
+  script:
+    - echo "Hello, $GITLAB_USER_LOGIN!"
+
+test-job1:
+  stage: test
+  only:
+    - main
+  script:
+    - echo "This job tests something"
+
+deploy-prod:
+  stage: deploy
+  only:
+    - main
+  script:
+    - cd $APP_PATH
+    - git pull origin $CI_DEPLOY_BRANCH
+    - echo "project cloned"
+    - composer install --ignore-platform-reqs
+    - php artisan migrate
