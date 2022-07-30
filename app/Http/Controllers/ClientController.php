@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\BaseModel\Result;
+use App\Helpers\Paginate;
 use App\Models\Address;
 use App\Models\Client;
 use App\Models\Command;
@@ -806,7 +807,9 @@ class ClientController extends Controller
             }
 
 
-            $res->success($this->paginate($supp, $per_page));
+            $paginate = new Paginate();
+
+            $res->success($paginate->paginate($supp, $per_page));
         } catch (\Exception $exception) {
             $res->fail($exception->getMessage());
         }
@@ -862,23 +865,15 @@ class ClientController extends Controller
 
                 return ($this->getFilterByKeywordClosure($keyword));
             }
+            $paginate = new Paginate();
 
-            $res->success($this->paginate($supp, $per_page));
+            $res->success($paginate->paginate($supp, $per_page));
         } catch (\Exception $exception) {
             $res->fail($exception->getMessage());
         }
         return new JsonResponse($res, $res->code);
     }
-    public function paginate($items, $perPage)
-    {
-        $pageStart = \Request::get('page', 1);
-        // Start displaying items from this number;
-        $offSet = ($pageStart * $perPage) - $perPage;
-        // Get only the items you need using array_slice
-        $itemsForCurrentPage = array_slice($items, $offSet, $perPage, false);
 
-        return new LengthAwarePaginator($itemsForCurrentPage, count($items), $perPage, Paginator::resolveCurrentPage(), array('path' => Paginator::resolveCurrentPath()));
-    }
 
 
     /**

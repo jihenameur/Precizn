@@ -36,7 +36,7 @@ window.Echo = new Echo({
     wsHost: window.location.hostname,
     auth: {
         headers: {
-            Authorization: "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC8xMjcuMC4wLjE6ODAwMFwvYXBpXC9sb2dpblN1cGVyQWRtaW4iLCJpYXQiOjE2NTg5Mjk1MDAsImV4cCI6MTY1OTE0NTUwMCwibmJmIjoxNjU4OTI5NTAwLCJqdGkiOiJ3SFpJd0ZIOGxsNlpnRnRQIiwic3ViIjo0NCwicHJ2IjoiMjNiZDVjODk0OWY2MDBhZGIzOWU3MDFjNDAwODcyZGI3YTU5NzZmNyJ9.evB5Xsu_VrBfmHdja9SVx_-QvfJFTOb6jqgJpYmRzLM"
+            Authorization: "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC8xMjcuMC4wLjE6ODAwMFwvYXBpXC9sb2dpblN1cGVyQWRtaW4iLCJpYXQiOjE2NTkwOTE1NDcsImV4cCI6MTY1OTMwNzU0NywibmJmIjoxNjU5MDkxNTQ3LCJqdGkiOiIzYjhvZTlVaWlWV1pveHZvIiwic3ViIjo0NCwicHJ2IjoiMjNiZDVjODk0OWY2MDBhZGIzOWU3MDFjNDAwODcyZGI3YTU5NzZmNyJ9.PXyxkbCMdyV8mmrc6LAx3BT3sv10ExC3Z4TRparlZuU"
         }
     },
     wsPort: 6001,

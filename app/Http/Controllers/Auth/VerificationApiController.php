@@ -18,8 +18,6 @@ use Illuminate\Foundation\Auth\VerifiesEmails;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Hash;
-use Octopush;
-use Vonage;
 use Oza75\OrangeSMSChannel\OrangeMessage;
 use Illuminate\Support\Facades\Validator;
 use Tymon\JWTAuth\Facades\JWTAuth;
@@ -67,64 +65,7 @@ class VerificationApiController extends Controller
         return response()->json('The notification has been resubmitted');
         // return back()->with(‘resent’, true);
     }
-    public function smsverify($id, Request $req)
-    {
-        $basic  = new Vonage\Client\Credentials\Basic("5380309e", "WIuDht0kHzcGd0ue");
-        $client = new Vonage\Client($basic);
-        //$client = new Octopush\Client('amel.meghe@gmail.com', 'qzR3aw5xOAuEvsSNn8PfHgy2Qd7VJcCX');
 
-        // $request = new Octopush\Request\SmsCampaign\SendSmsCampaignRequest();
-        // $request->setRecipients([
-        //     [
-        //         'phone_number' => $req['tel'],
-        //         'param1' => 'Alex',
-        //     ]
-        // ]);
-        // $request->setSender('thunder-express');
-        // $request->setText(rand(100000, 999999));
-        // $request->setType(Octopush\Constant\TypeEnum::SMS_PREMIUM);
-        // // $cookie = cookie('codesms', $request->getText(), 5);
-        // $codeverify = $request->getText();
-
-        // // ---------------------------------
-        // // optional
-        // // ---------------------------------
-        // $request->setPurpose(Octopush\Request\SmsCampaign\SendSmsCampaignRequest::ALERT_TRANSACTIONAL);
-        // $request->setWithReplies(false);
-
-        // $date = new DateTimeImmutable();
-        // $isoDateWithTimeZone = $date->format(DATE_ISO8601); // 2021-01-01T00:01:00+0100
-        // $request->setSendAt($isoDateWithTimeZone); // also works with "2021-01-01 00:01:00", (Central European TimeZone by default)
-        //  $user_id = Auth::user()->id;
-        // $codeverify = rand(100000, 999999);
-
-        $phoneExists = $this->checkPhoneExists($req['tel']);
-        if ($phoneExists) {
-            return (['error' => 'phone exists']);
-        } else {
-            $receiverNumber = $req['tel'];
-            $message = (string)rand(100000, 999999);
-            $messages = $client->message()->send([
-                'to' => $receiverNumber,
-                'from' => 'Thunder Express',
-                'text' => $message
-            ]);
-
-
-            User::where('id', $id)->update([
-                'tel' => $req['tel'],
-                'smscode' => $message
-            ]);
-            return ('SMS Sent Successfully.');
-
-            // ---------------------------------
-            // $content = $client->send($request);
-            // return response($content);
-            // ---------------------------------
-            // Result example:
-            // -------
-        }
-    }
     public function toOrange($id, $tel)
     {
 
@@ -157,48 +98,7 @@ class VerificationApiController extends Controller
         return $response;
     }
 
-    public function vocalverify($id, Request $req)
-    {
-        $client = new Octopush\Client('amel.meghe@gmail.com', 'qzR3aw5xOAuEvsSNn8PfHgy2Qd7VJcCX');
-        $request = new Octopush\Request\VocalCampaign\SendVocalCampaignRequest();
-        $request->setRecipients([
-            [
-                'phone_number' => $req['tel'],
-            ]
-        ]);
-        $request->setSender('thunder-express');
-        $request->setText(rand(100000, 999999));
-        $request->setType(Octopush\Constant\TypeEnum::VOCAL_SMS);
-        $request->setVoiceGender('female');
-        $request->setVoiceLanguage('fr-FR');
-        $cookie = cookie('codesms', $request->getText(), 5);
-        // ---------------------------------
-        // optional
-        // ---------------------------------
-        $request->setPurpose(Octopush\Request\VocalCampaign\SendVocalCampaignRequest::ALERT_TRANSACTIONAL);
 
-        $date = new  DateTimeImmutable();
-        $isoDateWithTimeZone = $date->format(DATE_ISO8601); // 2021-01-01T00:01:00+0100
-        $request->setSendAt($isoDateWithTimeZone); // also works with "2021-01-01 00:01:00", (Central European TimeZone by default)
-
-        // ---------------------------------
-
-        $phoneExists = $this->checkPhoneExists($req['tel']);
-        if ($phoneExists) {
-            return (['error' => 'phone exists']);
-        } else {
-            User::where('id', $id)->update([
-                'tel' => $req['tel'],
-                'updated_at' => $date,
-            ]);
-            $content = $client->send($request);
-            return response($content)->cookie($cookie);
-
-            // ---------------------------------
-            // Result example:
-            // -----
-        }
-    }
     public function verifySmscode($id, Request $request)
     {
 
@@ -270,6 +170,8 @@ class VerificationApiController extends Controller
         //  DB::table('users')->where('id', Auth::id())->update(['phone_verified_at' => date_format($date, 'Y-m-d H:i:s')]);
 
     }
+
+
     public function checkPhoneExists($tel)
     {
         $userExists = User::where('tel', $tel)->get();

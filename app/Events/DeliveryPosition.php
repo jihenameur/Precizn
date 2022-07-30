@@ -2,8 +2,7 @@
 
 namespace App\Events;
 
-use App\Models\Client;
-use App\Models\Message;
+use App\Models\Delivery;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
@@ -12,42 +11,29 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class MessageSent implements ShouldBroadcast
+class DeliveryPosition implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    /**
-     * User that sent the message
-     *
-     * @var Client
-     */
-    public $client;
 
-    /**
-     * Message details
-     *
-     * @var Message
-     */
-    public $message;
-
+    public $position;
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct($client, Message $message)
+    public function __construct($position)
     {
-        $this->client = $client;
-        $this->message = $message;
+        $this->position = $position;
     }
 
     /**
      * Get the channels the event should broadcast on.
      *
-     * @return Channel|array
+     * @return \Illuminate\Broadcasting\Channel|array
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('.chat.'.$this->client->id);
+        return new PrivateChannel('.positionDelivery');
     }
 }

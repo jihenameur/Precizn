@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\BaseModel\Result;
+use App\Helpers\Paginate;
 use App\Models\Category;
 use App\Models\Menu;
 use App\Models\Option;
@@ -14,6 +15,7 @@ use App\Models\TypeProduct;
 use DateTime;
 use DateTimeZone;
 use Exception;
+use Faker\Extension\Helper;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -423,7 +425,7 @@ class ProductController extends Controller
                            }                    })
                     ->where('available', true)
 
-                    ->paginate($per_page);
+                    ->get();
             }
             $products = [];
 
@@ -440,8 +442,9 @@ class ProductController extends Controller
                     array_push($products, $value);
                 }
             }
+            $paginate = new Paginate();
 
-            $res->success($products);
+            $res->success($paginate->paginate($products,$per_page));
         } catch (\Exception $exception) {
             $res->fail($exception->getMessage());
         }

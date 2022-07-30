@@ -27,7 +27,6 @@
                             </div>
                             <div class="flex-1 text-right md:text-center">
                                 <h5 class="font-bold uppercase text-gray-500">Latest trade</h5>
-								<h1> hello from CI CD</h1>
                                 <h3 class="font-bold text-3xl">
                                     <p>
                                         <span id="name_user"></span>: <span id="latest_trade_user"></span>
@@ -46,9 +45,22 @@
     Echo.private('.chat.1')
         .listen('MessageSent', (e) => {
             console.log(e);
-            document.getElementById('latest_trade_user').innerText = e.message;
-            document.getElementById('name_user').innerText = e.client.firstname;
 
+            if(e.message.send == 0) {
+                 document.getElementById('latest_trade_user').innerText = e.message.message;
+                document.getElementById('name_user').innerText = e.client.firstname;
+            }else{
+                 document.getElementById('latest_trade_user').innerText = e.message.message;
+                 document.getElementById('latest_trade_user').style.color = "red";
+            document.getElementById('name_user').innerText = "AKA ADMIN";
+            }
+
+
+        });
+
+        Echo.private('.positionDelivery')
+        .listen('positionDelivery', (e) => {
+            console.log(e);
         });
 
     let staff = []

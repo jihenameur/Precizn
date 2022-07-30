@@ -36,7 +36,7 @@ class NotificationController extends Controller
     }
     public function getNotif(Request $request)
     {
-        $notifs = Notification::where('type', $request->type)->get();
+        $notifs = Notification::where('type', '%'.$request->type.'%')->get();
         return $notifs;
     }
 }

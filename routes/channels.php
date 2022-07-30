@@ -25,6 +25,12 @@ Broadcast::channel('.chat.{client_id}', function ($client_id) {
     }
 });
 
+Broadcast::channel('.positionDelivery', function ($admin_id) {
+    if(Auth::user()->userable_type=="App\Models\Admin"){ // add verify admin role
+        return $admin_id;
+    }
+});
+
 Broadcast::channel('online', function ($user) {
     if (auth()->check()) {
 

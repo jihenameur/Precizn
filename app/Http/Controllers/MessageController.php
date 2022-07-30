@@ -5,11 +5,15 @@ namespace App\Http\Controllers;
 use App\BaseModel\Result;
 use App\Events\MessageSent;
 use App\Http\Resources\DeliverySocketResource;
+use App\Models\Admin;
 use App\Models\Client;
 use App\Models\Message;
+use App\Models\User;
+use App\Notifications\MessageNotification;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Notification;
 
 class MessageController extends Controller
 {
@@ -42,7 +46,7 @@ class MessageController extends Controller
 
             ]);
 
-            event (new \App\Events\MessageSent($client->firstname,$message->message));
+            event(new \App\Events\MessageSent($client->firstname, $message->message));
             return ['status' => 'Message Sent!'];
         }
     }
@@ -59,28 +63,56 @@ class MessageController extends Controller
 
     public function createMessage(Request $request)
     {
-            $this->validate($request,[
-                'message' => 'required|max:255'
-            ]);
+        $this->validate($request, [
+            'message' => 'required|max:255'
+        ]);
 
-            $message = new Message();
-            $message->message = $request->input('message');
-            $message->send = 0;
-            $message->client_id = auth()->user()->userable_id;
-            $message->date = date('Y-m-d H:i:s');
+        $message = new Message();
+        $message->message = $request->input('message');
+        $message->send = 0;
+        $message->client_id = auth()->user()->userable_id;
+        $message->date = date('Y-m-d H:i:s');
 
-            $message->save();
+        $message->save();
 
-            event (new \App\Events\MessageSent(new DeliverySocketResource(auth()->user()->userable),$request->input('message')));
+        event(new \App\Events\MessageSent(new DeliverySocketResource(auth()->user()->userable), $message));
+        $fromUser = Client::where('id', auth()->user()->userable_id)->first();
+        $toUser  = Admin::find(1);
+        $toUser->notify(new MessageNotification($message, $fromUser));
+        // Notification::send($toUser, new MessageNotification($message,auth()->user()));
 
-            $res = new Result();
+        $res = new Result();
 
-            $res->success('ok','sent');
+        $res->success('ok', 'sent');
 
-            return new JsonResponse($res, $res->code);
+        return new JsonResponse($res, $res->code);
     }
 
-    public function createReply(Request $request){
+    public function createReply(Request $request)
+    {
+        $this->validate($request, [
+            'message' => 'required|max:255'
+        ]);
 
+        $message = new Message();
+        $message->message = $request->input('message');
+        $message->send = 1;
+        $message->client_id = $request->client_id;
+        $message->date = date('Y-m-d H:i:s');
+
+        $message->save();
+
+        event(new \App\Events\MessageSent(new DeliverySocketResource(Client::find($request->client_id)), $message));
+        $fromUser = Admin::find(auth()->user()->userable_id);
+        $toUser = Client::find($request->client_id);
+
+        $toUser->notify(new MessageNotification($message, $fromUser));
+
+        //Notification::send($toUser, new MessageNotification(auth()->user()));
+        $res = new Result();
+
+        $res->success('ok', 'sent');
+
+        return new JsonResponse($res, $res->code);
     }
 }

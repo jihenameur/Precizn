@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\BaseModel\Result;
+use App\Models\Admin;
 use App\Models\Command;
 use App\Models\Delivery;
 use App\Models\Delivery_Hours;
@@ -12,6 +13,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use App\Models\Role;
 use App\Models\Supplier;
+use App\Notifications\DeliveryDispoNotification;
 use Carbon\Carbon;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Notification;
@@ -23,6 +25,8 @@ use Illuminate\Http\JsonResponse;
 use Ramsey\Uuid\Type\Decimal;
 use Barryvdh\DomPDF\Facade\Pdf;
 use DateTimeZone;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Redis;
 
 use function PHPUnit\Framework\returnSelf;
 
@@ -368,6 +372,10 @@ class DeliveryController extends Controller
                 $hoursWork->end_hour =  $currentTime;
                 $hoursWork->hours = 0;
                 $hoursWork->save();
+                $fromUser = Delivery::find($hoursWork->delivery_id);
+                $toUser  = Admin::find(1);
+                $status = "start Work";
+                $toUser->notify(new DeliveryDispoNotification($fromUser,$status));
             } else if ($request['action'] == 'end') {
                 $hoursWork = Delivery_Hours::where('delivery_id', $request['delivery_id'])
                     ->where('hours', 0)->first();
@@ -376,6 +384,10 @@ class DeliveryController extends Controller
                 $hoursWork->end_hour =  $currentTime;
                 $hoursWork->hours =  $diff_in_hours;
                 $hoursWork->update();
+                $fromUser = Delivery::find($hoursWork->delivery_id);
+                $toUser  = Admin::find(1);
+                $status = "end Work";
+                $toUser->notify(new DeliveryDispoNotification($fromUser,$status));
             } else {
                 $res->fail("erreur action");
                 return new JsonResponse($res, $res->code);
@@ -448,5 +460,21 @@ class DeliveryController extends Controller
             $res->fail($exception->getMessage());
         }
         return new JsonResponse($res, $res->code);
+    }
+    public function sendDeliveryPosition(Request $request)
+    {
+        $delivery =  Auth::user()->userable;
+        $value=Redis::set('deliveryPostion'.$delivery->id,json_encode([
+            'id' => $delivery->id,
+            'long' => $request->long,
+            'lat' => $request->long,
+
+        ]));
+
+        // brodcast to admins
+        event(new \App\Events\DeliveryPosition(json_decode(Redis::get('deliveryPostion'.$delivery->id))));
+
+        return response()->json(json_decode(Redis::get('deliveryPostion'.$delivery->id)));
+
     }
 }

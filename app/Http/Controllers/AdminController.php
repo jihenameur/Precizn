@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Validator;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Redis;
 
 use Tymon\JWTAuth\Facades\JWTAuth;
 
@@ -131,10 +132,10 @@ class AdminController extends Controller
      */
     private function getFilterByKeywordClosure($keyword)
     {
-      
+
         $admins = Admin::where('firstname', 'like', "%$keyword%")->where('lastname', 'like', "%$keyword%")
             ->get();
-    
+
           return $admins;
 
     }
@@ -197,5 +198,15 @@ class AdminController extends Controller
         }
         return new JsonResponse($res, $res->code);
     }
-
+    public function getLastPostionDelivery($id)
+    {
+        $res = new Result();
+        try {
+            $delivery=json_decode(Redis::get('deliveryPostion'.$id));
+            $res->success($delivery);
+        } catch (\Exception $exception) {
+            $res->fail($exception->getMessage());
+        }
+        return new JsonResponse($res, $res->code);
+    }
 }

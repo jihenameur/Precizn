@@ -300,6 +300,9 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         Route::get('/private', function () {
             return 'Admin';
         });
+        Route::post('createreply', [MessageController::class, 'createReply']);
+        Route::post('getlastpostiondelivery/{id}', [AdminController::class, 'getLastPostionDelivery']);
+
     });
     Route::middleware(['jwt.verify', 'role:client'])->group(function () {
         Route::get('getAllClient', [ClientController::class, 'all']);
@@ -321,6 +324,11 @@ Route::group(['middleware' => ['jwt.verify']], function () {
         Route::post('createmessage', [MessageController::class, 'createMessage']);
     });
     Route::middleware(['jwt.verify', 'role:supplier'])->group(function () {
+
+
+    });
+    Route::middleware(['jwt.verify', 'role:delivery'])->group(function () {
+        Route::post('sendposition', [DeliveryController::class, 'sendDeliveryPosition']);
 
 
     });

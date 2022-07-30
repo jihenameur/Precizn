@@ -10,6 +10,7 @@ use App\Models\Delivery;
 use App\Models\Panier;
 use App\Models\Product;
 use App\Models\Supplier;
+use App\Notifications\CommandNotification;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -37,7 +38,7 @@ class CommandController extends Controller
         try {
             $validator = Validator::make($request->all(), [
                 'date' => 'required',
-                'client_id' => 'required',
+               // 'supplier_id' => 'required',
 
             ]); // create the validations
             if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
@@ -81,8 +82,8 @@ class CommandController extends Controller
             $product = Product::find($panier->products[0]->id);
             $suppl = Supplier::whereHas('products', function ($q) use ($product) {
                 $q->where('product_id', $product->id);
-            })->get();
-            $command->supplier_id = $suppl[0]->id;
+            })->first();
+            $command->supplier_id = $suppl->id;
             // foreach ($panier->products as $key => $prod) {
 
             // $supplier = Supplier::find($suppl[0]->id);
@@ -102,7 +103,7 @@ class CommandController extends Controller
             // $command->address()->attach($client->userable, ['name' => $address['addressName']]);
             // }
             $suppliers = [];
-            array_push($suppliers, $suppl[0]);
+            array_push($suppliers, $suppl);
             if ($request['delivery'] == 1) {
                 $distance = $this->locationController->getdistances($address, $suppliers);
                 if ($distance[0]['deliveryprice'] > 0) {
@@ -127,6 +128,9 @@ class CommandController extends Controller
             }
 
             //return $command;
+            $fromUser = Client::find(auth()->user()->userable_id);
+            $toUser  = Supplier::find($command->supplier_id);
+            $toUser->notify(new CommandNotification($command,$fromUser));
             $res->success($command);
         } catch (\Exception $exception) {
             $res->fail($exception->getMessage());
