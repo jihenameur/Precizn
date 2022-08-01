@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Socialite\Facades\Socialite;
@@ -17,6 +18,7 @@ use Laravel\Socialite\Facades\Socialite;
 Auth::routes(['verify' => true]);
 
 Route::get('/', function () {
+    event(new \App\Events\DeliveryPosition(5));
     return view('welcome');
 });
 
