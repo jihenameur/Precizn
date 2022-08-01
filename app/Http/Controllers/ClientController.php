@@ -402,6 +402,24 @@ class ClientController extends Controller
         }
         return new JsonResponse($res, $res->code);
     }
+    public function allClient(Request $request)
+    {
+        $res = new Result();
+        try {
+            $keyword = $request->has('keyword') ? $request->get('keyword') : null;
+            // $supplier = Supplier::all();
+            $clients = Client::all();
+            if ($keyword !== null) {
+                $keyword = $this->cleanKeywordSpaces($keyword);
+
+                $clients = $this->getFilterByKeywordClosure($keyword);
+            }
+            $res->success($clients);
+        } catch (\Exception $exception) {
+            $res->fail($exception->getMessage());
+        }
+        return new JsonResponse($res, $res->code);
+    }
     /**
      *  get client
      *

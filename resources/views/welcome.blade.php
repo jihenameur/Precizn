@@ -52,7 +52,7 @@
             }else{
                  document.getElementById('latest_trade_user').innerText = e.message.message;
                  document.getElementById('latest_trade_user').style.color = "red";
-            document.getElementById('name_user').innerText = "AKA ADMIN";
+            document.getElementById('name_user').innerText = "ADMIN";
             }
 
 
