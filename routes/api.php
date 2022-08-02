@@ -72,7 +72,7 @@ Route::get('getAllProduct/{per_page}', [ProductController::class, 'all']);
 Route::get('getProduct/{id}', [ProductController::class, 'getProduct']);
 Route::post('updateProduct/{id}', [ProductController::class, 'update']);
 Route::get('getdispoHourProductsSupplier/{id}', [ProductController::class, 'getdispoHourProductsSupplier']);
-Route::get('getdispoHourProductsSupplierByTag/{id}', [ProductController::class, 'getdispoHourProductsSupplierByTag']);
+Route::post('getdispoHourProductsSupplierByTag/{id}', [ProductController::class, 'getdispoHourProductsSupplierByTag']);
 
 Route::get('getAllPublicProduct/{per_page}', [ProductController::class, 'getAllPublicProduct']);
 
@@ -155,7 +155,7 @@ Route::put('updateClienPW/{id}', [ClientController::class, 'updateClienPW']);
 Route::get('resetPWClient', [ClientController::class, 'resetPWClient']);
 Route::post('verifySmsResetPW', [ClientController::class, 'verifySmsResetPW']);
 Route::get('ClientGetSupplier/{per_page}', [ClientController::class, 'ClientGetSupplier']);
-Route::get('ClientGetSupplierByCategory/{per_page}', [ClientController::class, 'ClientGetSupplierByCategory']);
+Route::post('ClientGetSupplierByCategory/{per_page}', [ClientController::class, 'ClientGetSupplierByCategory']);
 
 /**
  * public Delivery

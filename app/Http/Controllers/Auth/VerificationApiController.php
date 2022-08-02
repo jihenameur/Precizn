@@ -69,7 +69,6 @@ class VerificationApiController extends Controller
     public function toOrange($id, $tel)
     {
 
-
         $config = array(
             'clientId' => "AqBU2cnxyHMDy7BWIjB8U00p7OgWT4Ka",
             'clientSecret' => "47kG53mINAAfTnfC",
