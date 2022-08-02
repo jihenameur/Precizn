@@ -253,11 +253,12 @@ class ClientController extends Controller
             } else {
                 throw new Exception("Err: address not found");
             }
-            $chekphoneExist = $this->verificationApiController->checkPhoneExists($request->tel);
+            $chekphoneExist = $this->verificationApiController->checkPhoneExists($request->phone);
             if ($chekphoneExist == "phone exists") {
                 $res->fail("phone exists");
                 return new JsonResponse($res, $res->code);
             }
+
             $client = $this->model->create($allRequestAttributes);
             // $user->sendApiEmailVerificationNotification();
             $client = $this->model->find($client->id);

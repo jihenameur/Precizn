@@ -19,7 +19,9 @@ class CouponController extends Controller
         $res = new Result();
         try {
             $validator = Validator::make($request->all(), [
-                'code_coupon' => 'required'
+                'code_coupon' => 'required',
+                'type' => 'in:amount,percentage',
+                'taxe' => 'in:T,HT'
             ]); // create the validations
             if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
             {

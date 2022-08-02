@@ -39,8 +39,7 @@ class ProductController extends Controller
             $validator = Validator::make($request->all(), [
                 'name' => 'required',
                 'default_price' => 'required',
-                'image.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-                'unit_type' => ['required', 'in:Piece,Kg,L,M']
+                'image.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048'
 
             ]); // create the validations
             if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
@@ -51,14 +50,12 @@ class ProductController extends Controller
                 if ($request->file('image')) {
 
                     if (!is_array($request->file('image'))) {
-                        //dd('test');
                         array_push($images, $request->file('image'));
                     } else {
                         $images = $request->file('image');
                     }
                 }
-                //dd($images);
-                //dd($request->file('image'));
+
                 foreach ($images as $image) {
 
                     $name = Str::uuid()->toString() .'.'.$image->getClientOriginalExtension();
@@ -69,23 +66,20 @@ class ProductController extends Controller
                 $product = new Product();
                 $product->name = $request->name;
                 $product['image'] = json_encode($data);
-                // if ($request->file('image')) {
-                //     $file = $request->file('image');
-                //     $filename = date('YmdHi') . $file->getClientOriginalName();
-                //     //dd( $filename);
 
-                //     $file->move(public_path('public/Products'), $filename);
-                //     $product['image'] = $filename;
-                // }
 
                 $product->description = $request->description;
                 $product->default_price = $request->default_price;
                 $product->private = 0;
                 $product->is_deleted = false;
-                $product->unit_type = $request->unit_type;
-                $product->unit_limit = $request->unit_limit;
-                $product->weight = $request->weight;
-                $product->dimension = $request->dimension;
+                 if($request->unit_type){
+                    $product->unit_type = $request->unit_type;
+                 }
+                 if($request->unit_limit){
+                    $product->unit_limit = $request->unit_limit;
+                 }
+                 $product->weight = $request->weight;
+                 $product->dimension = $request->dimension;
 
                 $product->save();
                 if ($request->typeProduct != null) {

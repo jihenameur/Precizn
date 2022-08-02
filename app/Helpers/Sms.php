@@ -133,6 +133,7 @@ class Sms {
                 )
             );
         }
+
         return $this->callApi($headers, $args, $url, 'POST', 201, true);
     }
 
@@ -251,7 +252,6 @@ class Sms {
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
         $data = curl_exec($ch);
-
         if ($data === false) {
             return array('error' => 'API call failed with cURL error: ' . curl_error($ch));
         }
@@ -285,14 +285,15 @@ class Sms {
                 $errorMessage = $response['requestError']['serviceException']['text']
                     . ' ' . $response['requestError']['serviceException']['variables'];
             } elseif (!empty($response['requestError']['policyException'])) {
-                $errorMessage = $response['requestError']['policyException']['text']
-                    . ' ' . $response['requestError']['policyException']['variables'];
+                $errorMessage = $response['requestError']['policyException']['text']. ' ' . $response['requestError']['policyException']['variables'];
+
             }
 
             return array('error' => $errorMessage);
         }
 
         return $response;
+
     }
 
     /**
