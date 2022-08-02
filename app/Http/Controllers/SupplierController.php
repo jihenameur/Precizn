@@ -110,16 +110,14 @@ class SupplierController extends Controller
 
             if ($request->file('image')) {
                 $file = $request->file('image');
-                $filename = $file->getClientOriginalName();
-                //dd( $filename);
+                $filename = Str::uuid()->toString() .'.'.$file->getClientOriginalExtension();
 
                 $file->move(public_path('public/Suppliers'), $filename);
                 $supplier['image'] = $filename;
             }
             if ($request->file('photo_couv')) {
                 $file = $request->file('photo_couv');
-                $filename = $file->getClientOriginalName();
-                //dd( $filename);
+                $filename = Str::uuid()->toString() .'.'.$file->getClientOriginalExtension();
 
                 $file->move(public_path('public/SuppliersCouverture'), $filename);
                 $supplier['photo_couv'] = $filename;

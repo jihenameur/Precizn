@@ -221,8 +221,8 @@ Route::get('getCommand/{id}', [CommandController::class, 'getCommand']);
  */
 Route::post('addCoupon', [CouponController::class, 'create']);
 Route::put('updateCoupon/{id}', [CouponController::class, 'update']);
-Route::get('getAllCoupond/{per_page}', [CouponController::class, 'getAll']);
-Route::get('getCoupond/{id}', [CouponController::class, 'getByid']);
+Route::get('getAllCoupon/{per_page}', [CouponController::class, 'getAll']);
+Route::get('getCoupon/{id}', [CouponController::class, 'getByid']);
 Route::delete('deleteCoupon', [CouponController::class, 'delete']);
 
 /**
