@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\BaseModel\Result;
 use App\Models\Admin;
 use App\Models\Role;
+use App\Models\Supplier;
 use Illuminate\Support\Facades\Validator;
 use App\Models\User;
 use Exception;
@@ -204,6 +205,18 @@ class AdminController extends Controller
         try {
             $delivery=json_decode(Redis::get('deliveryPostion'.$id));
             $res->success($delivery);
+        } catch (\Exception $exception) {
+            $res->fail($exception->getMessage());
+        }
+        return new JsonResponse($res, $res->code);
+    }
+    public function ConfirmEmailSupplier($id)
+    {
+        $res = new Result();
+        try {
+            $supplier=Supplier::findOrfail($id);
+            dd($supplier);
+           // $res->success($delivery);
         } catch (\Exception $exception) {
             $res->fail($exception->getMessage());
         }

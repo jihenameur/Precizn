@@ -12,11 +12,25 @@ class Coupon extends Model
 
     protected $fillable = [
         'code_coupon',
-        'percentage'
+        'client_id',
+        'type',
+        'value',
+        'title',
+        'client_id',
+        'start_date',
+        'end_date',
+        'description',
+        'quantity',
+        'client_quantity',
+        'status',
 
     ];
-    public function command()
+    public function client()
     {
-        return $this->belongsTo(Command::class);
+        return $this->belongsTo(Client::class);
+    }
+    public function clients()
+    {
+        return $this->belongsToMany(Client::class);
     }
 }

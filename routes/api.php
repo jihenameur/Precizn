@@ -188,6 +188,7 @@ Route::post('addSuperAdmin', [AdminController::class, 'create']);
 Route::put('updateAdmin/{id}', [AdminController::class, 'updateAdmin']);
 Route::get('getByid/{id}', [AdminController::class, 'getByid']);
 Route::delete('deleteAdmin/{id}', [AdminController::class, 'deleteAdmin']);
+Route::post('confirmemailsupplier/{id}', [AdminController::class, 'ConfirmEmailSupplier']);
 
 /**
  * public Notification
@@ -291,6 +292,8 @@ Route::group(['middleware' => ['jwt.verify']], function () {
 
 
     Route::get('getAllClient/{per_page}', [ClientController::class, 'all']);
+    Route::get('getlistclients', [ClientController::class, 'allClient']);
+
     Route::get('getAllSupplier/{per_page}', [SupplierController::class, 'all']);
     Route::get('getAllDelivery/{per_page}', [DeliveryController::class, 'all']);
     Route::get('getSupplierById/{id}', [SupplierController::class, 'getById']);

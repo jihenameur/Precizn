@@ -7,6 +7,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Validator;
 use Exception;
 use App\BaseModel\Result;
+use App\Models\Client;
 use App\Models\Command;
 use App\Models\Coupon;
 
@@ -15,29 +16,29 @@ class CouponController extends Controller
     public function create(Request $request)
     {
 
-        //dd(json_decode($request->typeProduct));
         $res = new Result();
         try {
             $validator = Validator::make($request->all(), [
-                'code_coupon' => 'required',
-                'percentage' => 'required'
+                'code_coupon' => 'required'
             ]); // create the validations
             if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
             {
                 throw new Exception($validator->errors());
             }
-            $command = Command::find($request->command_id);
-            if ($command == null) {
-                $res->fail("command not found");
-                return new JsonResponse($res, $res->code);
-            }
+
             $coupon = new Coupon();
-            $coupon->command_id = $command->id;
-            $coupon->percentage = $request->percentage;
             $coupon->code_coupon = $request->code_coupon;
+            $coupon->type = $request->type;
+            $coupon->value = $request->value;
+            $coupon->title = $request->title;
+            $coupon->start_date = $request->start_date;
+            $coupon->end_date = $request->end_date;
+            $coupon->description = $request->description;
+            $coupon->quantity = $request->quantity;
+            $coupon->client_quantity = $request->client_quantity;
+            $coupon->status = $request->status;
+            $coupon->client_id  = $request->client_id;
             $coupon->save();
-            $command->total_price_coupon = $command->total_price - ($command->total_price * ($coupon->percentage / 100));
-            $command->update();
             $res->success($coupon);
         } catch (\Exception $exception) {
             $res->fail($exception->getMessage());
@@ -71,15 +72,18 @@ class CouponController extends Controller
         $res = new Result();
         try {
             $coupon = Coupon::find($id);
-            $command = Command::find($request->command_id);
 
-            if ($command == null) {
-                $res->fail("command not found");
-                return new JsonResponse($res, $res->code);
-            }
-            $coupon->supplier_id = $command->id;
-            $coupon->percentage = $request->percentage;
             $coupon->code_coupon = $request->code_coupon;
+            $coupon->type = $request->type;
+            $coupon->value = $request->value;
+            $coupon->title = $request->title;
+            $coupon->start_date = $request->start_date;
+            $coupon->end_date = $request->end_date;
+            $coupon->description = $request->description;
+            $coupon->quantity = $request->quantity;
+            $coupon->client_quantity = $request->client_quantity;
+            $coupon->status = $request->status;
+            $coupon->client_id  = $request->client_id;
             $coupon->update();
 
             $res->success($coupon);
