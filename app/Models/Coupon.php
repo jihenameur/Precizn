@@ -23,7 +23,10 @@ class Coupon extends Model
         'quantity',
         'client_quantity',
         'status',
-
+        'montant_min',
+        'currency',
+        'taxe',
+        'frais_port',
     ];
     public function client()
     {

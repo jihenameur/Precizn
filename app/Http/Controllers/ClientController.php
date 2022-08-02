@@ -73,7 +73,6 @@ class ClientController extends Controller
                 $res->fail("Address not found");
                 return new JsonResponse($res, $res->code);
             }
-            //dd(round(count($suppliers)/25));
             $supps = [];
             $distances = [];
             if (is_float(count($suppliers) / 25) && count($suppliers) > 25) {
@@ -90,7 +89,9 @@ class ClientController extends Controller
                             array_push($supps, $suppliers[$j]);
                             unset($suppliers[$j]);
                         }
+
                         $dists = $this->locationController->getdistances($addres, $supps);
+
                         $k = 0;
                         for ($j = count($distances); $j < $x; $j++) {
                             $distances[$j] =  $dists[$k];
@@ -330,8 +331,9 @@ class ClientController extends Controller
             $client = Client::find($id);
             if ($request->file('image')) {
                 $file = $request->file('image');
-                $filename = date('YmdHi') . $file->getClientOriginalName();
-                $file->move(public_path('public/Image'), $filename);
+                //$filename = date('YmdHi') . $file->getClientOriginalName();
+                $filename = Str::uuid()->toString() .'.'.$file->getClientOriginalExtension();
+                $file->move(public_path('public/Clients'), $filename);
                 $client['image'] = $filename;
             }
             $client->update();
@@ -859,6 +861,8 @@ class ClientController extends Controller
             })->get();
             $keyword = $request->has('keyword') ? $request->get('keyword') : null;
             $i = 0;
+            $supp = [];
+
             foreach ($suppliers as $key => $supplier) {
                 $favorit = Client::whereHas('favorit', function ($q) use ($client, $supplier) {
                     $q->where('client_id', $client->id);

@@ -22,7 +22,6 @@ class LocationController extends Controller
         // $region = $request->region;
         $a = $street . ", " . $postcode . ", " . $city . ", " . $region;
         $address = urlencode($a);
-
         $link = 'https://maps.googleapis.com/maps/api/geocode/xml?address=' . $address . '&sensor=true_or_false&key=AIzaSyCYRBZBDovYe4GKiOH2PRyDtTWO6ymAZXA';
         $file = file_get_contents($link);
         if (!$file) {
@@ -53,11 +52,11 @@ class LocationController extends Controller
             array_push($coords, ['id' => $value['id'], 'lat' => $value['lat'], 'long' => $value['long']]);
             $from_latlong = $from_latlong . ($value['lat'] . "," . $value['long'] . "|");
         }
+
         $distance_data = file_get_contents(
             'https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=' . $from_latlong . '&destinations=' . $to_latlong . '&key=AIzaSyCYRBZBDovYe4GKiOH2PRyDtTWO6ymAZXA'
         );
         $distance_arr = json_decode($distance_data);
-
         $distances = array();
         foreach ($distance_arr->rows as $key => $element) {
             $distance = $element->elements[0]->distance->text;
@@ -77,10 +76,15 @@ class LocationController extends Controller
                 $deliveryprice = $delivpr['delivery_price'] + 2;
             }
 
-            array_push($distances, ['User' => $id, 'distance' => $distance, 'time' => $duration, 'deliveryprice' => $deliveryprice]);
-        }
+            $id['distance']=$distance;
+            $id['time']=$duration;
+            $id['deliveryprice']=$deliveryprice;
 
+            array_push($distances, $id);
+
+        }
         $array = collect($distances)->sortBy('distance')->toArray();
+
         return $array;
     }
     public function getSuppDistances()

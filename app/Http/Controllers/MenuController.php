@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 
 class MenuController extends Controller
 {
@@ -43,9 +44,7 @@ class MenuController extends Controller
             $menu->description = $request->description;
             if ($request->file('image')) {
                 $file = $request->file('image');
-                $filename = $file->getClientOriginalName();
-                //dd( $filename);
-
+                $filename = Str::uuid()->toString() .'.'.$file->getClientOriginalExtension();
                 $file->move(public_path('public/Menu'), $filename);
                 $menu['image'] = $filename;
             }

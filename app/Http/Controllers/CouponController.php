@@ -37,6 +37,12 @@ class CouponController extends Controller
             $coupon->quantity = $request->quantity;
             $coupon->client_quantity = $request->client_quantity;
             $coupon->status = $request->status;
+
+            $coupon->montant_min = $request->montant_min;
+            $coupon->currency = $request->currency;
+            $coupon->taxe = $request->taxe;
+            $coupon->frais_port = $request->frais_port;
+
             $coupon->client_id  = $request->client_id;
             $coupon->save();
             $res->success($coupon);
@@ -83,6 +89,12 @@ class CouponController extends Controller
             $coupon->quantity = $request->quantity;
             $coupon->client_quantity = $request->client_quantity;
             $coupon->status = $request->status;
+
+            $coupon->montant_min = $request->montant_min;
+            $coupon->currency = $request->currency;
+            $coupon->taxe = $request->taxe;
+            $coupon->frais_port = $request->frais_port;
+
             $coupon->client_id  = $request->client_id;
             $coupon->update();
 

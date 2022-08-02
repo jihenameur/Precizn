@@ -27,6 +27,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use DateTimeZone;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redis;
+use Illuminate\Support\Str;
 
 use function PHPUnit\Framework\returnSelf;
 
@@ -69,9 +70,7 @@ class DeliveryController extends Controller
             }
             if ($request->file('photo')) {
                 $file = $request->file('photo');
-                $filename = $file->getClientOriginalName();
-                //dd( $filename);
-
+                $filename = Str::uuid()->toString() .'.'.$file->getClientOriginalExtension();
                 $file->move(public_path('public/Deliverys'), $filename);
                 $request['image'] = $filename;
             }

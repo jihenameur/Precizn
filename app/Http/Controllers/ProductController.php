@@ -20,6 +20,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 
 class ProductController extends Controller
 {
@@ -60,8 +61,7 @@ class ProductController extends Controller
                 //dd($request->file('image'));
                 foreach ($images as $image) {
 
-                    $name = $image->getClientOriginalName();
-
+                    $name = Str::uuid()->toString() .'.'.$image->getClientOriginalExtension();
                     $image->move(public_path('public/Products'), $name); // your folder path
                     $data[] = $name;
                 }
