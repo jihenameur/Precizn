@@ -77,7 +77,6 @@ class VerificationApiController extends Controller
         $osms = new Sms($config);
 
         $data = $osms->getTokenFromConsumerKey();
-
         $message = (string)rand(100000, 999999);
 
         $response = $osms->sendSms(
@@ -90,6 +89,7 @@ class VerificationApiController extends Controller
             //name
             'Thunder Express'
         );
+
         User::where('id', $id)->update([
             'tel' => $tel,
             'smscode' => $message,

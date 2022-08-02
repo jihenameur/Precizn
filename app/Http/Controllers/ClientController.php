@@ -258,6 +258,7 @@ class ClientController extends Controller
                 $res->fail("phone exists");
                 return new JsonResponse($res, $res->code);
             }
+
             $client = $this->model->create($allRequestAttributes);
             // $user->sendApiEmailVerificationNotification();
             $client = $this->model->find($client->id);
