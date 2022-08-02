@@ -15,7 +15,8 @@ copying-files:
     - main
   script:
     - echo "copying repo files to project directory "
-    - rsync -av --progress $APP_PATH $PROJECT_PATH --exclude '.git' --exclude '.env' --exclude '.gitlab-ci'
+    - cd $APP_PATH
+    - rsync -av --progress ./ $PROJECT_PATH --exclude '.git' --exclude '.env' --exclude '.gitlab-ci'
     - echo "finish copying"
 
 deploy-prod:
