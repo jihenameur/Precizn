@@ -39,7 +39,9 @@ class ProductController extends Controller
             $validator = Validator::make($request->all(), [
                 'name' => 'required',
                 'default_price' => 'required',
-                'image.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048'
+                'image.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+                'unit_type' => 'required|in:Piece,Kg,L,M'
+
 
             ]); // create the validations
             if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
@@ -58,7 +60,7 @@ class ProductController extends Controller
 
                 foreach ($images as $image) {
 
-                    $name = Str::uuid()->toString() .'.'.$image->getClientOriginalExtension();
+                    $name = Str::uuid()->toString() . '.' . $image->getClientOriginalExtension();
                     $image->move(public_path('public/Products'), $name); // your folder path
                     $data[] = $name;
                 }
@@ -72,14 +74,14 @@ class ProductController extends Controller
                 $product->default_price = $request->default_price;
                 $product->private = 0;
                 $product->is_deleted = false;
-                 if($request->unit_type){
+                if ($request->unit_type) {
                     $product->unit_type = $request->unit_type;
-                 }
-                 if($request->unit_limit){
+                }
+                if ($request->unit_limit) {
                     $product->unit_limit = $request->unit_limit;
-                 }
-                 $product->weight = $request->weight;
-                 $product->dimension = $request->dimension;
+                }
+                $product->weight = $request->weight;
+                $product->dimension = $request->dimension;
 
                 $product->save();
                 if ($request->typeProduct != null) {
@@ -402,21 +404,22 @@ class ProductController extends Controller
                 })
                     ->where('available', true)
                     ->WhereHas('tag', function ($q) use ($request) {
-                       if(count($request->id_tag)){
-                        $q->whereIn('tag_id', $request->id_tag);
-                       }
+                        if (count($request->id_tag)) {
+                            $q->whereIn('tag_id', $request->id_tag);
+                        }
                     })->get();
 
-               // $product->paginate($per_page);
+                // $product->paginate($per_page);
             } else {
                 $product = Product::where('name', 'like', "%$request->keywords%")
                     ->whereHas('suppliers', function ($q) use ($request) {
                         $q->where('supplier_id', $request->idSupplier);
                     })
                     ->whereHas('tag', function ($q) use ($request) {
-                        if(count($request->id_tag)){
+                        if (count($request->id_tag)) {
                             $q->whereIn('tag_id', $request->id_tag);
-                           }                    })
+                        }
+                    })
                     ->where('available', true)
 
                     ->get();
@@ -438,7 +441,7 @@ class ProductController extends Controller
             }
             $paginate = new Paginate();
 
-            $res->success($paginate->paginate($products,$per_page));
+            $res->success($paginate->paginate($products, $per_page));
         } catch (\Exception $exception) {
             $res->fail($exception->getMessage());
         }

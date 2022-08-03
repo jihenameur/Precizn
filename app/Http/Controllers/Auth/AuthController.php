@@ -78,207 +78,217 @@ class AuthController extends Controller
         })->first();
         if (auth()->user()->status_id == 1) {
 
-        $admn = [
-            'id' => $user['id'],
-            'email' => $user['email'],
-            'role' => $role['id'],
-            'firstname' => $admin['firstname'],
-            'lastname' => $admin['lastname'],
-            'gender' => $admin['gender']
+            $admn = [
+                'id' => $user['id'],
+                'email' => $user['email'],
+                'role' => $role['id'],
+                'firstname' => $admin['firstname'],
+                'lastname' => $admin['lastname'],
+                'gender' => $admin['gender']
 
-        ];
-        $response = [
-            'token' => $token,
-            // 'refresh_token' => $refresh_token,
-            // 'token_type' => 'bearer',
-            // 'expires_in' => auth()->factory()->getTTL() * 60,
-            'admin' => $admn
-        ];
-        $res->success($response);
-        return new JsonResponse($res, $res->code);
-    }else{
-        $admn = [
-            'id' => $user['id'],
-            'email' => $user['email'],
-            'role' => $role['id'],
-            'firstname' => $admin['firstname'],
-            'lastname' => $admin['lastname'],
-            'gender' => $admin['gender']
-
-        ];
-        $response = [
-            //'token' => $token,
-            // 'refresh_token' => $refresh_token,
-            // 'token_type' => 'bearer',
-            // 'expires_in' => auth()->factory()->getTTL() * 60,
-            'admin' => $admn
-        ];
-        $res->success($response);
-        return new JsonResponse($res, $res->code);
-    }
-    }
-    function loginClient(Request $request)
-    {
-        $res = new Result();
-
-        $credentials = $request->only('email', 'password');
-        //valid credential
-        $validator = Validator::make($credentials, [
-            'email' => 'required|email',
-            'password' => 'required|string|min:6|max:50'
-        ]);
-
-        //Send failed response if request is not valid
-        if ($validator->fails()) {
-            return response()->json(['error' => $validator->messages()], 200);
-        }
-        // if (Auth::attempt(['email' => request('email'), 'password' => request('password')])) {
-        //     $user = Auth::user();
-        //     if ($user->email_verified_at == NULL) {
-        //         return response()->json(['error' => 'Please Verify Email'], 401);
-        //     }
-        // }
-        //Request is validated
-        //Crean token
-        try {
-            if (!$token = JWTAuth::attempt($credentials)) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Login credentials are invalid.',
-                ], 400);
-            }
-        } catch (JWTException $e) {
-            return $credentials;
-            return response()->json([
-                'success' => false,
-                'message' => 'Could not create token.',
-            ], 500);
-        }
-        //Token created, return with success response and jwt token
-        // dd($token);
-        // $refresh_token = JWTAuth::refresh($token);
-        $client = Client::find(auth()->user()->userable_id);
-        $address = Address::where('user_id', auth()->user()->id)
-            ->where('status', 1)->first();
-        $user = User::find(auth()->user()->id);
-        // $user->refresh_token = $refresh_token;
-        // $user->update();
-        $role = Role::whereHas('admins', function ($q) use ($user) {
-            $q->where('user_id', $user->id);
-        })->first();
-        $clt = [
-            'id' => $client['id'],
-            'firstname' => $client['firstname'],
-            'lastname' => $client['lastname'],
-            'image' => $client['image'],
-            'email' => $user['email'],
-            'gender' => $client['gender'],
-            'tel' => $user['tel'],
-            'status' => $user['status_id'],
-            'role' => $role['id'],
-            'street' => isset($address) ? $address['street'] : '',
-            'postcode' => isset($address) ? $address['postcode'] : '',
-            'city' => isset($address) ? $address['city'] : '',
-            'region' => isset($address) ? $address['region'] : '',
-        ];
-        if (auth()->user()->status_id == 1) {
-            $customClaims = ['name' => $user->name]; // Here you can pass user data on claims
-            $tokens = JWTAuth::fromUser($user, $customClaims);
-
+            ];
             $response = [
                 'token' => $token,
                 // 'refresh_token' => $refresh_token,
                 // 'token_type' => 'bearer',
                 // 'expires_in' => auth()->factory()->getTTL() * 60,
-                'client' => $clt
+                'admin' => $admn
             ];
             $res->success($response);
             return new JsonResponse($res, $res->code);
         } else {
-            $response = [
+            $admn = [
+                'id' => $user['id'],
+                'email' => $user['email'],
+                'role' => $role['id'],
+                'firstname' => $admin['firstname'],
+                'lastname' => $admin['lastname'],
+                'gender' => $admin['gender']
 
-                'client' => $clt
+            ];
+            $response = [
+                //'token' => $token,
+                // 'refresh_token' => $refresh_token,
+                // 'token_type' => 'bearer',
+                // 'expires_in' => auth()->factory()->getTTL() * 60,
+                'admin' => $admn
             ];
             $res->success($response);
             return new JsonResponse($res, $res->code);
-            //     if (auth()->user()->status_id == 2) {
-            //         $res->fail("User disabled");
-            //         return new JsonResponse($res, $res->code);
-            //     }
-            //     if (auth()->user()->status_id == 3) {
-            //         $res->fail("User blocked");
-            //         return new JsonResponse($res, $res->code);
-            //     }
-            //     if (auth()->user()->status_id == 4) {
-            //         $res->fail("User in progress");
-            //         return new JsonResponse($res, $res->code);
-            //     }
         }
     }
-    function loginSupplier(Request $request)
+    function loginClient(Request $request)
     {
+        $this->validate($request, [
+            'password' => 'required',
+            'email' => 'required'
+        ]);
         $res = new Result();
-        //Send failed response if request is not valid
-        // if ($validator->fails()) {
-        //     return response()->json(['error' => $validator->messages()], 200);
-        // }
-        // if (Auth::attempt(['email' => request('email'), 'password' => request('password')])) {
-        //     $user = Auth::user();
-        //     if ($user->email_verified_at == NULL) {
-        //         return response()->json(['error' => 'Please Verify Email'], 401);
-        //     }
-        // }
-        //Request is validated
-        //Crean token
         try {
-
-            if (str_contains($request->user, '@')) {
-                $request['email'] = $request['user'];
-
-                $credentials = $request->only('email', 'password');
-            } else if (str_contains($request->user, '+')) {
-                $request['tel'] = $request['user'];
-                $credentials = $request->only('tel', 'password');
-            } else {
-                $res->fail('Email , phone not valid');
-                return new JsonResponse($res, $res->code);
-            }
-            if (!$token = JWTAuth::attempt($credentials)) {
+            $user = User::where('email', $request['email'])
+                ->orWhere('tel', $request['email'])->first();
+            if (!$user && !($user->password == bcrypt($request->password))) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Login credentials are invalid.',
                 ], 400);
             }
+            $token = JWTAuth::fromUser($user);
+
+
+            if (!$token) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Login credentials are invalid.',
+                ], 400);
+            }
+
+            $role = Role::whereHas('admins', function ($q) use ($user) {
+                $q->where('user_id', $user->id);
+            })->first();
+            if ($role['id'] == 5) {
+                $client = Client::find($user->userable_id);
+                $address = Address::where('user_id', $user->id)
+                    ->where('status', 1)->first();
+                $clt = [
+                    'id' => $client['id'],
+                    'firstname' => $client['firstname'],
+                    'lastname' => $client['lastname'],
+                    'image' => $client['image'],
+                    'email' => $user['email'],
+                    'gender' => $client['gender'],
+                    'tel' => $user['tel'],
+                    'status' => $user['status_id'],
+                    'role' => $role['id'],
+                    'street' => isset($address) ? $address['street'] : '',
+                    'postcode' => isset($address) ? $address['postcode'] : '',
+                    'city' => isset($address) ? $address['city'] : '',
+                    'region' => isset($address) ? $address['region'] : '',
+                ];
+            }
+            if ($role['id'] == 4) {
+                $delivery = Delivery::find($user->userable_id);
+
+                // $user->refresh_token = $refresh_token;
+                // $user->update();
+                $clt = [
+                    'id' => $delivery['id'],
+                    'firstname' => $delivery['firstName'],
+                    'lastname' => $delivery['firstName'],
+                    'image' => $delivery['image'],
+                    'email' => $user['email'],
+                    'vehicle' => $delivery['vehicle'],
+                    'tel' => $user['tel'],
+                    'status' => $user['status_id'],
+                    'role' => $role['id'],
+                    'Mark_vehicle' => $delivery['Mark_vehicle'],
+                    'start_worktime' => $delivery['start_worktime'],
+                    'end_worktime' => $delivery['end_worktime'],
+                    'rating' => $delivery['rating'],
+                    'salary' => $delivery['salary'],
+
+                ];
+            }
+
+            if ($user->status_id == 1) {
+                $customClaims = ['name' => $user->name]; // Here you can pass user data on claims
+                $tokens = JWTAuth::fromUser($user, $customClaims);
+
+                $response = [
+                    'token' => $token,
+                    // 'refresh_token' => $refresh_token,
+                    // 'token_type' => 'bearer',
+                    // 'expires_in' => auth()->factory()->getTTL() * 60,
+                    'user' => $clt
+                ];
+                $res->success($response);
+                return new JsonResponse($res, $res->code);
+            } else {
+                $response = [
+
+                    'user' => $clt
+                ];
+                $res->success($response);
+                return new JsonResponse($res, $res->code);
+            }
         } catch (JWTException $e) {
-            return $credentials;
+
             return response()->json([
                 'success' => false,
                 'message' => 'Could not create token.',
             ], 500);
         }
-        //Token created, return with success response and jwt token
+    }
+    function loginSupplier(Request $request)
+    {
+        $res = new Result();
+        //Crean token
+        try {
+            $this->validate($request, [
+                'password' => 'required',
+                'email' => 'required'
+            ]);
+            $user = User::where('email', $request['email'])
+                ->orWhere('tel', $request['email'])->first();
+            if (!$user && !($user->password == bcrypt($request->password))) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Login credentials are invalid.',
+                ], 400);
+            }
+            $token = JWTAuth::fromUser($user);
 
-        $supplier = Supplier::find(auth()->user()->userable_id);
-        $user = auth()->user();
-        $role = Role::whereHas('admins', function ($q) use ($user) {
-            $q->where('user_id', $user->id);
-        })->first();
-        $response['supplier'] = [
-            'access_token' => $token,
-            'token_type' => 'bearer',
-            'expires_in' => auth()->factory()->getTTL() * 60,
-            'name' => $supplier['name'],
-            // 'image'=>[''],
-            'email' => $user['email'],
-            'tel' => $user['tel'],
-            'role' => $role['id'],
-            'street' => $supplier['street'],
-            'postcode' => $supplier['postcode'],
-            'city' => $supplier['city'],
-            'region' => $supplier['region'],
-        ];
-        $res->success($response);
-        return new JsonResponse($res, $res->code);
+            if (!$token) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Login credentials are invalid.',
+                ], 400);
+            }
+            //Token created, return with success response and jwt token
+
+            $supplier = Supplier::find($user->userable_id);
+            $role = Role::whereHas('admins', function ($q) use ($user) {
+                $q->where('user_id', $user->id);
+            })->first();
+            $supp = [
+                //'access_token' => $token,
+                //'token_type' => 'bearer',
+                // 'expires_in' => auth()->factory()->getTTL() * 60,
+                'name' => $supplier['name'],
+                // 'image'=>[''],
+                'email' => $user['email'],
+                'tel' => $user['tel'],
+                'role' => $role['id'],
+                'street' => $supplier['street'],
+                'postcode' => $supplier['postcode'],
+                'city' => $supplier['city'],
+                'region' => $supplier['region'],
+            ];
+            if ($user->status_id == 1) {
+                // $customClaims = ['name' => $user->name]; // Here you can pass user data on claims
+                // $tokens = JWTAuth::fromUser($user, $customClaims);
+
+                $response = [
+                    'token' => $token,
+                    // 'refresh_token' => $refresh_token,
+                    // 'token_type' => 'bearer',
+                    // 'expires_in' => auth()->factory()->getTTL() * 60,
+                    'user' => $supp
+                ];
+            } else {
+                $response = [
+                    'user' => $supp
+                ];
+
+            }
+            $res->success($response);
+            return new JsonResponse($res, $res->code);
+        } catch (JWTException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Could not create token.',
+            ], 500);
+        }
     }
     function loginDelivery(Request $request)
     {
