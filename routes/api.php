@@ -336,10 +336,11 @@ Route::group(['middleware' => ['jwt.verify']], function () {
 
     });
     Route::middleware(['jwt.verify', 'role:delivery'])->group(function () {
-        Route::post('sendposition', [DeliveryController::class, 'sendDeliveryPosition']);
 
 
     });
+    Route::post('sendposition', [DeliveryController::class, 'sendDeliveryPosition']);
+
     Route::post('createAnnonce', [AnnonceController::class, 'create']);
     Route::get('showAnnonces', [AnnonceController::class, 'getAllAnnonces']);
     Route::get('showAnnonce/{id}', [AnnonceController::class, 'show']);

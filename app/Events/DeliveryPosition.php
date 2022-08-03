@@ -36,4 +36,8 @@ class DeliveryPosition implements ShouldBroadcast
     {
         return new PrivateChannel('.positionDelivery');
     }
+    public function broadcastAs(): string
+    {
+        return 'my-positionDelivery';
+    }
 }
