@@ -44,6 +44,11 @@ use Laravel\Socialite\Facades\Socialite;
 */
 
 Auth::routes(['verify' => true]);
+\Illuminate\Support\Facades\Broadcast::routes();
+/*
+Route::post('/broadcasting/auth', function (Request $request){
+    return Auth::user();
+})->middleware('jwt.verify'); */
 /**
  * public api
  */
