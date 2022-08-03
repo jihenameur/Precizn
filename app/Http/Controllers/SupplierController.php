@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use App\Http\Controllers\Auth\VerificationApiController;
 
 class SupplierController extends Controller
 {
@@ -26,13 +27,17 @@ class SupplierController extends Controller
         Supplier $model,
         LocationController $locationController,
         Result $res,
-        ReqHelper $reqHelper
+        ReqHelper $reqHelper,
+        VerificationApiController $verificationApiController
+
 
     ) {
         $this->model = $model;
         $this->locationController = $locationController;
         $this->res = $res;
         $this->reqHelper = $reqHelper;
+        $this->verificationApiController = $verificationApiController;
+
     }
 
     public function create(Request $request)
@@ -73,6 +78,11 @@ class SupplierController extends Controller
                 $request['long'] = $latlong[0]['long'];
             } else {
                 throw new Exception("Err: address not found");
+            }
+            $chekphoneExist = $this->verificationApiController->checkPhoneExists($request->tel);
+            if ($chekphoneExist == "phone exists") {
+                $res->fail("phone exists");
+                return new JsonResponse($res, $res->code);
             }
             $allRequestAttributes = $request->all();
             $user = new User($allRequestAttributes);
