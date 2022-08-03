@@ -28,6 +28,7 @@ use DateTimeZone;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Str;
+use App\Http\Controllers\Auth\VerificationApiController;
 
 use function PHPUnit\Framework\returnSelf;
 
@@ -35,10 +36,16 @@ class DeliveryController extends Controller
 {
     protected $controller;
 
-    public function __construct(Request $request, Delivery $model,  Controller $controller = null, LocationController $locationController)
-    {
+    public function __construct(
+        Request $request,
+        Delivery $model,
+        Controller $controller = null,
+        LocationController $locationController,
+        VerificationApiController $verificationApiController
+    ) {
         $this->model = $model;
         $this->locationController = $locationController;
+        $this->verificationApiController = $verificationApiController;
     }
 
     public function create(Request $request)
@@ -68,9 +75,14 @@ class DeliveryController extends Controller
             } else {
                 return "Err: address not found";
             }
+            $chekphoneExist = $this->verificationApiController->checkPhoneExists($request->tel);
+            if ($chekphoneExist == "phone exists") {
+                $res->fail("phone exists");
+                return new JsonResponse($res, $res->code);
+            }
             if ($request->file('photo')) {
                 $file = $request->file('photo');
-                $filename = Str::uuid()->toString() .'.'.$file->getClientOriginalExtension();
+                $filename = Str::uuid()->toString() . '.' . $file->getClientOriginalExtension();
                 $file->move(public_path('public/Deliverys'), $filename);
                 $request['image'] = $filename;
             }
@@ -374,7 +386,7 @@ class DeliveryController extends Controller
                 $fromUser = Delivery::find($hoursWork->delivery_id);
                 $toUser  = Admin::find(1);
                 $status = "start Work";
-                $toUser->notify(new DeliveryDispoNotification($fromUser,$status));
+                $toUser->notify(new DeliveryDispoNotification($fromUser, $status));
             } else if ($request['action'] == 'end') {
                 $hoursWork = Delivery_Hours::where('delivery_id', $request['delivery_id'])
                     ->where('hours', 0)->first();
@@ -386,7 +398,7 @@ class DeliveryController extends Controller
                 $fromUser = Delivery::find($hoursWork->delivery_id);
                 $toUser  = Admin::find(1);
                 $status = "end Work";
-                $toUser->notify(new DeliveryDispoNotification($fromUser,$status));
+                $toUser->notify(new DeliveryDispoNotification($fromUser, $status));
             } else {
                 $res->fail("erreur action");
                 return new JsonResponse($res, $res->code);
@@ -463,7 +475,7 @@ class DeliveryController extends Controller
     public function sendDeliveryPosition(Request $request)
     {
         $delivery =  Auth::user()->userable;
-        $value=Redis::set('deliveryPostion'.$delivery->id,json_encode([
+        $value = Redis::set('deliveryPostion' . $delivery->id, json_encode([
             'id' => $delivery->id,
             'long' => $request->long,
             'lat' => $request->long,
@@ -471,9 +483,8 @@ class DeliveryController extends Controller
         ]));
 
         // brodcast to admins
-        event(new \App\Events\DeliveryPosition(json_decode(Redis::get('deliveryPostion'.$delivery->id))));
+        event(new \App\Events\DeliveryPosition(json_decode(Redis::get('deliveryPostion' . $delivery->id))));
 
-        return response()->json(json_decode(Redis::get('deliveryPostion'.$delivery->id)));
-
+        return response()->json(json_decode(Redis::get('deliveryPostion' . $delivery->id)));
     }
 }

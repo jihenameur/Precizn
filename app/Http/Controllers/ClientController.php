@@ -278,6 +278,7 @@ class ClientController extends Controller
             $credentials = $request->only('email', 'password');
             $token = JWTAuth::attempt($credentials);
             $user->token = $token;
+            $user->tel = $request->phone;
             $user->status_id = 4;
             $user->update();
             $this->verificationApiController->toOrange($user->id, $request->phone);
