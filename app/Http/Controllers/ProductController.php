@@ -18,6 +18,7 @@ use Exception;
 use Faker\Extension\Helper;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
@@ -26,13 +27,22 @@ class ProductController extends Controller
 {
     protected $controller;
 
-    public function __construct(Request $request, Product $model,  Controller $controller = null)
+    public function __construct()
     {
-        $this->model = $model;
+
     }
 
     public function createPublicProduct(Request $request)
     {
+
+        if(!Auth::user()->isAuthorized(['superadmin','supplier'])){
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ],403);
+        }
+
+
         //dd(json_decode($request->typeProduct));
         $res = new Result();
         try {
@@ -106,6 +116,7 @@ class ProductController extends Controller
     }
     public function createPrivateProduct(Request $request)
     {
+
         $res = new Result();
         try {
             $validator = Validator::make($request->all(), [
