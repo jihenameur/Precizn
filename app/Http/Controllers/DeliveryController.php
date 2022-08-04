@@ -542,8 +542,8 @@ class DeliveryController extends Controller
         $delivery =  Auth::user()->userable;
         $value = Redis::set('deliveryPostion' . $delivery->id, json_encode([
             'id' => $delivery->id,
-            'long' => $request->long,
-            'lat' => $request->long,
+            'lng' => $request->long,
+            'lat' => $request->lat,
 
         ]));
 
