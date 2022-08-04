@@ -8,6 +8,7 @@ use App\Models\Product;
 use Illuminate\Http\Request;
 use Exception;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 
@@ -22,6 +23,12 @@ class MenuController extends Controller
 
     public function create(Request $request)
     {
+        if (!Auth::user()->isAuthorized(['admin', 'supplier'])) {
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ], 403);
+        }
         $res = new Result();
         try {
             $validator = Validator::make($request->all(), [
@@ -44,7 +51,7 @@ class MenuController extends Controller
             $menu->description = $request->description;
             if ($request->file('image')) {
                 $file = $request->file('image');
-                $filename = Str::uuid()->toString() .'.'.$file->getClientOriginalExtension();
+                $filename = Str::uuid()->toString() . '.' . $file->getClientOriginalExtension();
                 $file->move(public_path('public/Menu'), $filename);
                 $menu['image'] = $filename;
             }
@@ -57,8 +64,14 @@ class MenuController extends Controller
         }
         return new JsonResponse($res, $res->code);
     }
-    public function getMenuProducts($id,$per_page)
+    public function getMenuProducts($id, $per_page)
     {
+        if (!Auth::user()->isAuthorized(['admin', 'supplier'])) {
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ], 403);
+        }
         $res = new Result();
         try {
             $products = Product::whereHas('menu', function ($q) use ($id) {
@@ -72,6 +85,12 @@ class MenuController extends Controller
     }
     public function getMenuByid($id)
     {
+        if (!Auth::user()->isAuthorized(['admin', 'supplier'])) {
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ], 403);
+        }
         $res = new Result();
         try {
             $menu = Menu::find($id);
@@ -83,6 +102,12 @@ class MenuController extends Controller
     }
     public function update($id, Request $request)
     {
+        if (!Auth::user()->isAuthorized(['admin', 'supplier'])) {
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ], 403);
+        }
         $res = new Result();
         try {
             $menu = Menu::find($id);
@@ -107,6 +132,12 @@ class MenuController extends Controller
     }
     public function delete($id)
     {
+        if (!Auth::user()->isAuthorized(['admin', 'supplier'])) {
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ], 403);
+        }
         $res = new Result();
         try {
             $menu = Menu::find($id);

@@ -23,6 +23,12 @@ class AddressController extends Controller
 
     public function create($id, Request $request)
     {
+        if(!Auth::user()->isAuthorized(['admin','client'])){
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ],403);
+        }
         $res = new Result();
         try {
             $validator = Validator::make($request->all(), [
@@ -111,6 +117,12 @@ class AddressController extends Controller
     }
     public function GetClientAddress($id)
     {
+        if(!Auth::user()->isAuthorized(['admin','client'])){
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ],403);
+        }
         $res = new Result();
         try {
             $user = User::where('userable_id', $id)
@@ -142,7 +154,12 @@ class AddressController extends Controller
      */
     public function update(Request $request, $id)
     {
-        /** @var Delivery $delivery */
+        if(!Auth::user()->isAuthorized(['admin','client'])){
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ],403);
+        }
         $res = new Result();
         try {
             $adresse = Address::find($id);
@@ -189,6 +206,12 @@ class AddressController extends Controller
      */
     public function destroy($id)
     {
+        if(!Auth::user()->isAuthorized(['admin','client'])){
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ],403);
+        }
         $adresse = Address::find($id);
         $adresse->delete();
         return 'delete';

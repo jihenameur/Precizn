@@ -103,4 +103,17 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
     {
     	return $this->belongsTo(Status::class);
     }
+
+    public function isAuthorized(array $roles){
+
+        $default_roles = $this->roles;
+        $ok = false;
+        foreach ($default_roles as $default_role){
+            if(in_array($default_role->name,$roles)) {
+                $ok = true;
+            }
+        }
+        return $ok;
+    }
+
 }

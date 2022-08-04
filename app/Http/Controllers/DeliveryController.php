@@ -113,6 +113,12 @@ class DeliveryController extends Controller
      */
     public function all($per_page, Request $request)
     {
+        if(!Auth::user()->isAuthorized(['admin'])){
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ],403);
+        }
         $res = new Result();
         try {
             $keyword = $request->has('keyword') ? $request->get('keyword') : null;
@@ -132,6 +138,12 @@ class DeliveryController extends Controller
     }
     public function getByid($id)
     {
+        if(!Auth::user()->isAuthorized(['admin','delivery'])){
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ],403);
+        }
         $res = new Result();
         try {
 
@@ -187,6 +199,12 @@ class DeliveryController extends Controller
      */
     public function update($id, Request $request)
     {
+        if(!Auth::user()->isAuthorized(['admin','delivery'])){
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ],403);
+        }
         $res = new Result();
         try {
             /** @var Delivery $delivery */
@@ -220,6 +238,12 @@ class DeliveryController extends Controller
      */
     public function delete($id)
     {
+        if(!Auth::user()->isAuthorized(['admin'])){
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ],403);
+        }
         $res = new Result();
         try {
             $user = User::where('userable_id', $id)
@@ -234,7 +258,12 @@ class DeliveryController extends Controller
     }
     public function acceptCommand(Request $request)
     {
-
+        if(!Auth::user()->isAuthorized(['admin','delivery'])){
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ],403);
+        }
         $delivery = Delivery::find($request['delivery_id']);
         $command = Command::find($request['command_id']);
         $delivReq = RequestDelivery::where('delivery_id', $request['delivery_id'])
@@ -304,6 +333,12 @@ class DeliveryController extends Controller
     }
     public function ListCommandDelivered($per_page, Request $request)
     {
+        if(!Auth::user()->isAuthorized(['admin','delivery'])){
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ],403);
+        }
         $res = new Result();
         try {
             $commands = Command::whereHas('requestDelivery', function ($q) use ($request) {
@@ -319,6 +354,12 @@ class DeliveryController extends Controller
     }
     public function ListCommandRejected($per_page, Request $request)
     {
+        if(!Auth::user()->isAuthorized(['admin','delivery'])){
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ],403);
+        }
         $res = new Result();
         try {
             $commands = Command::whereHas('requestDelivery', function ($q) use ($request) {
@@ -334,6 +375,12 @@ class DeliveryController extends Controller
     }
     public function gainCommands(Request $request)
     {
+        if(!Auth::user()->isAuthorized(['admin','delivery'])){
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ],403);
+        }
         $res = new Result();
         try {
             $date = new DateTime($request['date']);
@@ -353,6 +400,12 @@ class DeliveryController extends Controller
     }
     public function CommandDelivered(Request $request)
     {
+        if(!Auth::user()->isAuthorized(['admin','delivery'])){
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ],403);
+        }
         $delivery = Delivery::find($request['delivery_id']);
         $command = Command::find($request['command_id']);
         $command->status = 2;
@@ -369,6 +422,12 @@ class DeliveryController extends Controller
     }
     public function hoursWork(Request $request)
     {
+        if(!Auth::user()->isAuthorized(['admin','delivery'])){
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ],403);
+        }
         $res = new Result();
         try {
             $currentTime = Carbon::now()->setTimezone('Europe/paris')->format('Y-m-d H:i');
@@ -412,6 +471,12 @@ class DeliveryController extends Controller
 
     public function statisDeliv(Request $request)
     {
+        if(!Auth::user()->isAuthorized(['admin','delivery'])){
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ],403);
+        }
         $res = new Result();
         try {
             $from = new DateTime($request['from']);

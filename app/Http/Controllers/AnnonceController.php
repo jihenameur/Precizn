@@ -23,6 +23,12 @@ class AnnonceController extends Controller
      */
     public function getAllAnnonces()
     {
+        if(!Auth::user()->isAuthorized(['admin','client'])){
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ],403);
+        }
         $res = new Result();
         try {
             $client =  Auth::user();
@@ -52,6 +58,12 @@ class AnnonceController extends Controller
      */
     public function create(Request $request)
     {
+        if(!Auth::user()->isAuthorized(['admin','supplier'])){
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ],403);
+        }
         $res = new Result();
         try {
             $validator = Validator::make($request->all(), [
@@ -92,6 +104,12 @@ class AnnonceController extends Controller
      */
     public function show($id)
     {
+        if(!Auth::user()->isAuthorized(['admin','supplier','client'])){
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ],403);
+        }
         $res = new Result();
         try {
             $annonce = Annonces::find($id);
@@ -110,6 +128,12 @@ class AnnonceController extends Controller
      */
     public function edit(Request $request, $id)
     {
+        if(!Auth::user()->isAuthorized(['admin','supplier'])){
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ],403);
+        }
         $res = new Result();
         try {
             $allRequestAttributes = $request->all();
@@ -143,6 +167,12 @@ class AnnonceController extends Controller
      */
     public function destroy($id)
     {
+        if(!Auth::user()->isAuthorized(['admin','supplier'])){
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ],403);
+        }
         $res = new Result();
         try {
             $annonce = Annonces::find($id);
@@ -156,6 +186,12 @@ class AnnonceController extends Controller
     // effaser tout annonces
     public function destroyAllAnnonces()
     {
+        if(!Auth::user()->isAuthorized(['admin'])){
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ],403);
+        }
         $res = new Result();
         try {
             $annonces = Annonces::All();

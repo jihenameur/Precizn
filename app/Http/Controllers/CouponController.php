@@ -10,18 +10,24 @@ use App\BaseModel\Result;
 use App\Models\Client;
 use App\Models\Command;
 use App\Models\Coupon;
-
+use Illuminate\Support\Facades\Auth;
+use App\Models\User;
 class CouponController extends Controller
 {
     public function create(Request $request)
     {
-
+        if(!Auth::user()->isAuthorized(['admin'])){
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ],403);
+        }
         $res = new Result();
         try {
             $validator = Validator::make($request->all(), [
                 'code_coupon' => 'required',
                 'type' => 'in:amount,percentage',
-                'taxe' => 'in:T,HT'
+                'taxe' => 'in:TTC,HT'
             ]); // create the validations
             if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
             {
@@ -55,6 +61,12 @@ class CouponController extends Controller
     }
     public function getByid($id)
     {
+        if(!Auth::user()->isAuthorized(['admin'])){
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ],403);
+        }
         $res = new Result();
         try {
             $coupon = Coupon::find($id);
@@ -77,6 +89,12 @@ class CouponController extends Controller
     }
     public function update($id, Request $request)
     {
+        if(!Auth::user()->isAuthorized(['admin'])){
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ],403);
+        }
         $res = new Result();
         try {
             $coupon = Coupon::find($id);
@@ -108,10 +126,17 @@ class CouponController extends Controller
     }
     public function delete($id)
     {
+        if(!Auth::user()->isAuthorized(['admin'])){
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ],403);
+        }
         $res = new Result();
         try {
             $coupon = Coupon::find($id);
             $coupon->delete();
+
             $res->success($coupon);
         } catch (\Exception $exception) {
             $res->fail($exception->getMessage());

@@ -9,6 +9,7 @@ use App\Models\Supplier;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class CategoryController extends Controller
@@ -22,6 +23,12 @@ class CategoryController extends Controller
 
     public function create(Request $request)
     {
+        if(!Auth::user()->isAuthorized(['admin'])){
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ],403);
+        }
         $res = new Result();
         try {
             $validator = Validator::make($request->all(), [
@@ -210,6 +217,12 @@ class CategoryController extends Controller
      */
     public function update($id, Request $request)
     {
+        if(!Auth::user()->isAuthorized(['admin'])){
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ],403);
+        }
         $res = new Result();
         $category = Category::find($id);
 
@@ -258,6 +271,12 @@ class CategoryController extends Controller
      */
     public function delete($id)
     {
+        if(!Auth::user()->isAuthorized(['admin'])){
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ],403);
+        }
         /** @var Category $category */
         $res = new Result();
         $category = Category::find($id);
