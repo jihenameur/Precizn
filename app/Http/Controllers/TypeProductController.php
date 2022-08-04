@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\JsonResponse;
 use Exception;
+use Illuminate\Support\Facades\Auth;
 
 class TypeProductController extends Controller
 {
@@ -20,6 +21,12 @@ class TypeProductController extends Controller
 
     public function create(Request $request)
     {
+        if(!Auth::user()->isAuthorized(['admin','supplier'])){
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ],403);
+        }
         $res = new Result();
         try {
             $validator = Validator::make($request->all(), [
@@ -65,6 +72,12 @@ class TypeProductController extends Controller
     }
     public function update($id,Request $request)
     {
+        if(!Auth::user()->isAuthorized(['admin','supplier'])){
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ],403);
+        }
         $res = new Result();
         try {
 
@@ -119,6 +132,12 @@ class TypeProductController extends Controller
     }
     public function getAllTypeProduct($per_page,Request $request)
     {
+        if(!Auth::user()->isAuthorized(['admin','supplier'])){
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ],403);
+        }
         $res = new Result();
         try {
             $keyword = $request->has('keyword') ? $request->get('keyword') : null;
@@ -136,6 +155,12 @@ class TypeProductController extends Controller
     }
     public function getTypeProductByid($id)
     {
+        if(!Auth::user()->isAuthorized(['admin','supplier'] )){
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ],403);
+        }
         $res = new Result();
         try {
             $TypeProduct = ModelsTypeProduct::find($id);

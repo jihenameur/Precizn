@@ -317,6 +317,12 @@ class ClientController extends Controller
 
     public function addImage($id, Request $request)
     {
+        if (!Auth::user()->isAuthorized(['admin', 'client'])) {
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ], 403);
+        }
         $res = new Result();
         try {
             $validator = Validator::make($request->all(), [
@@ -334,7 +340,7 @@ class ClientController extends Controller
             if ($request->file('image')) {
                 $file = $request->file('image');
                 //$filename = date('YmdHi') . $file->getClientOriginalName();
-                $filename = Str::uuid()->toString() .'.'.$file->getClientOriginalExtension();
+                $filename = Str::uuid()->toString() . '.' . $file->getClientOriginalExtension();
                 $file->move(public_path('public/Clients'), $filename);
                 $client['image'] = $filename;
             }
@@ -356,6 +362,12 @@ class ClientController extends Controller
 
     public function addfavorite(Request $request)
     {
+        if (!Auth::user()->isAuthorized(['admin', 'client'])) {
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ], 403);
+        }
         $res = new Result();
         try {
             //$client = Client::find($request->id_client);
@@ -372,6 +384,12 @@ class ClientController extends Controller
     }
     public function deletefavorite(Request $request)
     {
+        if (!Auth::user()->isAuthorized(['admin', 'client'])) {
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ], 403);
+        }
         $res = new Result();
         try {
             $user =  Auth::user();
@@ -391,6 +409,12 @@ class ClientController extends Controller
      */
     public function all($per_page, Request $request)
     {
+        if (!Auth::user()->isAuthorized(['admin'])) {
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ], 403);
+        }
         $res = new Result();
         try {
             $keyword = $request->has('keyword') ? $request->get('keyword') : null;
@@ -432,6 +456,12 @@ class ClientController extends Controller
      */
     public function getClientCommands($id, $per_page)
     {
+        if (!Auth::user()->isAuthorized(['admin', 'client'])) {
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ], 403);
+        }
         $res = new Result();
         try {
             $client = Client::find($id);
@@ -479,6 +509,12 @@ class ClientController extends Controller
     }
     public function getClientFavorits()
     {
+        if (!Auth::user()->isAuthorized(['admin', 'client'])) {
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ], 403);
+        }
         $res = new Result();
         try {
             $user =  Auth::user();
@@ -536,6 +572,12 @@ class ClientController extends Controller
      */
     public function update($id, Request $request)
     {
+        if (!Auth::user()->isAuthorized(['admin', 'client'])) {
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ], 403);
+        }
         /** @var Client $client */
         $res = new Result();
         try {
@@ -604,6 +646,12 @@ class ClientController extends Controller
     }
     public function updateClienPW($id, Request $request)
     {
+        if (!Auth::user()->isAuthorized(['admin', 'client'])) {
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ], 403);
+        }
         /** @var Client $client */
         $res = new Result();
         try {
@@ -662,6 +710,12 @@ class ClientController extends Controller
      */
     public function delete($id)
     {
+        if (!Auth::user()->isAuthorized(['admin'])) {
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ], 403);
+        }
         /** @var Client $client */
         $res = new Result();
         try {
@@ -679,6 +733,12 @@ class ClientController extends Controller
     // get addresses wehere id client
     public function getAddressesClient($id, $per_page)
     {
+        if (!Auth::user()->isAuthorized(['admin', 'client'])) {
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ], 403);
+        }
         $res = new Result();
         try {
             $user = User::where('userable_id', $id)
@@ -693,6 +753,12 @@ class ClientController extends Controller
 
     public function statusClient($id, Request $request)
     {
+        if (!Auth::user()->isAuthorized(['admin', 'client'])) {
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ], 403);
+        }
         $res = new Result();
         try {
             $user = User::where('userable_id', $id)
@@ -710,6 +776,7 @@ class ClientController extends Controller
     }
     public function resetPWClient(Request $request)
     {
+
         $res = new Result();
         try {
             $user = User::where('email', $request->email)
@@ -796,6 +863,12 @@ class ClientController extends Controller
     }
     public function ClientGetSupplier($per_page, Request $request)
     {
+        if (!Auth::user()->isAuthorized(['admin', 'client'])) {
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ], 403);
+        }
         $res = new Result();
         try {
             $user =  Auth::user();
@@ -854,6 +927,12 @@ class ClientController extends Controller
     }
     public function ClientGetSupplierByCategory($per_page, Request $request)
     {
+        if(!Auth::user()->isAuthorized(['admin','client'])){
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ],403);
+        }
         $res = new Result();
         try {
             $user =  Auth::user();
@@ -906,6 +985,12 @@ class ClientController extends Controller
      */
     public function deleteClient($id)
     {
+        if(!Auth::user()->isAuthorized(['admin'])){
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ],403);
+        }
         $res = new Result();
         try {
             $user = User::where('userable_id', $id)

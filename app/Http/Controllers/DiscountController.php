@@ -10,13 +10,19 @@ use App\Models\Supplier;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Validator;
 use Exception;
+use Illuminate\Support\Facades\Auth;
 
 class DiscountController extends Controller
 {
 
     public function create(Request $request)
     {
-
+        if(!Auth::user()->isAuthorized(['admin','supplier'])){
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ],403);
+        }
         //dd(json_decode($request->typeProduct));
         $res = new Result();
         try {
@@ -54,6 +60,12 @@ class DiscountController extends Controller
     }
     public function getByid($id)
     {
+        if(!Auth::user()->isAuthorized(['admin','supplier'])){
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ],403);
+        }
         $res = new Result();
         try {
             $discount = Discount::find($id);
@@ -65,6 +77,12 @@ class DiscountController extends Controller
     }
     public function getAll($per_page)
     {
+        if(!Auth::user()->isAuthorized(['admin'])){
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ],403);
+        }
         $res = new Result();
         try {
             $discounts = Discount::paginate($per_page);
@@ -76,6 +94,12 @@ class DiscountController extends Controller
     }
     public function update($id, Request $request)
     {
+        if(!Auth::user()->isAuthorized(['admin','supplier'])){
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ],403);
+        }
         $res = new Result();
         try {
             /** @var Product $product */
@@ -106,6 +130,12 @@ class DiscountController extends Controller
     }
     public function delete($id)
     {
+        if(!Auth::user()->isAuthorized(['admin'])){
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ],403);
+        }
         $res = new Result();
         try {
             $discount = Discount::find($id);

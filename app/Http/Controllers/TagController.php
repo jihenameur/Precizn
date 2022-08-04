@@ -10,6 +10,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Auth;
 
 class TagController extends Controller
 {
@@ -22,6 +23,12 @@ class TagController extends Controller
 
     public function create(Request $request)
     {
+        if(!Auth::user()->isAuthorized(['admin','supplier'])){
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ],403);
+        }
         $res = new Result();
         try {
             $validator = Validator::make($request->all(), [
@@ -80,6 +87,12 @@ class TagController extends Controller
     }
     public function getAllTags($per_page, Request $request)
     {
+        if(!Auth::user()->isAuthorized(['admin','supplier'])){
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ],403);
+        }
         $res = new Result();
         try {
             $keyword = $request->has('keyword') ? $request->get('keyword') : null;
@@ -97,6 +110,12 @@ class TagController extends Controller
     }
     public function getTagByid($id)
     {
+        if(!Auth::user()->isAuthorized(['admin','supplier'])){
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ],403);
+        }
         $res = new Result();
         try {
             $tag = Tag::find($id);
@@ -108,6 +127,12 @@ class TagController extends Controller
     }
     public function getSupplierTags($id)
     {
+        if(!Auth::user()->isAuthorized(['admin','supplier','client'])){
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ],403);
+        }
         $ids = [];
         $tags = [];
         $res = new Result();
@@ -133,6 +158,12 @@ class TagController extends Controller
 
     public function update($id, Request $request)
     {
+        if(!Auth::user()->isAuthorized(['admin','supplier'])){
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ],403);
+        }
         $res = new Result();
         try {
             $tag = Tag::find($id);
@@ -153,6 +184,12 @@ class TagController extends Controller
     }
     public function delete($id)
     {
+        if(!Auth::user()->isAuthorized(['admin','supplier'])){
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ],403);
+        }
         $res = new Result();
         try {
             $tag = Tag::find($id);

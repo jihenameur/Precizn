@@ -35,7 +35,7 @@ class ProductController extends Controller
     public function createPublicProduct(Request $request)
     {
 
-        if(!Auth::user()->isAuthorized(['superadmin','supplier'])){
+        if(!Auth::user()->isAuthorized(['admin','supplier'])){
             return response()->json([
                 'success' => false,
                 'massage' => 'unauthorized'
@@ -48,7 +48,7 @@ class ProductController extends Controller
         try {
             $validator = Validator::make($request->all(), [
                 'name' => 'required',
-                'default_price' => 'required',
+                'default_price' => 'required|numeric',
                 'image.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
                 'unit_type' => 'required|in:Piece,Kg,L,M'
 
@@ -116,7 +116,12 @@ class ProductController extends Controller
     }
     public function createPrivateProduct(Request $request)
     {
-
+        if(!Auth::user()->isAuthorized(['admin','supplier'])){
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ],403);
+        }
         $res = new Result();
         try {
             $validator = Validator::make($request->all(), [
@@ -227,6 +232,12 @@ class ProductController extends Controller
     }
     public function productToSupplier(Request $request)
     {
+        if(!Auth::user()->isAuthorized(['admin','supplier'])){
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ],403);
+        }
         $res = new Result();
         try {
             $product = Product::find($request->product_id);
@@ -253,6 +264,12 @@ class ProductController extends Controller
      */
     public function all($per_page, Request $request)
     {
+        if(!Auth::user()->isAuthorized(['admin'])){
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ],403);
+        }
         $res = new Result();
         try {
             $keyword = $request->has('keyword') ? $request->get('keyword') : null;
@@ -280,6 +297,12 @@ class ProductController extends Controller
     }
     public function getProduct($id)
     {
+        if(!Auth::user()->isAuthorized(['admin','supplier','client'])){
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ],403);
+        }
         $res = new Result();
         try {
             $product = Product::find($id);
@@ -299,6 +322,12 @@ class ProductController extends Controller
     }
     public function getAllPublicProduct($per_page)
     {
+        if(!Auth::user()->isAuthorized(['admin','supplier'])){
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ],403);
+        }
         $res = new Result();
         try {
             $products = Product::where('private', 0)->paginate($per_page);
@@ -349,6 +378,12 @@ class ProductController extends Controller
     }
     public function getSupplierProduct($per_page)
     {
+        if(!Auth::user()->isAuthorized(['supplier'])){
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ],403);
+        }
         $res = new Result();
         try {
             $user = auth()->user();
@@ -365,6 +400,12 @@ class ProductController extends Controller
     }
     public function getdispoHourProductsSupplier($id)
     {
+        if(!Auth::user()->isAuthorized(['admin','supplier','client'])){
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ],403);
+        }
         $res = new Result();
         $dt = new DateTime();
         $tz = new DateTimeZone('Europe/paris'); // or whatever zone you're after
@@ -403,6 +444,12 @@ class ProductController extends Controller
 
     public function getdispoHourProductsSupplierByTag($per_page, Request $request)
     {
+        if(!Auth::user()->isAuthorized(['admin','supplier','client'])){
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ],403);
+        }
         $res = new Result();
         $dt = new DateTime();
         $tz = new DateTimeZone('Europe/paris'); // or whatever zone you're after
@@ -460,6 +507,12 @@ class ProductController extends Controller
     }
     public function ProductsSupplierNotAvailable($id, Request $request)
     {
+        if(!Auth::user()->isAuthorized(['admin','supplier'])){
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ],403);
+        }
         $res = new Result();
         try {
             $product = Product::find($id);
@@ -481,6 +534,12 @@ class ProductController extends Controller
      */
     public function update($id, Request $request)
     {
+        if(!Auth::user()->isAuthorized(['admin','supplier'])){
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ],403);
+        }
         $res = new Result();
         try {
             /** @var Product $product */
@@ -555,6 +614,12 @@ class ProductController extends Controller
      */
     public function delete($id)
     {
+        if(!Auth::user()->isAuthorized(['admin','supplier'])){
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ],403);
+        }
         $res = new Result();
         try {
             /** @var Product $product */

@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Validator;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redis;
 
 use Tymon\JWTAuth\Facades\JWTAuth;
@@ -83,6 +84,74 @@ class AdminController extends Controller
                 // 'token_type' => 'bearer',
                 // 'expires_in' => auth()->factory()->getTTL() * 60,
                 'SuperAdmin' => $admn
+            ];
+
+            $res->success($response);
+        } catch (\Exception $exception) {
+            $res->fail($exception->getMessage());
+        }
+        return new JsonResponse($res, $res->code);
+    }
+    public function createAdmin(Request $request)
+    {
+        if(!Auth::user()->isAuthorized(['superadmin'])){
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ],403);
+        }
+        $res = new Result();
+        try {
+            $validator = Validator::make($request->all(), [
+                'firstname' => 'required',
+                'lastname' => 'required',
+                'email' => 'required|email|unique:users,email',   // required and email format validation
+                'password' => 'required|min:8', // required and number field validation
+                'confirm_password' => 'required|same:password',
+
+            ]); // create the validations
+            if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
+            {
+                // return $validator->errors();
+                throw new Exception($validator->errors());
+
+                //return back()->withInput()->withErrors($validator);
+                // validation failed redirect back to form
+            }
+            //else {
+
+            $allRequestAttributes = $request->all();
+            $role_id = Role::where('short_name', config('roles.backadmin.admin'))->first()->id;
+            $user = new User($allRequestAttributes);
+            //$user->password = bcrypt($request->password);
+            $user->password = bcrypt($request->password);
+            $admin = $this->model->create($allRequestAttributes);
+            // $user->sendApiEmailVerificationNotification();
+            $admin = $this->model->find($admin->id);
+            $admin->user()->save($user);
+
+            $role = Role::find($role_id);
+            $user->roles()->attach($role);
+            $credentials = $request->only('email', 'password');
+            $token = JWTAuth::attempt($credentials);
+            $user->token = $token;
+            $user->status_id = 1;
+            $user->update();
+            $admn = [
+                'id' => $admin['id'],
+                'firstname' => $admin['firstname'],
+                'lastname' => $admin['lastname'],
+                'email' => $user['email'],
+                'gender' => $admin['gender'],
+                'role' => $role['id'],
+                'status' => $user['status_id'],
+            ];
+            $response = [
+                //'token' => $token,
+                // 'refresh_token' => $refresh_token,
+                // 'token_type' => 'bearer',
+                // 'expires_in' => auth()->factory()->getTTL() * 60,
+                'Admin' => $admn
             ];
 
             $res->success($response);

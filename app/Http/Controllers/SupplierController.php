@@ -17,6 +17,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use App\Http\Controllers\Auth\VerificationApiController;
+use Illuminate\Support\Facades\Auth;
 
 class SupplierController extends Controller
 {
@@ -172,6 +173,12 @@ class SupplierController extends Controller
      */
     public function all($per_page, Request $request)
     {
+        if(!Auth::user()->isAuthorized(['admin'])){
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ],403);
+        }
         $res = new Result();
         try {
 
@@ -207,6 +214,12 @@ class SupplierController extends Controller
      */
     public function getById($id)
     {
+        if(!Auth::user()->isAuthorized(['admin','supplier'])){
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ],403);
+        }
         $res = new Result();
         try {
 
@@ -267,6 +280,12 @@ class SupplierController extends Controller
      */
     public function update($id, Request $request)
     {
+        if(!Auth::user()->isAuthorized(['admin','supplier'])){
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ],403);
+        }
         $res = new Result();
         try {
             $user = User::where('userable_id', $id)
@@ -365,6 +384,12 @@ class SupplierController extends Controller
      */
     public function delete($id)
     {
+        if(!Auth::user()->isAuthorized(['admin'])){
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ],403);
+        }
         $res = new Result();
         try {
             /** @var Supplier $supplier */
@@ -461,6 +486,12 @@ class SupplierController extends Controller
     }
     public function statusSupplier($id, Request $request)
     {
+        if(!Auth::user()->isAuthorized(['admin','supplier'])){
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ],403);
+        }
         $res = new Result();
         try {
             $user = User::where('userable_id', $id)
@@ -481,6 +512,12 @@ class SupplierController extends Controller
   */
   public function deleteSupplier($id)
   {
+    if(!Auth::user()->isAuthorized(['admin'])){
+        return response()->json([
+            'success' => false,
+            'massage' => 'unauthorized'
+        ],403);
+    }
       $res = new Result();
       try {
            $user = User::where('userable_id', $id)

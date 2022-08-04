@@ -9,6 +9,7 @@ use App\Models\Supplier;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class OptionController extends Controller
@@ -22,6 +23,12 @@ class OptionController extends Controller
 
     public function create(Request $request)
     {
+        if(!Auth::user()->isAuthorized(['admin','supplier'])){
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ],403);
+        }
         $res = new Result();
         try {
             $validator = Validator::make($request->all(), [
@@ -55,6 +62,12 @@ class OptionController extends Controller
     }
     public function getProductOptions($id,$per_page)
     {
+        if(!Auth::user()->isAuthorized(['admin','supplier','client'])){
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ],403);
+        }
         $res = new Result();
         try {
             $option = Option::whereHas('products', function ($q) use ($id) {
@@ -68,6 +81,12 @@ class OptionController extends Controller
     }
     public function getOptionByid($id)
     {
+        if(!Auth::user()->isAuthorized(['admin','supplier'])){
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ],403);
+        }
         $res = new Result();
         try {
             $option = Option::find($id);
@@ -87,6 +106,12 @@ class OptionController extends Controller
      */
     public function update($id, Request $request)
     {
+        if(!Auth::user()->isAuthorized(['admin','supplier'])){
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ],403);
+        }
         $res = new Result();
         try {
             /** @var Option $option */
@@ -121,6 +146,12 @@ class OptionController extends Controller
      */
     public function delete($id)
     {
+        if(!Auth::user()->isAuthorized(['admin','supplier'])){
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ],403);
+        }
         $res = new Result();
         try {
             /** @var Option $option */
