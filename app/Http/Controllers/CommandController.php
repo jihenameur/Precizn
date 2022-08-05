@@ -11,10 +11,12 @@ use App\Models\Panier;
 use App\Models\Product;
 use App\Models\Supplier;
 use App\Notifications\CommandNotification;
+use DateTime;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Validator;
 
 class CommandController extends Controller
@@ -38,24 +40,19 @@ class CommandController extends Controller
         try {
             $validator = Validator::make($request->all(), [
                 'date' => 'required',
-               // 'supplier_id' => 'required',
+                // 'supplier_id' => 'required',
 
             ]); // create the validations
             if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
             {
                 throw new Exception($validator->errors());
-
-                //return $validator->errors();
-                //            return back()->withInput()->withErrors($validator);
-                // validation failed redirect back to form
-
             }
 
             $command = new Command();
             $command->date = $request->date;
             $command->tip = $request->tip;
             $command->mode_pay = $request->mode_pay;
-            $command->status = $request->status;
+            $command->status = 0;
             $command->codepromo = $request->codepromo;
             //$supplier = Supplier::find($request->supplier_id);
             $client =  Auth::user();
@@ -64,6 +61,7 @@ class CommandController extends Controller
             // $delivery = Delivery::find($request->delivery_id);
             // $command->delivery_id = $delivery->id;
             $panier = Panier::find($request->panier_id);
+
             $command->panier_id = $panier->id;
             $command->total_price = $panier->price + $request['tip'] + $request['delivery_price'];
             $command->addresse_id = $request->addresse_id;
@@ -78,7 +76,6 @@ class CommandController extends Controller
                 $command->long = $request->long;
             }
             // foreach ($panier->products as $key => $prod) {
-
             $product = Product::find($panier->products[0]->id);
             $suppl = Supplier::whereHas('products', function ($q) use ($product) {
                 $q->where('product_id', $product->id);
@@ -130,7 +127,7 @@ class CommandController extends Controller
             //return $command;
             $fromUser = Client::find(auth()->user()->userable_id);
             $toUser  = Supplier::find($command->supplier_id);
-            $toUser->notify(new CommandNotification($command,$fromUser));
+            $toUser->notify(new CommandNotification($command, $fromUser));
             $res->success($command);
         } catch (\Exception $exception) {
             $res->fail($exception->getMessage());
@@ -142,24 +139,42 @@ class CommandController extends Controller
      *
      * @return Collection|Model[]|mixed|void
      */
-    public function all($per_page)
+    public function all(Request $request, $per_page)
     {
+        $this->validate($request, [
+            'status' => 'required',
+            'from' => 'required',
+            'to' => 'required'
+        ]);
         $res = new Result();
+
         try {
-            $commands = Command::paginate($per_page);
-            // $i = 0;
-            // foreach ($commands as $key => $command) {
-            //     $address = Address::where('command_id', $command->id)
-            //         ->get();
-            //     $comds[$i] = ['command', $command, 'address', $address];
-            //     $i++;
-            // }
-            //return $commands;
+            $from = new DateTime($request->from == 'null' ? '2000-01-01' : $request->from);
+            $to = new DateTime($request->to == 'null' ? Date::now() : $request->to);
+
+            $commands = Command::where('status', 'like', '%' . ($request->status == 'null' ? '' : $request->status) . '%')
+                ->whereBetween('date', [$from->format('Y-m-d'), $to->format('Y-m-d')])->paginate($per_page);
+
             $res->success($commands);
         } catch (\Exception $exception) {
             $res->fail($exception->getMessage());
         }
         return new JsonResponse($res, $res->code);
+    }
+
+
+    private function getFilterByKeywordClosure($keyword, $request)
+    {
+
+        $from = new DateTime($request['from']);
+
+        $to = new DateTime($request['to']);
+
+        $commands = Command::whereBetween('date', [$from->format('Y-m-d'), $to->format('Y-m-d')])
+            ->orWhere('status', $request['status'])
+            ->get();
+
+        return $commands;
     }
     public function getCommandPanier($id)
     {
@@ -192,11 +207,11 @@ class CommandController extends Controller
      * @param $keyword
      * @return string|string[]|null
      */
-    private function cleanKeywordSpaces($id)
+    private function cleanKeywordSpaces($keyword)
     {
-        $id = trim($id);
-        $id = preg_replace('/\s+/', ' ', $id);
-        return $id;
+        $keyword = trim($keyword);
+        $keyword = preg_replace('/\s+/', ' ', $keyword);
+        return $keyword;
     }
 
     /**
