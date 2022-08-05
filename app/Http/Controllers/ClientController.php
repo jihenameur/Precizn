@@ -223,7 +223,8 @@ class ClientController extends Controller
                 'email' => 'required|email|unique:users,email',   // required and email format validation
                 'password' => 'required|min:8', // required and number field validation
                 'confirm_password' => 'required|same:password',
-
+                'phone' => 'required',
+                'street' => 'required',  'postcode' => 'required',  'city' => 'required',  'region' => 'required',
             ]); // create the validations
             if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
             {
@@ -582,18 +583,15 @@ class ClientController extends Controller
         $res = new Result();
         try {
 
-            // $validator = Validator::make($request->all(), [
-            //     'firstname' => 'required',
-            //     'lastname' => 'required',
-            //     //'email' => 'required|email|unique:users,email',   // required and email format validation
-            //     //'password' => 'required|min:8', // required and number field validation
-            //     //'confirm_password' => 'required|same:password',
+            $validator = Validator::make($request->all(), [
+                'firstname' => 'required',
+                'lastname' => 'required'
 
-            // ]); // create the validations
-            // if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
-            // {
-            //     throw new Exception($validator->errors());
-            // }
+            ]); // create the validations
+            if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
+            {
+                throw new Exception($validator->errors());
+            }
             $allRequestAttributes = $request->all();
             $client = Client::find($id);
             $user = $client->user;
@@ -927,11 +925,11 @@ class ClientController extends Controller
     }
     public function ClientGetSupplierByCategory($per_page, Request $request)
     {
-        if(!Auth::user()->isAuthorized(['admin','client'])){
+        if (!Auth::user()->isAuthorized(['admin', 'client'])) {
             return response()->json([
                 'success' => false,
                 'massage' => 'unauthorized'
-            ],403);
+            ], 403);
         }
         $res = new Result();
         try {
@@ -985,11 +983,11 @@ class ClientController extends Controller
      */
     public function deleteClient($id)
     {
-        if(!Auth::user()->isAuthorized(['admin'])){
+        if (!Auth::user()->isAuthorized(['admin'])) {
             return response()->json([
                 'success' => false,
                 'massage' => 'unauthorized'
-            ],403);
+            ], 403);
         }
         $res = new Result();
         try {

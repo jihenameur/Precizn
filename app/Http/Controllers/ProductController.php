@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\BaseModel\Result;
 use App\Helpers\Paginate;
+use App\Http\Resources\ProductResource;
 use App\Models\Category;
+use App\Models\File;
 use App\Models\Menu;
 use App\Models\Option;
 use App\Models\Product;
@@ -59,6 +61,7 @@ class ProductController extends Controller
                 throw new Exception($validator->errors());
             } else {
                 $images = [];
+
                 if ($request->file('image')) {
 
                     if (!is_array($request->file('image'))) {
@@ -68,17 +71,10 @@ class ProductController extends Controller
                     }
                 }
 
-                foreach ($images as $image) {
 
-                    $name = Str::uuid()->toString() . '.' . $image->getClientOriginalExtension();
-                    $image->move(public_path('public/Products'), $name); // your folder path
-                    $data[] = $name;
-                }
 
                 $product = new Product();
                 $product->name = $request->name;
-                $product['image'] = json_encode($data);
-
 
                 $product->description = $request->description;
                 $product->default_price = $request->default_price;
@@ -106,6 +102,18 @@ class ProductController extends Controller
                         $tag = TypeProduct::find($value);
                         $product->tag()->attach($tag);
                     }
+                }
+                foreach ($images as $image) {
+                    $name = Str::uuid()->toString() . '.' . $image->getClientOriginalExtension();
+                    $image->move(public_path('public/Products'), $name); // your folder path
+                    $data[] = $name;
+                    $file= new File();
+                    $file->name=$name;
+                    $file->path = asset('public/Products'.$name);
+                    $file->user_id= Auth::user()->id;
+                    $file->save();
+                    $file->products()->attach($product);
+
                 }
             }
             $res->success($product);
@@ -310,9 +318,7 @@ class ProductController extends Controller
                 $q->where('product_id', $product->id);
             })->get();
             $prd = [
-                'product' => $product,
-                'options' => $options
-
+                'product' => new ProductResource($product),
             ];
             $res->success($prd);
         } catch (\Exception $exception) {

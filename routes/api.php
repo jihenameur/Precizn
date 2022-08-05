@@ -65,6 +65,7 @@ Route::post('addSupplier', [SupplierController::class, 'create']);
 Route::post('addClient', [ClientController::class, 'create']);
 Route::post('addDelivery', [DeliveryController::class, 'create']);
 Route::post('addSuperAdmin', [AdminController::class, 'create']);
+Route::get('allCategoryParent', [CategoryController::class, 'allCategoryParent']);
 
 Route::group(['middleware' => ['jwt.verify']], function () {
     Route::get('getAllSupplier/{per_page}', [SupplierController::class, 'all']);
@@ -100,7 +101,6 @@ Route::group(['middleware' => ['jwt.verify']], function () {
     Route::post('addCategory', [CategoryController::class, 'create']);
     Route::get('getCategoryChildren/{id}', [CategoryController::class, 'getCategoryChildren']);
     Route::get('getCategoryParent/{id}', [CategoryController::class, 'getCategoryParent']);
-    Route::get('allCategoryParent', [CategoryController::class, 'allCategoryParent']);
 
     Route::get('getCategorysupplier/{id}/{per_page}', [CategoryController::class, 'getCategorysupplier']);
     Route::get('getCategory/{per_page}', [CategoryController::class, 'all']);

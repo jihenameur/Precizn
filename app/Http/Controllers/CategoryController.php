@@ -41,8 +41,6 @@ class CategoryController extends Controller
             {
                 throw new Exception($validator->errors());
 
-                //return back()->withInput()->withErrors($validator);
-                // validation failed redirect back to form
 
             } else {
 
