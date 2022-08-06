@@ -2,10 +2,9 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
-class UpdateProductsTable extends Migration
+class UpdateImageClientTable extends Migration
 {
     /**
      * Run the migrations.
@@ -14,14 +13,10 @@ class UpdateProductsTable extends Migration
      */
     public function up()
     {
-        Schema::table('products', function (Blueprint $table) {
+        Schema::table('clients', function (Blueprint $table) {
 
-            try {
+            $table->foreignId('file_id')->nullable()->constrained('files')->onDelete('cascade');
 
-                DB::statement('ALTER TABLE products DROP  image ;');
-            } catch (Exception $e) {
-                // do nothing
-            }
         });
     }
 

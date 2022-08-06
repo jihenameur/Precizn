@@ -24,6 +24,7 @@ use Illuminate\Support\Facades\Hash;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use App\Helpers\TypeAddress;
 use App\Http\Controllers\Auth\VerificationApiController;
+use App\Models\File;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
@@ -282,14 +283,13 @@ class ClientController extends Controller
             $user->tel = $request->phone;
             $user->status_id = 4;
             $user->update();
-            $this->verificationApiController->toOrange($user->id, $request->phone);
+            //$this->verificationApiController->toOrange($user->id, $request->phone);
 
             // return $client;
             $clt = [
                 'id' => $client['id'],
                 'firstname' => $client['firstname'],
                 'lastname' => $client['lastname'],
-                'image' => $client['image'],
                 'email' => $user['email'],
                 'gender' => $client['gender'],
                 'tel' => $request->phone,
@@ -310,13 +310,12 @@ class ClientController extends Controller
 
             $res->success($response);
         } catch (\Exception $exception) {
-            dd($exception);
             $res->fail($exception->getMessage());
         }
         return new JsonResponse($res, $res->code);
     }
 
-    public function addImage($id, Request $request)
+    public function addImage( Request $request)
     {
         if (!Auth::user()->isAuthorized(['admin', 'client'])) {
             return response()->json([
@@ -337,20 +336,24 @@ class ClientController extends Controller
                 //return back()->withInput()->withErrors($validator);
                 // validation failed redirect back to form
             }
-            $client = Client::find($id);
+            $client = Client::find(Auth::user()->userable_id);
             if ($request->file('image')) {
                 $file = $request->file('image');
-                //$filename = date('YmdHi') . $file->getClientOriginalName();
-                $filename = Str::uuid()->toString() . '.' . $file->getClientOriginalExtension();
-                $file->move(public_path('public/Clients'), $filename);
-                $client['image'] = $filename;
+                $name = Str::uuid()->toString() . '.' . $file->getClientOriginalExtension();
+                $file->move(public_path('public/Clients'), $name); // your folder path
+                $file = new File();
+                $file->name = $name;
+                $file->path = asset('public/Clients/' . $name);
+                $file->user_id = Auth::user()->id;
+                $file->save();
             }
+            $client->file_id=$file->id;
             $client->update();
             $response['client'] = [
                 "id"         =>  $client->id,
                 "firstname"     =>  $client->firstname,
                 "lastname"     =>  $client->lastname,
-                "image"     =>  $client->image
+                "image"     =>  $file->path
 
             ];
 
@@ -360,7 +363,57 @@ class ClientController extends Controller
         }
         return new JsonResponse($res, $res->code);
     }
+    public function updateImage( Request $request)
+    {
+        if (!Auth::user()->isAuthorized(['admin', 'client'])) {
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ], 403);
+        }
+        $res = new Result();
+        try {
+            $validator = Validator::make($request->all(), [
+                'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            ]); // create the validations
+            if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
+            {
+                // return $validator->errors();
+                throw new Exception($validator->errors());
 
+                //return back()->withInput()->withErrors($validator);
+                // validation failed redirect back to form
+            }
+            $client = Client::find(Auth::user()->userable_id);
+            if ($request->file('image')) {
+                $image=File::find($client->file_id);
+                unlink('public/Clients/' . $image->name);
+                $image->delete();
+                $file = $request->file('image');
+                $name = Str::uuid()->toString() . '.' . $file->getClientOriginalExtension();
+                $file->move(public_path('public/Clients'), $name); // your folder path
+                $file = new File();
+                $file->name = $name;
+                $file->path = asset('public/Clients/' . $name);
+                $file->user_id = Auth::user()->id;
+                $file->save();
+            }
+            $client->file_id=$file->id;
+            $client->update();
+            $response['client'] = [
+                "id"         =>  $client->id,
+                "firstname"     =>  $client->firstname,
+                "lastname"     =>  $client->lastname,
+                "image"     =>  $file->path
+
+            ];
+
+            $res->success($response);
+        } catch (\Exception $exception) {
+            $res->fail($exception->getMessage());
+        }
+        return new JsonResponse($res, $res->code);
+    }
     public function addfavorite(Request $request)
     {
         if (!Auth::user()->isAuthorized(['admin', 'client'])) {
@@ -488,11 +541,12 @@ class ClientController extends Controller
                 $q->where('user_id', $user->id);
             })->first();
             $client = Client::find($id);
+            $file=File::find($client->file_id);
             $clt['client'] = [
                 'id' => $client['id'],
                 'firstname' => $client['firstname'],
                 'lastname' => $client['lastname'],
-                'image' => $client['image'],
+                'image' => $file['path']??  '',
                 'email' => $user['email'],
                 'gender' => $client['gender'],
                 'tel' => $user['tel'],

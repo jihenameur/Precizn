@@ -5,7 +5,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
-class UpdateProductsTable extends Migration
+class UpdateImageSupplierTable extends Migration
 {
     /**
      * Run the migrations.
@@ -14,11 +14,13 @@ class UpdateProductsTable extends Migration
      */
     public function up()
     {
-        Schema::table('products', function (Blueprint $table) {
+        Schema::table('clients', function (Blueprint $table) {
 
             try {
 
-                DB::statement('ALTER TABLE products DROP  image ;');
+                DB::statement('ALTER TABLE suppliers DROP  image ;');
+                DB::statement('ALTER TABLE suppliers DROP  photo_couv ;');
+
             } catch (Exception $e) {
                 // do nothing
             }
