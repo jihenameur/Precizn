@@ -26,7 +26,7 @@ class AdminController extends Controller
         Admin $model,
         Result $res
     ) {
-        $this->request=$request;
+        $this->request = $request;
         $this->model = $model;
         $this->res = $res;
     }
@@ -94,11 +94,11 @@ class AdminController extends Controller
     }
     public function createAdmin(Request $request)
     {
-        if(!Auth::user()->isAuthorized(['superadmin'])){
+        if (!Auth::user()->isAuthorized(['superadmin'])) {
             return response()->json([
                 'success' => false,
                 'massage' => 'unauthorized'
-            ],403);
+            ], 403);
         }
         $res = new Result();
         try {
@@ -206,16 +206,21 @@ class AdminController extends Controller
         $admins = Admin::where('firstname', 'like', "%$keyword%")->where('lastname', 'like', "%$keyword%")
             ->get();
 
-          return $admins;
-
+        return $admins;
     }
     public function deleteAdmin($id)
     {
+        if (!Auth::user()->isAuthorized(['superadmin'])) {
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ], 403);
+        }
         $res = new Result();
         try {
-             $user = User::where('userable_id', $id)
-                 ->where('userable_type', 'App\Models\Admin')->first();
-          $admin=Admin::find($user->userable_id);
+            $user = User::where('userable_id', $id)
+                ->where('userable_type', 'App\Models\Admin')->first();
+            $admin = Admin::find($user->userable_id);
             $user->delete();
 
             $admin->delete();
@@ -226,14 +231,14 @@ class AdminController extends Controller
         }
         return new JsonResponse($res, $res->code);
     }
-  /**
+    /**
      * @inheritDoc
      *
      * @param null $id
      * @param null $params
      * @return Supplier|mixed|void
      */
-    public function updateAdmin($id,Request $request)
+    public function updateAdmin($id, Request $request)
     {
         $res = new Result();
         $admin = Admin::find($id);
@@ -272,7 +277,7 @@ class AdminController extends Controller
     {
         $res = new Result();
         try {
-            $delivery=json_decode(Redis::get('deliveryPostion'.$id));
+            $delivery = json_decode(Redis::get('deliveryPostion' . $id));
             $res->success($delivery);
         } catch (\Exception $exception) {
             $res->fail($exception->getMessage());
@@ -283,9 +288,9 @@ class AdminController extends Controller
     {
         $res = new Result();
         try {
-            $supplier=Supplier::findOrfail($id);
+            $supplier = Supplier::findOrfail($id);
             dd($supplier);
-           // $res->success($delivery);
+            // $res->success($delivery);
         } catch (\Exception $exception) {
             $res->fail($exception->getMessage());
         }

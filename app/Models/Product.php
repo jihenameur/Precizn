@@ -25,7 +25,7 @@ class Product extends Model
         'typeproduct',
         'tag',
         'discounds',
-        //'options',
+        'files',
     ];
 
 
@@ -67,6 +67,10 @@ public function menu() {
    public function tag()
    {
        return $this->belongsToMany(Tag::class);
+   }
+   public function files()
+   {
+       return $this->belongsToMany(File::class);
    }
    public function product_hours()
    {
