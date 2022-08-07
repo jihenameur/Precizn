@@ -41,6 +41,22 @@ class SeederDelivery extends Seeder
             'email'=> 'devilry123@gmail.com',
             'password'=>Hash::make($this->password),
             'vehicle'=>1],
+            [
+
+                'lat'=>35.816399,
+                'long'=>10.5115072,
+                'available'=>1,
+                'email'=> 'devilry1234@gmail.com',
+                'password'=>Hash::make($this->password),
+                'vehicle'=>1],
+            [
+
+                'lat'=>35.806399,
+                'long'=>10.5015072,
+                'available'=>1,
+                'email'=> 'devilry1235@gmail.com',
+                'password'=>Hash::make($this->password),
+                'vehicle'=>1],
         ];
         return $deliverys;
     }
