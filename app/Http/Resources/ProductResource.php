@@ -23,7 +23,10 @@ class ProductResource extends JsonResource
             'min_period_time' =>$this->min_period_time,
             'max_period_time' =>$this->max_period_time,
             'options' => ProductOptionsResource::collection($this->options),
-            'image' => FileResource::collection($this->files)
+            'image' => FileResource::collection($this->files),
+            'type_product' => TypeProductResource::collection($this->typeproduct),
+            'tags' => TagResource::collection($this->tag),
+
         ];
     }
 }

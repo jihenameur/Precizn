@@ -803,9 +803,9 @@ class ClientController extends Controller
         return new JsonResponse($res, $res->code);
     }
 
-    public function statusClient($id, Request $request)
+    public function statusClient(Request $request)
     {
-        if (!Auth::user()->isAuthorized(['admin', 'client'])) {
+        if (!Auth::user()->isAuthorized(['admin'])) {
             return response()->json([
                 'success' => false,
                 'massage' => 'unauthorized'
@@ -813,7 +813,7 @@ class ClientController extends Controller
         }
         $res = new Result();
         try {
-            $user = User::where('userable_id', $id)
+            $user = User::where('userable_id', $request->id)
                 ->where('userable_type', 'App\Models\Client')->first();
             User::where('id', $user->id)->update([
                 'status_id' => $request->status_id

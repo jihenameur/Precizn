@@ -522,9 +522,9 @@ class SupplierController extends Controller
         //  DB::table('users')->where('id', Auth::id())->update(['phone_verified_at' => date_format($date, 'Y-m-d H:i:s')]);
 
     }
-    public function statusSupplier($id, Request $request)
+    public function statusSupplier( Request $request)
     {
-        if (!Auth::user()->isAuthorized(['admin', 'supplier'])) {
+        if (!Auth::user()->isAuthorized(['admin'])) {
             return response()->json([
                 'success' => false,
                 'massage' => 'unauthorized'
@@ -532,7 +532,7 @@ class SupplierController extends Controller
         }
         $res = new Result();
         try {
-            $user = User::where('userable_id', $id)
+            $user = User::where('userable_id', $request->id)
                 ->where('userable_type', 'App\Models\Supplier')->first();
             User::where('id', $user->id)->update([
                 'status_id' => $request->status_id

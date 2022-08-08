@@ -643,4 +643,27 @@ class DeliveryController extends Controller
 
         return response()->json(json_decode(Redis::get('deliveryPostion' . $delivery->id)));
     }
+    public function statusDelivery(Request $request)
+    {
+        if (!Auth::user()->isAuthorized(['admin'])) {
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ], 403);
+        }
+        $res = new Result();
+        try {
+            $user = User::where('userable_id', $request->id)
+                ->where('userable_type', 'App\Models\Delivery')->first();
+            User::where('id', $user->id)->update([
+                'status_id' => $request->status_id
+            ]);
+
+
+            $res->success($user);
+        } catch (\Exception $exception) {
+            $res->fail($exception->getMessage());
+        }
+        return new JsonResponse($res, $res->code);
+    }
 }
