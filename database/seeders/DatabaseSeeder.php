@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
         $this->call(SeederProduct::class);
         $this->call(SeederPanier::class);
         $this->call(SeederClient::class);
+        $this->call(SeederAdmin::class);
         $this->call(SeederDelivery::class);
         $this->call(SeederAdress::class);
         $this->call(SeederCommand::class);
@@ -33,7 +34,7 @@ class DatabaseSeeder extends Seeder
         $this->call(SeederTypeProduct::class);
         $this->call(SeederTags::class);
 
-        
+
 
 
 

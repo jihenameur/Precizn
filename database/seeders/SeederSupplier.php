@@ -39,7 +39,6 @@ class SeederSupplier extends Seeder
         $suppliers = [
             [
                 'name' => 'thunder',
-                'image' => 'https://img.freepik.com/photos-gratuite/table-banquet-collations_144627-18361.jpg?w=2000',
                 // 'min_period_time'=>20,
                 // 'max_period_time'=>30,
                 'star' => 0,

@@ -9,6 +9,7 @@ use App\Models\Delivery;
 use App\Models\Delivery_Hours;
 use App\Models\RequestDelivery;
 use App\Models\User;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use App\Models\Role;
@@ -210,11 +211,21 @@ class DeliveryController extends Controller
                 'massage' => 'unauthorized'
             ],403);
         }
+
+        $this->validate($request, [
+            'available' => 'numeric',
+            'region' => 'numeric'
+        ]);
         $res = new Result();
         try {
             $keyword = $request->has('keyword') ? $request->get('keyword') : null;
+            $disponible = $request->has('available') ? $request->get('available') : null;
 
-            $delivery = Delivery::paginate($per_page);
+            if($disponible) {
+                $delivery = Delivery::where('available', 1)->paginate($per_page);
+            } else {
+                $delivery = Delivery::paginate($per_page);
+            }
 
             if ($keyword !== null) {
                 $keyword = $this->cleanKeywordSpaces($keyword);

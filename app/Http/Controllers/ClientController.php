@@ -310,6 +310,7 @@ class ClientController extends Controller
 
             $res->success($response);
         } catch (\Exception $exception) {
+
             $res->fail($exception->getMessage());
         }
         return new JsonResponse($res, $res->code);

@@ -31,12 +31,10 @@ class SeederProduct extends Seeder
         $products = [
 
             ['name' => 'pizza',
-            'image' => 'C:/Users/windows/Downloads/coca.png',
              'description' => 'Pizza 4fromages on dirait une soupe tellement pâte trop fine. Cadre agréable mais la pizza non.',
              'private'=>0,
              'default_price'=>7],
             ['name' => 'Spaghetti',
-             'image' => 'C:/Users/windows/Downloads/coca.png',
               'description' => 'Spaghetti à l \'amatriciana, spaghetti aux boulettes de thon, spaghetti au saumon et épinards, spaghetti au poulet et pesto, spaghetti aux fruits de mer... Il y en a pour tous les goûts.',
               'private'=>0,
               'default_price'=>10]
