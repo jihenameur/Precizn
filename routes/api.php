@@ -101,6 +101,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
     Route::post('addCategory', [CategoryController::class, 'create']);
     Route::get('getCategoryChildren/{id}', [CategoryController::class, 'getCategoryChildren']);
     Route::get('getCategoryParent/{id}', [CategoryController::class, 'getCategoryParent']);
+    Route::get('getcategorybyid/{id}', [CategoryController::class, 'categorybyid']);
 
     Route::get('getCategorysupplier/{id}/{per_page}', [CategoryController::class, 'getCategorysupplier']);
     Route::get('getCategory/{per_page}', [CategoryController::class, 'all']);
@@ -164,7 +165,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
     Route::delete('deleteClient/{id}', [ClientController::class, 'deleteClient']);
 
     Route::get('getClientFavorits', [ClientController::class, 'getClientFavorits']);
-    Route::post('statusClient/{id}', [ClientController::class, 'statusClient']);
+    Route::post('statusClient', [ClientController::class, 'statusClient']);
     Route::put('updateClienPW/{id}', [ClientController::class, 'updateClienPW']);
     Route::get('resetPWClient', [ClientController::class, 'resetPWClient']);
     Route::post('verifySmsResetPW', [ClientController::class, 'verifySmsResetPW']);
@@ -190,6 +191,8 @@ Route::group(['middleware' => ['jwt.verify']], function () {
     Route::get('getDeliveryById/{id}', [DeliveryController::class, 'getByid']);
     Route::post('addimagedelivery', [DeliveryController::class, 'addImage']);
     Route::post('updateimagedelivery', [DeliveryController::class, 'updateImage']);
+    Route::post('statusdelivery', [DeliveryController::class, 'statusDelivery']);
+
     /**
      * public DeliveryRating
      */

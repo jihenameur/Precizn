@@ -146,6 +146,17 @@ class CategoryController extends Controller
         }
         return new JsonResponse($res, $res->code);
     }
+    public function categorybyid($id)
+    {
+        $res = new Result();
+        try {
+          $category=Category::find($id);
+            $res->success($category);
+        } catch (\Exception $exception) {
+            $res->fail($exception->getMessage());
+        }
+        return new JsonResponse($res, $res->code);
+    }
     /**
      * Filter or get all
      *
