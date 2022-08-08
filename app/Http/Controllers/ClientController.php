@@ -281,7 +281,7 @@ class ClientController extends Controller
             $user->tel = $request->phone;
             $user->status_id = 4;
             $user->update();
-            $this->verificationApiController->toOrange($user->id, $request->phone);
+           // $this->verificationApiController->toOrange($user->id, $request->phone);
 
             // return $client;
             $clt = [
@@ -309,7 +309,7 @@ class ClientController extends Controller
 
             $res->success($response);
         } catch (\Exception $exception) {
-            dd($exception);
+           // dd($exception);
             $res->fail($exception->getMessage());
         }
         return new JsonResponse($res, $res->code);

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\BaseModel\Result;
 use App\Helpers\ReqHelper;
+use App\Jobs\SendNewSuuplierNotification;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\Role;
@@ -160,6 +161,7 @@ class SupplierController extends Controller
             ];
 
             $res->success($response);
+            SendNewSuuplierNotification::dispatch($supplier);
         } catch (\Exception $exception) {
             $res->fail($exception->getMessage());
         }
@@ -539,4 +541,5 @@ class SupplierController extends Controller
       }
       return new JsonResponse($res, $res->code);
   }
+
 }
