@@ -316,7 +316,7 @@ class ClientController extends Controller
         return new JsonResponse($res, $res->code);
     }
 
-    public function addImage( Request $request)
+    public function addImage(Request $request)
     {
         if (!Auth::user()->isAuthorized(['admin', 'client'])) {
             return response()->json([
@@ -348,7 +348,7 @@ class ClientController extends Controller
                 $file->user_id = Auth::user()->id;
                 $file->save();
             }
-            $client->file_id=$file->id;
+            $client->file_id = $file->id;
             $client->update();
             $response['client'] = [
                 "id"         =>  $client->id,
@@ -364,7 +364,7 @@ class ClientController extends Controller
         }
         return new JsonResponse($res, $res->code);
     }
-    public function updateImage( Request $request)
+    public function updateImage(Request $request)
     {
         if (!Auth::user()->isAuthorized(['admin', 'client'])) {
             return response()->json([
@@ -387,7 +387,7 @@ class ClientController extends Controller
             }
             $client = Client::find(Auth::user()->userable_id);
             if ($request->file('image')) {
-                $image=File::find($client->file_id);
+                $image = File::find($client->file_id);
                 unlink('public/Clients/' . $image->name);
                 $image->delete();
                 $file = $request->file('image');
@@ -399,7 +399,7 @@ class ClientController extends Controller
                 $file->user_id = Auth::user()->id;
                 $file->save();
             }
-            $client->file_id=$file->id;
+            $client->file_id = $file->id;
             $client->update();
             $response['client'] = [
                 "id"         =>  $client->id,
@@ -542,12 +542,12 @@ class ClientController extends Controller
                 $q->where('user_id', $user->id);
             })->first();
             $client = Client::find($id);
-            $file=File::find($client->file_id);
+            $file = File::find($client->file_id);
             $clt['client'] = [
                 'id' => $client['id'],
                 'firstname' => $client['firstname'],
                 'lastname' => $client['lastname'],
-                'image' => $file['path']??  '',
+                'image' => $file['path'] ??  '',
                 'email' => $user['email'],
                 'gender' => $client['gender'],
                 'tel' => $user['tel'],
@@ -806,11 +806,21 @@ class ClientController extends Controller
 
     public function statusClient(Request $request)
     {
+
         if (!Auth::user()->isAuthorized(['admin'])) {
             return response()->json([
                 'success' => false,
                 'massage' => 'unauthorized'
             ], 403);
+        }
+        $validator = Validator::make($request->all(), [
+            'id' => 'required', // required and number field validation
+            'status_id' => 'required'
+
+        ]); // create the validations
+        if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
+        {
+            throw new Exception($validator->errors());
         }
         $res = new Result();
         try {
@@ -830,6 +840,15 @@ class ClientController extends Controller
     public function resetPWClient(Request $request)
     {
 
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email',   // required and email format validation
+            'tel' => 'required'
+
+        ]); // create the validations
+        if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
+        {
+            throw new Exception($validator->errors());
+        }
         $res = new Result();
         try {
             $user = User::where('email', $request->email)

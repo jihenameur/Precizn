@@ -68,10 +68,7 @@ class SupplierController extends Controller
                 // return $validator->errors();
                 throw new Exception($validator->errors());
 
-                //return back()->withInput()->withErrors($validator);
-                // validation failed redirect back to form
             }
-            // } else {
             $role_id = Role::where('short_name', config('roles.backadmin.supplier'))->first()->id;
 
             $latlong = $this->locationController->GetLocationWithAdresse($request->street, $request->postcode, $request->city, $request->region);
@@ -136,7 +133,6 @@ class SupplierController extends Controller
                 "lastName"     =>  $supplier->lastName
 
             ];
-
             $res->success($response);
             SendNewSuuplierNotification::dispatch($supplier);
         } catch (\Exception $exception) {
@@ -531,6 +527,15 @@ class SupplierController extends Controller
                 'success' => false,
                 'massage' => 'unauthorized'
             ], 403);
+        }
+        $validator = Validator::make($request->all(), [
+            'id' => 'required', // required and number field validation
+            'status_id' => 'required'
+
+        ]); // create the validations
+        if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
+        {
+            throw new Exception($validator->errors());
         }
         $res = new Result();
         try {

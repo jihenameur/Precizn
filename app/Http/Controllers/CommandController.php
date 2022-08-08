@@ -141,18 +141,21 @@ class CommandController extends Controller
      */
     public function all(Request $request, $per_page)
     {
-        $this->validate($request, [
-            'status' => 'required',
-            'from' => 'required',
-            'to' => 'required'
-        ]);
+        // $this->validate($request, [
+        //     'status' => 'required',
+        //     'from' => 'required',
+        //     'to' => 'required'
+        // ]);
         $res = new Result();
 
         try {
-            $from = new DateTime($request->from == 'null' ? '2000-01-01' : $request->from);
-            $to = new DateTime($request->to == 'null' ? Date::now() : $request->to);
+            $status = $request->status ?? 'null';
+            $from = $request->from ?? 'null';
+            $to = $request->to ?? 'null';
+            $from = new DateTime($from == 'null' ? '2000-01-01' : $from);
+            $to = new DateTime($to == 'null' ? Date::now() : $to);
 
-            $commands = Command::where('status', 'like', '%' . ($request->status == 'null' ? '' : $request->status) . '%')
+            $commands = Command::where('status', 'like', '%' . ($status == 'null' ? '' : $status) . '%')
                 ->whereBetween('date', [$from->format('Y-m-d'), $to->format('Y-m-d')])->paginate($per_page);
 
             $res->success($commands);
@@ -303,6 +306,14 @@ class CommandController extends Controller
     }
     public function commandStatus($id, Request $request)
     {
+        $validator = Validator::make($request->all(), [
+            'status' => 'required',
+
+        ]); // create the validations
+        if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
+        {
+            throw new Exception($validator->errors());
+        }
         $res = new Result();
         try {
             /** @var Command $command */

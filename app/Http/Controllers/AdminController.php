@@ -249,9 +249,8 @@ class AdminController extends Controller
             $user = $admin->user;
 
             $validator = Validator::make($request->all(), [
-                'lastname' => 'required',
-                // 'email' => 'required|email|unique:email',   // required and email format validation
-
+                'firstname' => 'required',
+                'lastname' => 'required'
             ]); // create the validations
             if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
             {
@@ -284,16 +283,5 @@ class AdminController extends Controller
         }
         return new JsonResponse($res, $res->code);
     }
-    public function ConfirmEmailSupplier($id)
-    {
-        $res = new Result();
-        try {
-            $supplier = Supplier::findOrfail($id);
-            dd($supplier);
-            // $res->success($delivery);
-        } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
-        }
-        return new JsonResponse($res, $res->code);
-    }
+
 }

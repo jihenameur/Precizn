@@ -95,6 +95,15 @@ class CouponController extends Controller
                 'massage' => 'unauthorized'
             ],403);
         }
+        $validator = Validator::make($request->all(), [
+            'code_coupon' => 'required',
+            'type' => 'in:amount,percentage',
+            'taxe' => 'in:TTC,HT'
+        ]); // create the validations
+        if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
+        {
+            throw new Exception($validator->errors());
+        }
         $res = new Result();
         try {
             $coupon = Coupon::find($id);

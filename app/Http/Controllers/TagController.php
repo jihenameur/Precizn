@@ -42,8 +42,7 @@ class TagController extends Controller
                 //return back()->withInput()->withErrors($validator);
                 // validation failed redirect back to form
 
-            } else {
-
+            }
                 $tag = new Tag();
                 $tag->name = $request->name;
                 $tag->save();
@@ -52,7 +51,7 @@ class TagController extends Controller
                     "id"         =>  $tag->id,
                     "name"     =>  $tag->name
                 ];
-            }
+
 
             $res->success($response);
         } catch (\Exception $exception) {
@@ -163,6 +162,14 @@ class TagController extends Controller
                 'success' => false,
                 'massage' => 'unauthorized'
             ],403);
+        }
+        $validator = Validator::make($request->all(), [
+            'name' => 'required'
+
+        ]); // create the validations
+        if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
+        {
+            throw new Exception($validator->errors());
         }
         $res = new Result();
         try {

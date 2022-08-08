@@ -42,7 +42,7 @@ class TypeProductController extends Controller
                 //return back()->withInput()->withErrors($validator);
                 // validation failed redirect back to form
 
-            } else {
+            }
 
                 $typeProduct = new ModelsTypeProduct();
                 $typeProduct->name = $request->name;
@@ -62,7 +62,7 @@ class TypeProductController extends Controller
                     "type_served"     =>  $typeProduct->type_served,
 
                 ];
-            }
+
 
             $res->success($response);
         } catch (\Exception $exception) {
@@ -77,6 +77,17 @@ class TypeProductController extends Controller
                 'success' => false,
                 'massage' => 'unauthorized'
             ],403);
+        }
+        $validator = Validator::make($request->all(), [
+            'name' => 'required',
+            'parent_id' => 'required',
+            'order_id' => 'required'
+
+        ]); // create the validations
+        if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
+        {
+            throw new Exception($validator->errors());
+
         }
         $res = new Result();
         try {
