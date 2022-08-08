@@ -64,9 +64,6 @@ class DeliveryController extends Controller
             if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
             {
                 throw new Exception($validator->errors());
-                //return $validator->errors();
-                //return back()->withInput()->withErrors($validator);
-                // validation failed redirect back to form
 
             }
             $role_id = Role::where('short_name', config('roles.backadmin.delivery'))->first();
@@ -96,6 +93,8 @@ class DeliveryController extends Controller
             $delivery = $this->model->find($delivery->id);
             $role = Role::find($role_id);
             $user->roles()->attach($role);
+            //$this->verificationApiController->toOrange($user->id, $request->phone);
+
             $res->success($delivery);
         } catch (\Exception $exception) {
             $res->fail($exception->getMessage());
@@ -661,6 +660,15 @@ class DeliveryController extends Controller
                 'success' => false,
                 'massage' => 'unauthorized'
             ], 403);
+        }
+        $validator = Validator::make($request->all(), [
+            'id' => 'required', // required and number field validation
+            'status_id' => 'required'
+
+        ]); // create the validations
+        if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
+        {
+            throw new Exception($validator->errors());
         }
         $res = new Result();
         try {

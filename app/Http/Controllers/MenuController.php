@@ -108,6 +108,14 @@ class MenuController extends Controller
                 'massage' => 'unauthorized'
             ], 403);
         }
+        $validator = Validator::make($request->all(), [
+            'name' => 'required',
+
+        ]); // create the validations
+        if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
+        {
+            throw new Exception($validator->errors());
+        }
         $res = new Result();
         try {
             $menu = Menu::find($id);
