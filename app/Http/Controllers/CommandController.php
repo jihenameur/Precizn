@@ -254,7 +254,7 @@ class CommandController extends Controller
             $validator = Validator::make($request->all(), [
                 'date' => 'required',
                 'client_id' => 'required',
-                'delivery_id' => 'required',
+
             ]); // create the validations
             if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
             {

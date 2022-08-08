@@ -18,6 +18,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use App\Http\Controllers\Auth\VerificationApiController;
+use App\Models\File;
 use Illuminate\Support\Facades\Auth;
 
 class SupplierController extends Controller
@@ -39,7 +40,6 @@ class SupplierController extends Controller
         $this->res = $res;
         $this->reqHelper = $reqHelper;
         $this->verificationApiController = $verificationApiController;
-
     }
 
     public function create(Request $request)
@@ -89,15 +89,6 @@ class SupplierController extends Controller
             $allRequestAttributes = $request->all();
             $user = new User($allRequestAttributes);
             $user->password = bcrypt($request->password);
-            /** @var Supplier $Supplier */
-            //dd($request->hasFile('image'));
-
-            // if ($request->hasFile('image')) {
-            //     $filename = $request->image->getClientOriginalName();
-            //     $request->image->storeAs('images', $filename, 'public');
-            //     //Auth()->user()->update(['image'=>$filename]);
-            // }
-            //$supplier = $this->model->create($allRequestAttributes);
             $supplier = new Supplier();
             $supplier->name = $request->name;
             $supplier->firstName = $request->firstName;
@@ -120,20 +111,6 @@ class SupplierController extends Controller
             $supplier->long = $request->long;
             $user->status_id = 4;
 
-            if ($request->file('image')) {
-                $file = $request->file('image');
-                $filename = Str::uuid()->toString() .'.'.$file->getClientOriginalExtension();
-
-                $file->move(public_path('public/Suppliers'), $filename);
-                $supplier['image'] = $filename;
-            }
-            if ($request->file('photo_couv')) {
-                $file = $request->file('photo_couv');
-                $filename = Str::uuid()->toString() .'.'.$file->getClientOriginalExtension();
-
-                $file->move(public_path('public/SuppliersCouverture'), $filename);
-                $supplier['photo_couv'] = $filename;
-            }
             $supplier->save();
             $supplier->user()->save($user);
             // $user->sendApiEmailVerificationNotification();
@@ -167,6 +144,68 @@ class SupplierController extends Controller
         }
         return new JsonResponse($res, $res->code);
     }
+    public function addImage(Request $request)
+    {
+        if (!Auth::user()->isAuthorized(['admin', 'supplier'])) {
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ], 403);
+        }
+        $res = new Result();
+        try {
+            $validator = Validator::make($request->all(), [
+                'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+                'type' => 'required|in:principal,couverture'
+
+            ]); // create the validations
+            if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
+            {
+                // return $validator->errors();
+                throw new Exception($validator->errors());
+            }
+            $supplier = Supplier::find(Auth::user()->userable_id);
+            if ($request->type == "principal") {
+                if ($request->file('image')) {
+                    $file = $request->file('image');
+                    $name = Str::uuid()->toString() . '.' . $file->getClientOriginalExtension();
+                    $file->move(public_path('public/Suppliers'), $name); // your folder path
+                    $file = new File();
+                    $file->name = $name;
+                    $file->path = asset('public/Suppliers/' . $name);
+                    $file->user_id = Auth::user()->id;
+                    $file->save();
+                    $file->supplier()->attach($supplier, ['type' => $request->type]);
+                }
+            } else if ($request->type == "couverture") {
+                if ($request->file('image')) {
+                    $file = $request->file('image');
+                    $name = Str::uuid()->toString() . '.' . $file->getClientOriginalExtension();
+                    $file->move(public_path('public/SuppliersCouverture'), $name); // your folder path
+                    $file = new File();
+                    $file->name = $name;
+                    $file->path = asset('public/SuppliersCouverture/' . $name);
+                    $file->user_id = Auth::user()->id;
+                    $file->save();
+                    $file->supplier()->attach($supplier, ['type' => $request->type]);
+                }
+            }
+            $response['supplier'] = [
+                "id"         =>  $supplier->id,
+                "name"     =>  $supplier->name,
+                "firstname"     =>  $supplier->firstName,
+                "lastname"     =>  $supplier->firstName,
+                "image"     =>  $file->path,
+                "type" => $file->supplier[0]->pivot->type
+
+            ];
+
+            $res->success($response);
+        } catch (\Exception $exception) {
+            $res->fail($exception->getMessage());
+        }
+        return new JsonResponse($res, $res->code);
+    }
 
     /**
      * Filter or get all
@@ -175,11 +214,11 @@ class SupplierController extends Controller
      */
     public function all($per_page, Request $request)
     {
-        if(!Auth::user()->isAuthorized(['admin'])){
+        if (!Auth::user()->isAuthorized(['admin'])) {
             return response()->json([
                 'success' => false,
                 'massage' => 'unauthorized'
-            ],403);
+            ], 403);
         }
         $res = new Result();
         try {
@@ -216,11 +255,11 @@ class SupplierController extends Controller
      */
     public function getById($id)
     {
-        if(!Auth::user()->isAuthorized(['admin','supplier'])){
+        if (!Auth::user()->isAuthorized(['admin', 'supplier'])) {
             return response()->json([
                 'success' => false,
                 'massage' => 'unauthorized'
-            ],403);
+            ], 403);
         }
         $res = new Result();
         try {
@@ -282,17 +321,17 @@ class SupplierController extends Controller
      */
     public function update($id, Request $request)
     {
-        if(!Auth::user()->isAuthorized(['admin','supplier'])){
+        if (!Auth::user()->isAuthorized(['admin', 'supplier'])) {
             return response()->json([
                 'success' => false,
                 'massage' => 'unauthorized'
-            ],403);
+            ], 403);
         }
         $res = new Result();
         try {
             $user = User::where('userable_id', $id)
                 ->where('userable_type', 'App\Models\Supplier')->first();
-            $supplier=Supplier::find($id);
+            $supplier = Supplier::find($id);
             if ($request->street && $request->postcode && $request->city && $request->region) {
                 $latlong = $this->locationController->GetLocationWithAdresse($request->street, $request->postcode, $request->city, $request->region);
                 if (is_array($latlong) && $latlong[0]['long'] > 0) {
@@ -329,7 +368,7 @@ class SupplierController extends Controller
             $user->email  = $request->email;
             $user->tel  = $request->tel;
 
-            if ($request->file('image') ) {
+            if ($request->file('image')) {
                 $file = $request->file('image');
                 $filename = $file->getClientOriginalName();
                 //dd( $filename);
@@ -354,7 +393,6 @@ class SupplierController extends Controller
             if (!is_array($categories)) {
                 $categories = json_decode($request->category);
                 $supplier->categorys()->detach();
-
             }
             foreach ($categories as $key => $value) {
                 $category = Category::find($value);
@@ -386,11 +424,11 @@ class SupplierController extends Controller
      */
     public function delete($id)
     {
-        if(!Auth::user()->isAuthorized(['admin'])){
+        if (!Auth::user()->isAuthorized(['admin'])) {
             return response()->json([
                 'success' => false,
                 'massage' => 'unauthorized'
-            ],403);
+            ], 403);
         }
         $res = new Result();
         try {
@@ -488,11 +526,11 @@ class SupplierController extends Controller
     }
     public function statusSupplier($id, Request $request)
     {
-        if(!Auth::user()->isAuthorized(['admin','supplier'])){
+        if (!Auth::user()->isAuthorized(['admin', 'supplier'])) {
             return response()->json([
                 'success' => false,
                 'massage' => 'unauthorized'
-            ],403);
+            ], 403);
         }
         $res = new Result();
         try {
@@ -510,36 +548,36 @@ class SupplierController extends Controller
         return new JsonResponse($res, $res->code);
     }
     /**
-  * deleted supplier
-  */
-  public function deleteSupplier($id)
-  {
-    if(!Auth::user()->isAuthorized(['admin'])){
-        return response()->json([
-            'success' => false,
-            'massage' => 'unauthorized'
-        ],403);
-    }
-      $res = new Result();
-      try {
-           $user = User::where('userable_id', $id)
-               ->where('userable_type', 'App\Models\Supplier')->first();
-        $supplier=Supplier::find($user->userable_id);
-          $user->delete();
-          $products = Product::whereHas('suppliers', function ($q) use ($user) {
-            $q->where('supplier_id', $user->userable_id);
-        })->get();
-        foreach($products as $product){
-            $product->suppliers()->detach();
-            $product->delete();
+     * deleted supplier
+     */
+    public function deleteSupplier($id)
+    {
+        if (!Auth::user()->isAuthorized(['admin'])) {
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ], 403);
         }
-          $supplier->delete();
+        $res = new Result();
+        try {
+            $user = User::where('userable_id', $id)
+                ->where('userable_type', 'App\Models\Supplier')->first();
+            $supplier = Supplier::find($user->userable_id);
+            $user->delete();
+            $products = Product::whereHas('suppliers', function ($q) use ($user) {
+                $q->where('supplier_id', $user->userable_id);
+            })->get();
+            foreach ($products as $product) {
+                $product->suppliers()->detach();
+                $product->delete();
+            }
+            $supplier->delete();
 
-          $res->success($user);
-      } catch (\Exception $exception) {
-          $res->fail($exception->getMessage());
-      }
-      return new JsonResponse($res, $res->code);
-  }
+            $res->success($user);
+        } catch (\Exception $exception) {
+            $res->fail($exception->getMessage());
+        }
+        return new JsonResponse($res, $res->code);
+    }
 
 }

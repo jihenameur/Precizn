@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\BaseModel\Result;
 use App\Helpers\Paginate;
+use App\Http\Resources\ProductResource;
 use App\Models\Category;
+use App\Models\File;
 use App\Models\Menu;
 use App\Models\Option;
 use App\Models\Product;
@@ -29,17 +31,16 @@ class ProductController extends Controller
 
     public function __construct()
     {
-
     }
 
     public function createPublicProduct(Request $request)
     {
 
-        if(!Auth::user()->isAuthorized(['admin','supplier'])){
+        if (!Auth::user()->isAuthorized(['admin', 'supplier'])) {
             return response()->json([
                 'success' => false,
                 'massage' => 'unauthorized'
-            ],403);
+            ], 403);
         }
 
 
@@ -59,6 +60,7 @@ class ProductController extends Controller
                 throw new Exception($validator->errors());
             } else {
                 $images = [];
+
                 if ($request->file('image')) {
 
                     if (!is_array($request->file('image'))) {
@@ -68,17 +70,10 @@ class ProductController extends Controller
                     }
                 }
 
-                foreach ($images as $image) {
 
-                    $name = Str::uuid()->toString() . '.' . $image->getClientOriginalExtension();
-                    $image->move(public_path('public/Products'), $name); // your folder path
-                    $data[] = $name;
-                }
 
                 $product = new Product();
                 $product->name = $request->name;
-                $product['image'] = json_encode($data);
-
 
                 $product->description = $request->description;
                 $product->default_price = $request->default_price;
@@ -107,6 +102,16 @@ class ProductController extends Controller
                         $product->tag()->attach($tag);
                     }
                 }
+                foreach ($images as $image) {
+                    $name = Str::uuid()->toString() . '.' . $image->getClientOriginalExtension();
+                    $image->move(public_path('public/Products'), $name); // your folder path
+                    $file = new File();
+                    $file->name = $name;
+                    $file->path = asset('public/Products/' . $name);
+                    $file->user_id = Auth::user()->id;
+                    $file->save();
+                    $file->products()->attach($product);
+                }
             }
             $res->success($product);
         } catch (\Exception $exception) {
@@ -116,11 +121,11 @@ class ProductController extends Controller
     }
     public function createPrivateProduct(Request $request)
     {
-        if(!Auth::user()->isAuthorized(['admin','supplier'])){
+        if (!Auth::user()->isAuthorized(['admin', 'supplier'])) {
             return response()->json([
                 'success' => false,
                 'massage' => 'unauthorized'
-            ],403);
+            ], 403);
         }
         $res = new Result();
         try {
@@ -232,11 +237,11 @@ class ProductController extends Controller
     }
     public function productToSupplier(Request $request)
     {
-        if(!Auth::user()->isAuthorized(['admin','supplier'])){
+        if (!Auth::user()->isAuthorized(['admin', 'supplier'])) {
             return response()->json([
                 'success' => false,
                 'massage' => 'unauthorized'
-            ],403);
+            ], 403);
         }
         $res = new Result();
         try {
@@ -264,11 +269,11 @@ class ProductController extends Controller
      */
     public function all($per_page, Request $request)
     {
-        if(!Auth::user()->isAuthorized(['admin'])){
+        if (!Auth::user()->isAuthorized(['admin'])) {
             return response()->json([
                 'success' => false,
                 'massage' => 'unauthorized'
-            ],403);
+            ], 403);
         }
         $res = new Result();
         try {
@@ -289,7 +294,13 @@ class ProductController extends Controller
 
                 return ($this->getFilterByKeywordClosure($keyword));
             }
-            $res->success($products);
+            $res->success([
+                'par_page' => $products->count(),
+                'current_page' => $products->currentPage(),
+                'last_page' => $products->lastPage(),
+                'total' => $products->total(),
+                'products' => ProductResource::collection($products->items()),
+            ]);
         } catch (\Exception $exception) {
             $res->fail($exception->getMessage());
         }
@@ -297,11 +308,11 @@ class ProductController extends Controller
     }
     public function getProduct($id)
     {
-        if(!Auth::user()->isAuthorized(['admin','supplier','client'])){
+        if (!Auth::user()->isAuthorized(['admin', 'supplier', 'client'])) {
             return response()->json([
                 'success' => false,
                 'massage' => 'unauthorized'
-            ],403);
+            ], 403);
         }
         $res = new Result();
         try {
@@ -310,9 +321,7 @@ class ProductController extends Controller
                 $q->where('product_id', $product->id);
             })->get();
             $prd = [
-                'product' => $product,
-                'options' => $options
-
+                'product' => new ProductResource($product),
             ];
             $res->success($prd);
         } catch (\Exception $exception) {
@@ -322,16 +331,23 @@ class ProductController extends Controller
     }
     public function getAllPublicProduct($per_page)
     {
-        if(!Auth::user()->isAuthorized(['admin','supplier'])){
+        if (!Auth::user()->isAuthorized(['admin', 'supplier'])) {
             return response()->json([
                 'success' => false,
                 'massage' => 'unauthorized'
-            ],403);
+            ], 403);
         }
         $res = new Result();
         try {
             $products = Product::where('private', 0)->paginate($per_page);
-            $res->success($products);
+
+            $res->success([
+                'par_page' => $products->count(),
+                'current_page' => $products->currentPage(),
+                'last_page' => $products->lastPage(),
+                'total' => $products->total(),
+                'products' => ProductResource::collection($products->items()),
+            ]);
         } catch (\Exception $exception) {
             $res->fail($exception->getMessage());
         }
@@ -378,11 +394,11 @@ class ProductController extends Controller
     }
     public function getSupplierProduct($per_page)
     {
-        if(!Auth::user()->isAuthorized(['supplier'])){
+        if (!Auth::user()->isAuthorized(['supplier'])) {
             return response()->json([
                 'success' => false,
                 'massage' => 'unauthorized'
-            ],403);
+            ], 403);
         }
         $res = new Result();
         try {
@@ -400,11 +416,11 @@ class ProductController extends Controller
     }
     public function getdispoHourProductsSupplier($id)
     {
-        if(!Auth::user()->isAuthorized(['admin','supplier','client'])){
+        if (!Auth::user()->isAuthorized(['admin', 'supplier', 'client'])) {
             return response()->json([
                 'success' => false,
                 'massage' => 'unauthorized'
-            ],403);
+            ], 403);
         }
         $res = new Result();
         $dt = new DateTime();
@@ -444,11 +460,11 @@ class ProductController extends Controller
 
     public function getdispoHourProductsSupplierByTag($per_page, Request $request)
     {
-        if(!Auth::user()->isAuthorized(['admin','supplier','client'])){
+        if (!Auth::user()->isAuthorized(['admin', 'supplier', 'client'])) {
             return response()->json([
                 'success' => false,
                 'massage' => 'unauthorized'
-            ],403);
+            ], 403);
         }
         $res = new Result();
         $dt = new DateTime();
@@ -507,11 +523,11 @@ class ProductController extends Controller
     }
     public function ProductsSupplierNotAvailable($id, Request $request)
     {
-        if(!Auth::user()->isAuthorized(['admin','supplier'])){
+        if (!Auth::user()->isAuthorized(['admin', 'supplier'])) {
             return response()->json([
                 'success' => false,
                 'massage' => 'unauthorized'
-            ],403);
+            ], 403);
         }
         $res = new Result();
         try {
@@ -534,11 +550,11 @@ class ProductController extends Controller
      */
     public function update($id, Request $request)
     {
-        if(!Auth::user()->isAuthorized(['admin','supplier'])){
+        if (!Auth::user()->isAuthorized(['admin', 'supplier'])) {
             return response()->json([
                 'success' => false,
                 'massage' => 'unauthorized'
-            ],403);
+            ], 403);
         }
         $res = new Result();
         try {
@@ -546,16 +562,16 @@ class ProductController extends Controller
             $allRequestAttributes = $request->all();
             $product = Product::find($id);
 
-            // $validator = Validator::make($request->all(), [
-            //     'name' => 'required',
+            $validator = Validator::make($request->all(), [
+                'name' => 'required',
 
-            // ]); // create the validations
-            // if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
-            // {
-            //     return back()->withInput()->withErrors($validator);
-            //     // validation failed redirect back to form
+            ]); // create the validations
+            if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
+            {
+                return back()->withInput()->withErrors($validator);
+                // validation failed redirect back to form
 
-            // } else {
+            }
             $images = [];
             if ($request->file('image')) {
 
@@ -566,23 +582,6 @@ class ProductController extends Controller
                     $images = $request->file('image');
                 }
             }
-            foreach ($images as $image) {
-                $imageName = $image->getClientOriginalName();
-                //save images in public/images/listing folder
-                $image->move(public_path('public/Products'), $imageName);
-                // Delete the old photo
-                $oldImagepath = $product->image;
-                foreach (json_decode($oldImagepath) as $key => $value) {
-                    //unlink(storage_path('public/Products/'.$value));
-                    unlink('public/Products/' . $value);
-                }
-                //Storage::delete($oldImagepath);
-
-                $data[] = $imageName;
-                $json_encode = json_encode($data);
-                $product->image = $json_encode;
-            }
-            //$product->fill($allRequestAttributes);
             $product->description = $request->description;
             $product->default_price = $request->default_price;
             $product->min_period_time = $request->min_period_time;
@@ -599,6 +598,22 @@ class ProductController extends Controller
                 $tag = TypeProduct::find($value);
                 $product->tag()->attach($tag);
             }
+            foreach ($images as $image) {
+                $name = Str::uuid()->toString() . '.' . $image->getClientOriginalExtension();
+                $image->move(public_path('public/Products'), $name); // your folder path
+                $file = new File();
+                $file->name = $name;
+                $file->path = asset('public/Products/' . $name);
+                $file->user_id = Auth::user()->id;
+                $file->save();
+                $oldImagepath = $product->files;
+                foreach ($oldImagepath as $key => $value) {
+                    unlink('public/Products/' . $value->name);
+                }
+                $product->files()->detach();
+
+                $file->products()->attach($product);
+            }
             $res->success($product);
         } catch (\Exception $exception) {
             $res->fail($exception->getMessage());
@@ -614,11 +629,11 @@ class ProductController extends Controller
      */
     public function delete($id)
     {
-        if(!Auth::user()->isAuthorized(['admin','supplier'])){
+        if (!Auth::user()->isAuthorized(['admin', 'supplier'])) {
             return response()->json([
                 'success' => false,
                 'massage' => 'unauthorized'
-            ],403);
+            ], 403);
         }
         $res = new Result();
         try {

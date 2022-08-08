@@ -9,6 +9,7 @@ use App\Models\Delivery;
 use App\Models\Delivery_Hours;
 use App\Models\RequestDelivery;
 use App\Models\User;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use App\Models\Role;
@@ -29,6 +30,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Str;
 use App\Http\Controllers\Auth\VerificationApiController;
+use App\Models\File;
 
 use function PHPUnit\Framework\returnSelf;
 
@@ -80,12 +82,7 @@ class DeliveryController extends Controller
                 $res->fail("phone exists");
                 return new JsonResponse($res, $res->code);
             }
-            if ($request->file('photo')) {
-                $file = $request->file('photo');
-                $filename = Str::uuid()->toString() . '.' . $file->getClientOriginalExtension();
-                $file->move(public_path('public/Deliverys'), $filename);
-                $request['image'] = $filename;
-            }
+
             $allRequestAttributes = $request->all();
             $user = new User($allRequestAttributes);
             $user->password = bcrypt($request->password);
@@ -105,7 +102,102 @@ class DeliveryController extends Controller
         }
         return new JsonResponse($res, $res->code);
     }
+    public function addImage( Request $request)
+    {
+        if (!Auth::user()->isAuthorized(['admin', 'delivery'])) {
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ], 403);
+        }
+        $res = new Result();
+        try {
+            $validator = Validator::make($request->all(), [
+                'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            ]); // create the validations
+            if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
+            {
+                // return $validator->errors();
+                throw new Exception($validator->errors());
 
+                //return back()->withInput()->withErrors($validator);
+                // validation failed redirect back to form
+            }
+            $delivery = Delivery::find(Auth::user()->userable_id);
+            if ($request->file('image')) {
+                $file = $request->file('image');
+                $name = Str::uuid()->toString() . '.' . $file->getClientOriginalExtension();
+                $file->move(public_path('public/Deliverys'), $name); // your folder path
+                $file = new File();
+                $file->name = $name;
+                $file->path = asset('public/Deliverys/' . $name);
+                $file->user_id = Auth::user()->id;
+                $file->save();
+            }
+            $delivery->file_id=$file->id;
+            $delivery->update();
+            $response['delivery'] = [
+                "id"         =>  $delivery->id,
+                "firstname"     =>  $delivery->firstName,
+                "lastname"     =>  $delivery->lastName,
+                "image"     =>  $file->path
+
+            ];
+
+            $res->success($response);
+        } catch (\Exception $exception) {
+            $res->fail($exception->getMessage());
+        }
+        return new JsonResponse($res, $res->code);
+    }
+    public function updateImage( Request $request)
+    {
+        if (!Auth::user()->isAuthorized(['admin', 'delivery'])) {
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ], 403);
+        }
+        $res = new Result();
+        try {
+            $validator = Validator::make($request->all(), [
+                'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            ]); // create the validations
+            if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
+            {
+                throw new Exception($validator->errors());
+
+            }
+            $delivery = Delivery::find(Auth::user()->userable_id);
+            if ($request->file('image')) {
+                $image=File::find($delivery->file_id);
+                unlink('public/Deliverys/' . $image->name);
+                $image->delete();
+                $file = $request->file('image');
+                $name = Str::uuid()->toString() . '.' . $file->getClientOriginalExtension();
+                $file->move(public_path('public/Deliverys'), $name); // your folder path
+                $file = new File();
+                $file->name = $name;
+                $file->path = asset('public/Deliverys/' . $name);
+                $file->user_id = Auth::user()->id;
+                $file->save();
+            }
+            $delivery->file_id=$file->id;
+            $delivery->update();
+            $response['client'] = [
+                "id"         =>  $delivery->id,
+                "firstname"     =>  $delivery->firstName,
+                "lastname"     =>  $delivery->lastName,
+                "image"     =>  $file->path
+
+            ];
+
+            $res->success($response);
+        } catch (\Exception $exception) {
+            $res->fail($exception->getMessage());
+        }
+        return new JsonResponse($res, $res->code);
+    }
     /**
      * Filter or get all
      *
@@ -119,11 +211,21 @@ class DeliveryController extends Controller
                 'massage' => 'unauthorized'
             ],403);
         }
+
+        $this->validate($request, [
+            'available' => 'numeric',
+            'region' => 'numeric'
+        ]);
         $res = new Result();
         try {
             $keyword = $request->has('keyword') ? $request->get('keyword') : null;
+            $disponible = $request->has('available') ? $request->get('available') : null;
 
-            $delivery = Delivery::paginate($per_page);
+            if($disponible) {
+                $delivery = Delivery::where('available', 1)->paginate($per_page);
+            } else {
+                $delivery = Delivery::paginate($per_page);
+            }
 
             if ($keyword !== null) {
                 $keyword = $this->cleanKeywordSpaces($keyword);

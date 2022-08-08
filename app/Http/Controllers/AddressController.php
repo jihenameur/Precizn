@@ -23,11 +23,11 @@ class AddressController extends Controller
 
     public function create($id, Request $request)
     {
-        if(!Auth::user()->isAuthorized(['admin','client'])){
+        if (!Auth::user()->isAuthorized(['admin', 'client'])) {
             return response()->json([
                 'success' => false,
                 'massage' => 'unauthorized'
-            ],403);
+            ], 403);
         }
         $res = new Result();
         try {
@@ -38,6 +38,9 @@ class AddressController extends Controller
                 'postcode' => 'required',
                 'city' => 'required',
                 'region' => 'required',
+                'user_id' => 'required',
+                'label' => 'required',
+                'type' => 'required',
 
 
             ]); // create the validations
@@ -54,7 +57,7 @@ class AddressController extends Controller
                     $request['lat'] = $latlong[0]['lat'];
                     $request['long'] = $latlong[0]['long'];
                 } else {
-                    throw new Exception( "Err: address not found");
+                    throw new Exception("Err: address not found");
                 }
                 $user = User::where('userable_id', $id)
                     ->where('userable_type', 'App\Models\Client')->first();
@@ -117,11 +120,11 @@ class AddressController extends Controller
     }
     public function GetClientAddress($id)
     {
-        if(!Auth::user()->isAuthorized(['admin','client'])){
+        if (!Auth::user()->isAuthorized(['admin', 'client'])) {
             return response()->json([
                 'success' => false,
                 'massage' => 'unauthorized'
-            ],403);
+            ], 403);
         }
         $res = new Result();
         try {
@@ -154,11 +157,11 @@ class AddressController extends Controller
      */
     public function update(Request $request, $id)
     {
-        if(!Auth::user()->isAuthorized(['admin','client'])){
+        if (!Auth::user()->isAuthorized(['admin', 'client'])) {
             return response()->json([
                 'success' => false,
                 'massage' => 'unauthorized'
-            ],403);
+            ], 403);
         }
         $res = new Result();
         try {
@@ -166,9 +169,13 @@ class AddressController extends Controller
 
             $validator = Validator::make($request->all(), [
                 'street' => 'required',
-                'city' => 'required',
+                'user_id' => 'required',
                 'postcode' => 'required',
-                'region' => 'required'
+                'city' => 'required',
+                'region' => 'required',
+                'user_id' => 'required',
+                'label' => 'required',
+                'type' => 'required',
 
             ]); // create the validations
             if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
@@ -184,7 +191,7 @@ class AddressController extends Controller
                     $request['lat'] = $latlong[0]['lat'];
                     $request['long'] = $latlong[0]['long'];
                 } else {
-                    throw new Exception( "Err: address not found");
+                    throw new Exception("Err: address not found");
                 }
                 $allRequestAttributes = $request->all();
                 $adresse->fill($allRequestAttributes);
@@ -206,11 +213,11 @@ class AddressController extends Controller
      */
     public function destroy($id)
     {
-        if(!Auth::user()->isAuthorized(['admin','client'])){
+        if (!Auth::user()->isAuthorized(['admin', 'client'])) {
             return response()->json([
                 'success' => false,
                 'massage' => 'unauthorized'
-            ],403);
+            ], 403);
         }
         $adresse = Address::find($id);
         $adresse->delete();

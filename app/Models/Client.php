@@ -9,7 +9,7 @@ use NunoMaduro\Collision\Writer;
 
 class Client extends Model
 {
-    use HasFactory,Notifiable;
+    use HasFactory, Notifiable;
     protected $table = 'clients';
 
     protected $fillable = [
@@ -20,17 +20,18 @@ class Client extends Model
         'image',
         'verified'
         //'street',
-       // 'postcode',
-       // 'city',
-       // 'region',
-       // 'lat',
-       // 'long'
+        // 'postcode',
+        // 'city',
+        // 'region',
+        // 'lat',
+        // 'long'
 
     ];
     protected $with = [
         'user',
         'favorit',
         //   'commands'
+        'file'
     ];
 
     public $toClaim = [
@@ -38,13 +39,12 @@ class Client extends Model
     ];
 
 
-   /**
+    /**
      * @return MorphOne
      */
     public function user()
     {
-        return $this->morphOne('App\Models\User', 'userable')->without('userable');
-        ;
+        return $this->morphOne('App\Models\User', 'userable')->without('userable');;
     }
 
     public function commands()
@@ -57,22 +57,27 @@ class Client extends Model
     }
     public function messages()
     {
-      return $this->hasMany(Message::class);
+        return $this->hasMany(Message::class);
     }
 
-    public function getWallet(){
+    public function getWallet()
+    {
         return $this->balance;
     }
 
     public function incrementDecrementBalance($value, $incrm = true) // incr -> false : for decrement
     {
-        if($incrm){
+        if ($incrm) {
             $this->balance += $value;
-        }else{
+        } else {
             $this->balance - $value < 0 ? $this->balance = 0 : $this->balance -= $value;
         }
 
         $this->save();
         return $this->balance;
+    }
+    public function file()
+    {
+        return $this->belongsTo(File::class);
     }
 }

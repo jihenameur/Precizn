@@ -65,6 +65,7 @@ Route::post('addSupplier', [SupplierController::class, 'create']);
 Route::post('addClient', [ClientController::class, 'create']);
 Route::post('addDelivery', [DeliveryController::class, 'create']);
 Route::post('addSuperAdmin', [AdminController::class, 'create']);
+Route::get('allCategoryParent', [CategoryController::class, 'allCategoryParent']);
 
 Route::group(['middleware' => ['jwt.verify']], function () {
     Route::get('getAllSupplier/{per_page}', [SupplierController::class, 'all']);
@@ -74,7 +75,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
     Route::post('verifySmsResetPWSupp', [SupplierController::class, 'verifySmsResetPW']);
     Route::post('statusSupplier', [SupplierController::class, 'statusSupplier']);
     Route::delete('deleteSupplier/{id}', [SupplierController::class, 'deleteSupplier']);
-
+    Route::post('addimagesupplier', [SupplierController::class, 'addImage']);
     /**
      * public Product
      */
@@ -100,7 +101,6 @@ Route::group(['middleware' => ['jwt.verify']], function () {
     Route::post('addCategory', [CategoryController::class, 'create']);
     Route::get('getCategoryChildren/{id}', [CategoryController::class, 'getCategoryChildren']);
     Route::get('getCategoryParent/{id}', [CategoryController::class, 'getCategoryParent']);
-    Route::get('allCategoryParent', [CategoryController::class, 'allCategoryParent']);
 
     Route::get('getCategorysupplier/{id}/{per_page}', [CategoryController::class, 'getCategorysupplier']);
     Route::get('getCategory/{per_page}', [CategoryController::class, 'all']);
@@ -151,7 +151,8 @@ Route::group(['middleware' => ['jwt.verify']], function () {
      * public Client
      */
 
-    Route::post('addImage/{id}', [ClientController::class, 'addImage']);
+    Route::post('addImage', [ClientController::class, 'addImage']);
+    Route::post('updateimage', [ClientController::class, 'updateImage']);
 
     Route::post('addfavorite', [ClientController::class, 'addfavorite']);
     Route::post('deletefavorite', [ClientController::class, 'deletefavorite']);
@@ -187,7 +188,8 @@ Route::group(['middleware' => ['jwt.verify']], function () {
     Route::get('statisDeliv', [DeliveryController::class, 'statisDeliv']);
     Route::post('hoursWork', [DeliveryController::class, 'hoursWork']);
     Route::get('getDeliveryById/{id}', [DeliveryController::class, 'getByid']);
-
+    Route::post('addimagedelivery', [DeliveryController::class, 'addImage']);
+    Route::post('updateimagedelivery', [DeliveryController::class, 'updateImage']);
     /**
      * public DeliveryRating
      */

@@ -32,6 +32,7 @@ class Delivery extends Model
     protected $with = [
         'user',
         // 'commands'
+        'file'
     ];
 
     public $toClaim = [
@@ -55,5 +56,9 @@ class Delivery extends Model
     {
         return $this->hasMany(RequestDelivery::class);
 
+    }
+    public function file()
+    {
+        return $this->belongsTo(File::class);
     }
 }
