@@ -275,25 +275,32 @@ class ProductController extends Controller
                 'massage' => 'unauthorized'
             ], 403);
         }
+
         $res = new Result();
         try {
-            $keyword = $request->has('keyword') ? $request->get('keyword') : null;
-            $products = Product::paginate($per_page);
-            $i = 0;
-            foreach ($products as $key => $pro) {
-                $supplier = Supplier::whereHas('products', function ($q) use ($pro) {
-                    $q->where('product_id', $pro->id);
-                })->get();
-                $prods[$i] = ['product', $pro, 'supplier', $supplier];
-                $i++;
+
+            $orderBy = 'name';
+            $orderByType = "ASC";
+            if($request->has('orderBy') && $request->orderBy != null){
+                $this->validate($request,[
+                    'orderBy' => 'required|in:name,default_price,available,private' // complete the akak list
+                ]);
+                $orderBy = $request->orderBy;
             }
-
-
+            if($request->has('orderByType') && $request->orderByType != null){
+                $this->validate($request,[
+                    'orderByType' => 'required|in:ASC,DESC' // complete the akak list
+                ]);
+                $orderByType = $request->orderByType;
+            }
+            $keyword = $request->has('keyword') ? $request->get('keyword') : null;
+            $products = Product::orderBy($orderBy, $orderByType)->paginate($per_page);
             if ($keyword !== null) {
                 $keyword = $this->cleanKeywordSpaces($keyword);
 
-                return ($this->getFilterByKeywordClosure($keyword));
+                return ($this->getFilterByKeywordClosure($keyword, $orderBy, $orderByType));
             }
+
             $res->success([
                 'par_page' => $products->count(),
                 'current_page' => $products->currentPage(),
@@ -372,21 +379,18 @@ class ProductController extends Controller
      * @param $keyword
      * @return \Closure
      */
-    private function getFilterByKeywordClosure($keyword)
+    private function getFilterByKeywordClosure($keyword, $orderBy, $orderByType)
     {
         $res = new Result();
         try {
             $products = Product::where('name', 'like', "%$keyword%")
-                // ->orWhere('lastname', 'like', "%$keyword%")
-                // ->orWhereRaw("CONCAT(lastname,' ',firstname) like '%$keyword%'")
-                ->get();
-            foreach ($products as $key => $pro) {
-                $supplier = Supplier::whereHas('products', function ($q) use ($pro) {
-                    $q->where('product_id', $pro->id);
-                })->get();
-                $prods = ['product', $pro, 'supplier', $supplier];
-            }
-            $res->success($products);
+            ->orderBy($orderBy, $orderByType)
+            ->get();
+
+            $res->success( [
+                'products' => ProductResource::collection($products),
+            ]);
+
         } catch (\Exception $exception) {
             $res->fail($exception->getMessage());
         }

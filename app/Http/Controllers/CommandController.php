@@ -149,14 +149,34 @@ class CommandController extends Controller
         $res = new Result();
 
         try {
+            $orderBy = 'date';
+            $orderByType = "ASC";
+            if($request->has('orderBy') && $request->orderBy != null){
+                $this->validate($request,[
+                    'orderBy' => 'required|in:date,id' // complete the akak list
+                ]);
+                $orderBy = $request->orderBy;
+            }
+            if($request->has('orderByType') && $request->orderByType != null){
+                $this->validate($request,[
+                    'orderByType' => 'required|in:ASC,DESC' // complete the akak list
+                ]);
+                $orderByType = $request->orderByType;
+            }
+            $keyword = $request->has('keyword') ? $request->get('keyword') : null;
+
             $status = $request->status ?? 'null';
             $from = $request->from ?? 'null';
             $to = $request->to ?? 'null';
             $from = new DateTime($from == 'null' ? '2000-01-01' : $from);
             $to = new DateTime($to == 'null' ? Date::now() : $to);
+            if ($keyword !== null) {
+                $keyword = $this->cleanKeywordSpaces($keyword);
 
+                return $this->getFilterByKeywordClosure($keyword, $orderBy, $orderByType);
+            }
             $commands = Command::where('status', 'like', '%' . ($status == 'null' ? '' : $status) . '%')
-                ->whereBetween('date', [$from->format('Y-m-d'), $to->format('Y-m-d')])->paginate($per_page);
+                ->whereBetween('date', [$from->format('Y-m-d'), $to->format('Y-m-d')])->orderBy($orderBy, $orderByType)->paginate($per_page);
 
             $res->success($commands);
         } catch (\Exception $exception) {
@@ -166,18 +186,30 @@ class CommandController extends Controller
     }
 
 
-    private function getFilterByKeywordClosure($keyword, $request)
+    private function getFilterByKeywordClosure($keyword, $orderBy, $orderByType)
     {
+        $res = new Result();
 
-        $from = new DateTime($request['from']);
+        try {
+            $commands = Command::whereHas('client', function ($q) use ($keyword) {
+                $q->where('lastname', 'like', "%$keyword%");
+                $q->orWhere('firstname', 'like', "%$keyword%");
+            })
+                ->orWhereHas('supplier', function ($q) use ($keyword) {
+                    $q->where('name', 'like', "%$keyword%");
+                })
+                ->orWhereHas('delivery', function ($q) use ($keyword) {
+                    $q->where('lastName', 'like', "%$keyword%");
+                    $q->orWhere('firstName', 'like', "%$keyword%");
+                })
+                ->orderBy($orderBy, $orderByType)
+                ->get();
 
-        $to = new DateTime($request['to']);
-
-        $commands = Command::whereBetween('date', [$from->format('Y-m-d'), $to->format('Y-m-d')])
-            ->orWhere('status', $request['status'])
-            ->get();
-
-        return $commands;
+            $res->success($commands);
+        } catch (\Exception $exception) {
+            $res->fail($exception->getMessage());
+        }
+        return new JsonResponse($res, $res->code);
     }
     public function getCommandPanier($id)
     {

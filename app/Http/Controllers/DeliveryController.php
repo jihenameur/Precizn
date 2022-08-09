@@ -211,26 +211,43 @@ class DeliveryController extends Controller
             ],403);
         }
 
-        $this->validate($request, [
-            'available' => 'numeric',
-            'region' => 'numeric'
-        ]);
+        // $this->validate($request, [
+        //     'available' => 'numeric',
+        //     'region' => 'numeric'
+        // ]);
         $res = new Result();
         try {
-            $keyword = $request->has('keyword') ? $request->get('keyword') : null;
-            $disponible = $request->has('available') ? $request->get('available') : null;
-
-            if($disponible) {
-                $delivery = Delivery::where('available', 1)->paginate($per_page);
-            } else {
-                $delivery = Delivery::paginate($per_page);
+            $orderBy = 'firstName';
+            $orderByType = "ASC";
+            if($request->has('orderBy') && $request->orderBy != null){
+                $this->validate($request,[
+                    'orderBy' => 'required|in:firstName,lastName,region' // complete the akak list
+                ]);
+                $orderBy = $request->orderBy;
             }
-
+            if($request->has('orderByType') && $request->orderByType != null){
+                $this->validate($request,[
+                    'orderByType' => 'required|in:ASC,DESC' // complete the akak list
+                ]);
+                $orderByType = $request->orderByType;
+            }
+            $keyword = $request->has('keyword') ? $request->get('keyword') : null;
+            $disponible = $request->has('available') ??  'null';
+            $region = $request->has('region') ?? 'null';
             if ($keyword !== null) {
                 $keyword = $this->cleanKeywordSpaces($keyword);
 
-                return ($this->getFilterByKeywordClosure($keyword));
+                return ($this->getFilterByKeywordClosure($keyword, $orderBy, $orderByType));
             }
+            $delivery = Delivery::where('available', 'like', '%' . ($disponible == 'null' ? '' : $disponible) . '%')
+            ->where('region', 'like', '%' . ($region == 'null' ? '' : $region) . '%')->orderBy($orderBy, $orderByType)->paginate($per_page);
+
+            // if($disponible) {
+            //     $delivery = Delivery::where('available', 1)->orderBy($orderBy, $orderByType)->paginate($per_page);
+            // } else {
+            //     $delivery = Delivery::orderBy($orderBy, $orderByType)->paginate($per_page);
+            // }
+
             $res->success($delivery);
         } catch (\Exception $exception) {
             $res->fail($exception->getMessage());
@@ -275,15 +292,16 @@ class DeliveryController extends Controller
      * @param $keyword
      * @return \Closure
      */
-    private function getFilterByKeywordClosure($keyword)
+    private function getFilterByKeywordClosure($keyword, $orderBy, $orderByType)
     {
         $res = new Result();
         try {
-            $delivery = Delivery::where('firstName', 'like', "%$keyword%")
-                // ->orWhere('lastname', 'like', "%$keyword%")
-                // ->orWhereRaw("CONCAT(lastname,' ',firstname) like '%$keyword%'")
-                // ->orWhereRaw("CONCAT(firstname,' ',lastname) like '%$keyword%'")
+            $delivery = Delivery::whereHas('user', function ($q) use ($keyword) {
+                $q->where('email', 'like', "%$keyword%");
+            })
+                ->orWhere('firstName', 'like', "%$keyword%")
                 ->orWhere('lastName', 'like', "%$keyword%")
+                ->orderBy($orderBy, $orderByType)
                 ->get();
             $res->success($delivery);
         } catch (\Exception $exception) {
