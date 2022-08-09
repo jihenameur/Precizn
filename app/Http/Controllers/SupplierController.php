@@ -339,17 +339,12 @@ class SupplierController extends Controller
                     throw new Exception("Err: address not found");
                 }
             }
-            $allRequestAttributes = $request->all();
-            //$user = new User($allRequestAttributes);
-            $user->password = bcrypt($request->password);
-
-            //$supplier = new Supplier();
+            //$user->password = bcrypt($request->password);
             $supplier->name = $request->name;
             $supplier->firstName = $request->firstName;
             $supplier->lastName = $request->lastName;
             $supplier->starttime = $request->starttime;
             $supplier->closetime = $request->closetime;
-
             $supplier->star = $request->star;
             $supplier->qantityVente = $request->qantityVente;
             $supplier->delivery = $request->delivery;
@@ -363,30 +358,10 @@ class SupplierController extends Controller
             $supplier->lat = $request->lat;
             $supplier->long = $request->long;
             $user->status_id = 4;
-            $user->email  = $request->email;
-            $user->tel  = $request->tel;
-
-            if ($request->file('image')) {
-                $file = $request->file('image');
-                $filename = $file->getClientOriginalName();
-                //dd( $filename);
-
-                $file->move(public_path('public/Suppliers'), $filename);
-                $supplier['image'] = $filename;
-            }
-            if ($request->file('photo_couv')) {
-                $file = $request->file('photo_couv');
-                $filename = $file->getClientOriginalName();
-                //dd( $filename);
-
-                $file->move(public_path('public/SuppliersCouverture'), $filename);
-                $supplier['photo_couv'] = $filename;
-            }
             $supplier->update();
             $user->update();
             // $user->sendApiEmailVerificationNotification();
             $supplier = $this->model->find($supplier->id);
-
             $categories = $request->category;
             if (!is_array($categories)) {
                 $categories = json_decode($request->category);
@@ -396,10 +371,6 @@ class SupplierController extends Controller
                 $category = Category::find($value);
                 $supplier->categorys()->attach($category);
             }
-
-
-            //     return $supplier;
-            // }
             $response['supplier'] = [
                 "id"         =>  $supplier->id,
                 "name"      =>  $supplier->name,
