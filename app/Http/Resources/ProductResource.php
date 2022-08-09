@@ -15,7 +15,7 @@ class ProductResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'id' => $this->id,
+            //'id' => $this->id,
             'name' =>$this->name,
             'description' =>$this->description,
             'default_price' =>$this->default_price,
@@ -26,6 +26,8 @@ class ProductResource extends JsonResource
             'image' => FileResource::collection($this->files),
             'type_product' => TypeProductResource::collection($this->typeproduct),
             'tags' => TagResource::collection($this->tag),
+            'supplier' => SupplierResource::collection($this->suppliers)
+
 
         ];
     }

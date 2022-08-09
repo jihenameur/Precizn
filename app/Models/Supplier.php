@@ -78,4 +78,8 @@ class Supplier extends Model
     {
         return $this->hasMany(Annonces::class,'annonces');
     }
+    public function file()
+    {
+        return $this->belongsTo(File::class);
+    }
 }

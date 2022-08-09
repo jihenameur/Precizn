@@ -76,12 +76,54 @@ class CouponController extends Controller
         }
         return new JsonResponse($res, $res->code);
     }
-    public function getAll($per_page)
+    public function getAll($per_page,Request $request)
+    {
+        if(!Auth::user()->isAuthorized(['admin'])){
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ],403);
+        }
+        $res = new Result();
+        try {
+           $orderBy = 'title';
+            $orderByType = "ASC";
+            if($request->has('orderBy') && $request->orderBy != null){
+                $this->validate($request,[
+                    'orderBy' => 'required|in:title,id' // complete the akak list
+                ]);
+                $orderBy = $request->orderBy;
+            }
+            if($request->has('orderByType') && $request->orderByType != null){
+                $this->validate($request,[
+                    'orderByType' => 'required|in:ASC,DESC' // complete the akak list
+                ]);
+                $orderByType = $request->orderByType;
+            }
+            $keyword = $request->has('keyword') ? $request->get('keyword') : null;
+            if ($keyword !== null) {
+                $keyword = $this->cleanKeywordSpaces($keyword);
+
+                return $this->getFilterByKeywordClosure($keyword, $orderBy, $orderByType);
+            }
+            $coupons = Coupon::orderBy($orderBy, $orderByType)->paginate($per_page);
+
+            $res->success($coupons);
+        } catch (\Exception $exception) {
+            $res->fail($exception->getMessage());
+        }
+        return new JsonResponse($res, $res->code);
+    }
+    private function getFilterByKeywordClosure($keyword, $orderBy, $orderByType)
     {
         $res = new Result();
         try {
-            $coupons = Coupon::paginate($per_page);
+            $coupons = Coupon::where('title', 'like', "%$keyword%")
+            ->orderBy($orderBy, $orderByType)
+            ->get();
+
             $res->success($coupons);
+
         } catch (\Exception $exception) {
             $res->fail($exception->getMessage());
         }

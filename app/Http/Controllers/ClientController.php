@@ -470,15 +470,29 @@ class ClientController extends Controller
                 'massage' => 'unauthorized'
             ], 403);
         }
+
         $res = new Result();
         try {
+            $orderBy = 'firstname';
+            $orderByType = "ASC";
+            if($request->has('orderBy') && $request->orderBy != null){
+                $this->validate($request,[
+                    'orderBy' => 'required|in:firstname,lastname,' // complete the akak list
+                ]);
+                $orderBy = $request->orderBy;
+            }
+            if($request->has('orderByType') && $request->orderByType != null){
+                $this->validate($request,[
+                    'orderByType' => 'required|in:ASC,DESC' // complete the akak list
+                ]);
+                $orderByType = $request->orderByType;
+            }
             $keyword = $request->has('keyword') ? $request->get('keyword') : null;
-            // $supplier = Supplier::all();
-            $clients = Client::paginate($per_page);
+            $clients = Client::orderBy($orderBy, $orderByType)->paginate($per_page);
             if ($keyword !== null) {
                 $keyword = $this->cleanKeywordSpaces($keyword);
 
-                $clients = $this->getFilterByKeywordClosure($keyword);
+                $clients = $this->getFilterByKeywordClosure($keyword, $orderBy, $orderByType);
             }
             $res->success($clients);
         } catch (\Exception $exception) {
@@ -490,13 +504,26 @@ class ClientController extends Controller
     {
         $res = new Result();
         try {
+            $orderBy = 'firstname';
+            $orderByType = "ASC";
+            if($request->has('orderBy') && $request->orderBy != null){
+                $this->validate($request,[
+                    'orderBy' => 'required|in:firstname,lastname,' // complete the akak list
+                ]);
+                $orderBy = $request->orderBy;
+            }
+            if($request->has('orderByType') && $request->orderByType != null){
+                $this->validate($request,[
+                    'orderByType' => 'required|in:ASC,DESC' // complete the akak list
+                ]);
+                $orderByType = $request->orderByType;
+            }
             $keyword = $request->has('keyword') ? $request->get('keyword') : null;
-            // $supplier = Supplier::all();
-            $clients = Client::all();
+            $clients = Client::orderBy($orderBy, $orderByType)->get();
             if ($keyword !== null) {
                 $keyword = $this->cleanKeywordSpaces($keyword);
 
-                $clients = $this->getFilterByKeywordClosure($keyword);
+                $clients = $this->getFilterByKeywordClosure($keyword, $orderBy, $orderByType);
             }
             $res->success($clients);
         } catch (\Exception $exception) {
@@ -606,7 +633,7 @@ class ClientController extends Controller
      * @param $keyword
      * @return \Closure
      */
-    private function getFilterByKeywordClosure($keyword)
+    private function getFilterByKeywordClosure($keyword, $orderBy, $orderByType)
     {
 
         $client = Client::whereHas('user', function ($q) use ($keyword) {
@@ -614,7 +641,7 @@ class ClientController extends Controller
         })
             ->orWhere('lastname', 'like', "%$keyword%")
             ->orWhere('firstname', 'like', "%$keyword%")
-
+            ->orderBy($orderBy, $orderByType)
             ->get();
 
         return $client;

@@ -78,28 +78,42 @@ class TagController extends Controller
      * @param $keyword
      * @return \Closure
      */
-    private function getFilterByKeywordClosure($keyword)
+    private function getFilterByKeywordClosure($keyword, $orderBy, $orderByType)
     {
         $tag = Tag::where('name', 'like', "%$keyword%")
-            ->get();
+           ->orderBy($orderBy, $orderByType) ->get();
         return $tag;
     }
     public function getAllTags($per_page, Request $request)
     {
-        if(!Auth::user()->isAuthorized(['admin','supplier'])){
-            return response()->json([
-                'success' => false,
-                'massage' => 'unauthorized'
-            ],403);
-        }
+        // if(!Auth::user()->isAuthorized(['admin','supplier'])){
+        //     return response()->json([
+        //         'success' => false,
+        //         'massage' => 'unauthorized'
+        //     ],403);
+        // }
         $res = new Result();
         try {
+            $orderBy = 'name';
+            $orderByType = "ASC";
+            if($request->has('orderBy') && $request->orderBy != null){
+                $this->validate($request,[
+                    'orderBy' => 'required|in:name,' // complete the akak list
+                ]);
+                $orderBy = $request->orderBy;
+            }
+            if($request->has('orderByType') && $request->orderByType != null){
+                $this->validate($request,[
+                    'orderByType' => 'required|in:ASC,DESC' // complete the akak list
+                ]);
+                $orderByType = $request->orderByType;
+            }
             $keyword = $request->has('keyword') ? $request->get('keyword') : null;
-            $tags = Tag::paginate($per_page);
+            $tags = Tag::orderBy($orderBy, $orderByType)->paginate($per_page);
             if ($keyword !== null) {
                 $keyword = $this->cleanKeywordSpaces($keyword);
 
-                $tags = $this->getFilterByKeywordClosure($keyword);
+                $tags = $this->getFilterByKeywordClosure($keyword, $orderBy, $orderByType);
             }
             $res->success($tags);
         } catch (\Exception $exception) {

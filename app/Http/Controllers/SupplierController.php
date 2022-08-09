@@ -18,6 +18,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use App\Http\Controllers\Auth\VerificationApiController;
+use App\Http\Resources\SupplierResource;
 use App\Models\File;
 use Illuminate\Support\Facades\Auth;
 
@@ -67,7 +68,6 @@ class SupplierController extends Controller
             {
                 // return $validator->errors();
                 throw new Exception($validator->errors());
-
             }
             $role_id = Role::where('short_name', config('roles.backadmin.supplier'))->first()->id;
 
@@ -219,25 +219,30 @@ class SupplierController extends Controller
         $res = new Result();
         try {
 
-            $keyword = $request->has('keyword') ? $request->get('keyword') : null;
-            $suppliers = Supplier::paginate($per_page);
-            // $suppliers = User::where('userable_type', '=', 'App\Models\Supplier')
-            //     ->get();
-            $i = 0;
-            foreach ($suppliers as $key => $supplier) {
-                $product = Product::whereHas('suppliers', function ($q) use ($supplier) {
-                    $q->where('supplier_id', $supplier->id);
-                })->get();
-                $supp[$i] = ['supplier', $supplier, 'product', $product];
-                $i++;
+            $orderBy = 'name';
+            $orderByType = "ASC";
+            if($request->has('orderBy') && $request->orderBy != null){
+                $this->validate($request,[
+                    'orderBy' => 'required|in:firstName,lastName,' // complete the akak list
+                ]);
+                $orderBy = $request->orderBy;
             }
+            if($request->has('orderByType') && $request->orderByType != null){
+                $this->validate($request,[
+                    'orderByType' => 'required|in:ASC,DESC' // complete the akak list
+                ]);
+                $orderByType = $request->orderByType;
+            }
+            $keyword = $request->has('keyword') ? $request->get('keyword') : null;
+            $suppliers = Supplier::orderBy($orderBy, $orderByType)->paginate($per_page);
             if ($keyword !== null) {
                 $keyword = $this->cleanKeywordSpaces($keyword);
 
-                return ($this->getFilterByKeywordClosure($keyword));
+                return ($this->getFilterByKeywordClosure($keyword, $orderBy, $orderByType));
             }
-            //return $suppliers;
-            $res->success($suppliers);
+            $res->success([
+                'suppliers' => $suppliers,
+            ]);
         } catch (\Exception $exception) {
             $res->fail($exception->getMessage());
         }
@@ -287,22 +292,19 @@ class SupplierController extends Controller
      * @param $keyword
      * @return \Closure
      */
-    private function getFilterByKeywordClosure($keyword)
+    private function getFilterByKeywordClosure($keyword, $orderBy, $orderByType)
     {
         $res = new Result();
         try {
 
-            $supplier =  Supplier::where('name', 'like', "%$keyword%")
-                // User::where('userable_type', '=', 'App\Models\Supplier')
-                // ->where('name', 'like', "%$keyword%")
-                // ->orWhere('lastname', 'like', "%$keyword%")
-                // ->orWhereRaw("CONCAT(lastname,' ',firstname) like '%$keyword%'")
-                // ->orWhereRaw("CONCAT(firstname,' ',lastname) like '%$keyword%'")
-                // ->orWhere('email', 'like', "%$keyword%")
+            $suppliers =  Supplier::where('name', 'like', "%$keyword%")
+                ->orderBy($orderBy, $orderByType)
+
                 ->get();
 
-            // return $supplier;
-            $res->success($supplier);
+            $res->success([
+                'suppliers' => SupplierResource::collection($suppliers),
+            ]);
         } catch (\Exception $exception) {
             $res->fail($exception->getMessage());
         }
@@ -520,7 +522,7 @@ class SupplierController extends Controller
         //  DB::table('users')->where('id', Auth::id())->update(['phone_verified_at' => date_format($date, 'Y-m-d H:i:s')]);
 
     }
-    public function statusSupplier( Request $request)
+    public function statusSupplier(Request $request)
     {
         if (!Auth::user()->isAuthorized(['admin'])) {
             return response()->json([
@@ -584,5 +586,4 @@ class SupplierController extends Controller
         }
         return new JsonResponse($res, $res->code);
     }
-
 }
