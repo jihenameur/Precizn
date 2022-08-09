@@ -25,14 +25,13 @@ class Delivery extends Model
         'Mark_vehicle',
         'start_worktime',
         'end_worktime',
-        'image',
         'rating',
         'salary',
     ];
     protected $with = [
         'user',
         // 'commands'
-        'file'
+        'image'
     ];
 
     public $toClaim = [
@@ -57,8 +56,8 @@ class Delivery extends Model
         return $this->hasMany(RequestDelivery::class);
 
     }
-    public function file()
+    public function image()
     {
-        return $this->belongsTo(File::class);
+       return $this->belongsTo(File::class,'file_id');
     }
 }

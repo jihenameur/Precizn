@@ -21,6 +21,7 @@ use App\Http\Controllers\Auth\VerificationApiController;
 use App\Http\Resources\SupplierResource;
 use App\Models\File;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class SupplierController extends Controller
 {
@@ -240,9 +241,7 @@ class SupplierController extends Controller
 
                 return ($this->getFilterByKeywordClosure($keyword, $orderBy, $orderByType));
             }
-            $res->success([
-                'suppliers' => $suppliers,
-            ]);
+            $res->success( $suppliers);
         } catch (\Exception $exception) {
             $res->fail($exception->getMessage());
         }
@@ -380,6 +379,49 @@ class SupplierController extends Controller
             ];
 
             $res->success($response);
+        } catch (\Exception $exception) {
+            $res->fail($exception->getMessage());
+        }
+        return new JsonResponse($res, $res->code);
+    }
+    public function updateSupplierPW($id, Request $request)
+    {
+        if (!Auth::user()->isAuthorized(['admin', 'supplier'])) {
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ], 403);
+        }
+        /** @var Client $client */
+        $res = new Result();
+        try {
+
+            $validator = Validator::make($request->all(), [
+                'oldpassword' => 'required|min:8', // required and number field validation
+                'newpassword' => 'required|min:8', // required and number field validation
+                'confirm_password' => 'required|same:newpassword',
+
+            ]); // create the validations
+            if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
+            {
+                throw new Exception($validator->errors());
+            }
+            $supplier = Supplier::find($id);
+            $user = User::where('userable_id', $id)
+                ->where('userable_type', 'App\Models\Supplier')->first();
+            if (Hash::check($request->oldpassword, $user->password, []) == true) {
+                $user->password = bcrypt($request->newpassword);
+                $user->update();
+            } else {
+                $res->fail("Password not correct");
+                return new JsonResponse($res, $res->code);
+            }
+            $role = Role::whereHas('admins', function ($q) use ($user) {
+                $q->where('user_id', $user->id);
+            })->first();
+
+
+            $res->success($supplier);
         } catch (\Exception $exception) {
             $res->fail($exception->getMessage());
         }
