@@ -232,21 +232,24 @@ class DeliveryController extends Controller
                 $orderByType = $request->orderByType;
             }
             $keyword = $request->has('keyword') ? $request->get('keyword') : null;
-            $disponible = $request->has('available') ??  'null';
-            $region = $request->has('region') ?? 'null';
+            $disponible = $request->has('available') ? $request->available :  null;
+            $region = $request->has('region') ? $request->region :  null;
             if ($keyword !== null) {
                 $keyword = $this->cleanKeywordSpaces($keyword);
 
                 return ($this->getFilterByKeywordClosure($keyword, $orderBy, $orderByType));
             }
-            $delivery = Delivery::where('available', 'like', '%' . ($disponible == 'null' ? '' : $disponible) . '%')
-            ->where('region', 'like', '%' . ($region == 'null' ? '' : $region) . '%')->orderBy($orderBy, $orderByType)->paginate($per_page);
 
-            // if($disponible) {
-            //     $delivery = Delivery::where('available', 1)->orderBy($orderBy, $orderByType)->paginate($per_page);
-            // } else {
-            //     $delivery = Delivery::orderBy($orderBy, $orderByType)->paginate($per_page);
-            // }
+            $delivery =  Delivery::query();
+
+            if (!empty($disponible)) {
+                $delivery->where('available', 'like', '%' . $disponible . '%');
+            }
+            if (!empty($region)) {
+                $delivery->where('region', 'like', '%' . $region . '%');
+            }
+
+            $delivery = $delivery->orderBy($orderBy, $orderByType)->paginate($per_page);
 
             $res->success($delivery);
         } catch (\Exception $exception) {
