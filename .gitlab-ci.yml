@@ -49,7 +49,7 @@ copying-files-prod:
     - Master
   script:
     - echo "copying repo files to project directory "
-    - ssh achref@thunder-express.com "sudo cp -f /var/www/thunder/api/repo/* /var/www/thunder/api/source/"
+    - ssh achref@thunder-express.com "sudo cp -f -r /var/www/thunder/api/repo/* /var/www/thunder/api/source/"
     - ssh achref@thunder-express.com "sudo chgrp -R www-data /var/www/thunder/api/source/public"
     - ssh achref@thunder-express.com " sudo chmod -R g+wx /var/www/thunder/api/source/public"
     - echo "finish copying"
