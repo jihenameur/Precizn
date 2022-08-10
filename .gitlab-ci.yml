@@ -24,6 +24,7 @@ build-job-prod:
     - cd /var/www/thunder/api/repo/
     - echo "pulling changes"
     - git stash
+    - git fetch
     - git checkout Master
     - git pull origin Master
     - echo "project cloned"
