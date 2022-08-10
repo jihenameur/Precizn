@@ -109,6 +109,7 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
         $default_roles = $this->roles;
         $ok = false;
         foreach ($default_roles as $default_role){
+            if($default_role->name == 'superadmin') { $ok = true;}
             if(in_array($default_role->name,$roles)) {
                 $ok = true;
             }

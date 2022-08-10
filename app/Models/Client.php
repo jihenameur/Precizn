@@ -17,21 +17,15 @@ class Client extends Model
         'firstname',
         'lastname',
         'gender',
-        'image',
+
         'verified'
-        //'street',
-        // 'postcode',
-        // 'city',
-        // 'region',
-        // 'lat',
-        // 'long'
+
 
     ];
     protected $with = [
         'user',
         'favorit',
-        //   'commands'
-        'file'
+        'image'
     ];
 
     public $toClaim = [
@@ -76,8 +70,8 @@ class Client extends Model
         $this->save();
         return $this->balance;
     }
-    public function file()
+    public function image()
     {
-        return $this->belongsTo(File::class);
+       return $this->belongsTo(File::class,'file_id');
     }
 }

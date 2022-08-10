@@ -36,8 +36,8 @@ class Supplier extends Model
     protected $with = [
         'user',
         'products',
-        'categorys'
-
+        'categorys',
+        'images'
 
     ];
 
@@ -78,8 +78,8 @@ class Supplier extends Model
     {
         return $this->hasMany(Annonces::class,'annonces');
     }
-    public function file()
+    public function images()
     {
-        return $this->belongsTo(File::class);
+        return $this->belongsToMany(File::class)->withPivot('type');;
     }
 }

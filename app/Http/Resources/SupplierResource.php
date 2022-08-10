@@ -19,7 +19,7 @@ class SupplierResource extends JsonResource
             "name"      =>  $this->name,
             "firstName"     =>  $this->firstName,
             "lastName"     =>  $this->lastName,
-            //'image' => new FileResource($this->file)
+            'image' => new FileResource($this->file)
         ];
     }
 }
