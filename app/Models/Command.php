@@ -65,5 +65,8 @@ class Command extends Model
     {
         return $this->hasMany(RequestDelivery::class);
     }
-
+    public function admin()
+    {
+       return $this->belongsTo(Admin::class,'admin_id');
+    }
 }

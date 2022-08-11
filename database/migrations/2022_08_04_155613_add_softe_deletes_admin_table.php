@@ -13,12 +13,12 @@ class AddSofteDeletesAdminTable extends Migration
      */
     public function up()
     {
-        
+
             Schema::table('admins', function (Blueprint $table) {
                 $table->softDeletes();
             });
     }
-    
+
         /**
          * Reverse the migrations.
          *
@@ -26,8 +26,6 @@ class AddSofteDeletesAdminTable extends Migration
          */
         public function down()
         {
-            Schema::table('admins', function (Blueprint $table) {
-                $table->dropSoftDeletes();
-            });
+           //
         }
 }
