@@ -1,0 +1,83 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Thunder Express OpenApi Demo Documentation",
+        "description": "Thunder ExpressOpenApi description",
+        "contact": {
+            "email": "admin@thunder-express.com"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://127.0.0.1:8000/api/",
+            "description": "API Server"
+        }
+    ],
+    "paths": {
+        "/loginSuperAdmin": {
+            "post": {
+                "tags": [
+                    "Authentification"
+                ],
+                "summary": "login Admin / SuperAdmin",
+                "description": "Returns Admin info && Bearer Token",
+                "operationId": "loginSuperAdmin",
+                "parameters": [
+                    {
+                        "name": "email",
+                        "in": "query",
+                        "description": "email",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "password",
+                        "in": "query",
+                        "description": "password",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "400": {
+                        "description": "Bad request"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "Authorization": {
+                "type": "apiKey",
+                "name": "Authorization",
+                "in": "header"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Authentification",
+            "description": "Authentification & Authorisation "
+        },
+        {
+            "name": "Coupon",
+            "description": "Authentification & Authorisation "
+        }
+    ]
+}

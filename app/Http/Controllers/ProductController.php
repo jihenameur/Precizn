@@ -98,7 +98,7 @@ class ProductController extends Controller
                 }
                 if ($request->tags != null) {
                     foreach (json_decode($request->tags) as $key => $value) {
-                        $tag = TypeProduct::find($value);
+                        $tag = Tag::find($value);
                         $product->tag()->attach($tag);
                     }
                 }
