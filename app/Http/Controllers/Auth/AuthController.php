@@ -80,7 +80,7 @@ class AuthController extends Controller
             $admn = [
                 'id' => $user['id'],
                 'email' => $user['email'],
-                'role' => $role['id'],
+                'role' => $role['name'],
                 'firstname' => $admin['firstname'],
                 'lastname' => $admin['lastname'],
                 'gender' => $admin['gender']

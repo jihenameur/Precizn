@@ -77,6 +77,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
     Route::delete('deleteSupplier/{id}', [SupplierController::class, 'deleteSupplier']);
     Route::post('addimagesupplier', [SupplierController::class, 'addImage']);
     Route::post('updatesupplierpassword/{id}', [SupplierController::class, 'updateSupplierPW']);
+    Route::post('supplieraccceptrefusecommand', [SupplierController::class, 'supplierAccceptRefuseCommand']);
 
     /**
      * public Product
@@ -233,6 +234,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
     Route::delete('commandStatus/{id}', [CommandController::class, 'commandStatus']);
     Route::get('getCommandPanier/{id}', [CommandController::class, 'getCommandPanier']);
     Route::get('getCommand/{id}', [CommandController::class, 'getCommand']);
+    Route::post('commandassignedadmin/{id}', [CommandController::class, 'CommandAssignedAdmin']);
 
     /**
      * public Coupon

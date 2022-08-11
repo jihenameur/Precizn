@@ -19,7 +19,10 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use App\Http\Controllers\Auth\VerificationApiController;
 use App\Http\Resources\SupplierResource;
+use App\Models\Client;
+use App\Models\Command;
 use App\Models\File;
+use App\Notifications\CommandClientNotification;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
@@ -222,14 +225,14 @@ class SupplierController extends Controller
 
             $orderBy = 'name';
             $orderByType = "ASC";
-            if($request->has('orderBy') && $request->orderBy != null){
-                $this->validate($request,[
+            if ($request->has('orderBy') && $request->orderBy != null) {
+                $this->validate($request, [
                     'orderBy' => 'required|in:firstName,lastName,' // complete the akak list
                 ]);
                 $orderBy = $request->orderBy;
             }
-            if($request->has('orderByType') && $request->orderByType != null){
-                $this->validate($request,[
+            if ($request->has('orderByType') && $request->orderByType != null) {
+                $this->validate($request, [
                     'orderByType' => 'required|in:ASC,DESC' // complete the akak list
                 ]);
                 $orderByType = $request->orderByType;
@@ -241,7 +244,7 @@ class SupplierController extends Controller
 
                 return ($this->getFilterByKeywordClosure($keyword, $orderBy, $orderByType));
             }
-            $res->success( $suppliers);
+            $res->success($suppliers);
         } catch (\Exception $exception) {
             $res->fail($exception->getMessage());
         }
@@ -567,6 +570,41 @@ class SupplierController extends Controller
         }
         return new JsonResponse($res, $res->code);
     }
+    public function supplierAccceptRefuseCommand(Request $request)
+    {
+        if (!Auth::user()->isAuthorized(['admin', 'supplier'])) {
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ], 403);
+        }
+        $validator = Validator::make($request->all(), [
+            'command_id' => 'required', // required and number field validation
+            'action' => 'required'
+
+        ]); // create the validations
+        if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
+        {
+            throw new Exception($validator->errors());
+        }
+        $res = new Result();
+        try {
+            $command = Command::find($request->command_id);
+            $fromUser = Supplier::find(auth()->user()->userable_id);
+            $toUser  = Client::find($command->client_id);
+            if ($request->action == 'accept') {
+                $command->status = 1;
+            } else if ($request->action == 'refuse') {
+                $command->status = 2;
+            }
+            $command->update();
+            $toUser->notify(new CommandClientNotification($command, $fromUser, $command->status));
+            -$res->success($command);
+        } catch (\Exception $exception) {
+            $res->fail($exception->getMessage());
+        }
+        return new JsonResponse($res, $res->code);
+    }
     /**
      * deleted supplier
      */
@@ -583,17 +621,17 @@ class SupplierController extends Controller
             $user = User::where('userable_id', $id)
                 ->where('userable_type', 'App\Models\Supplier')->first();
             $supplier = Supplier::find($user->userable_id);
-            $user->delete();
             $products = Product::whereHas('suppliers', function ($q) use ($user) {
                 $q->where('supplier_id', $user->userable_id);
             })->get();
             foreach ($products as $product) {
-                $product->suppliers()->detach();
+                //$product->suppliers()->detach();
                 $product->delete();
             }
             $supplier->delete();
+            $user->delete();
 
-            $res->success($user);
+            $res->success("Deleted");
         } catch (\Exception $exception) {
             $res->fail($exception->getMessage());
         }
