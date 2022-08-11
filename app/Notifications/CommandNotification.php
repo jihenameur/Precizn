@@ -2,26 +2,32 @@
 
 namespace App\Notifications;
 
+use App\Models\Client;
 use App\Models\Command;
+use App\Models\Supplier;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Illuminate\Notifications\Messages\BroadcastMessage;
 
-class CommandNotification extends Notification
+class CommandNotification extends Notification implements ShouldBroadcast
 {
     use Queueable;
     private $command;
     private $from;
+
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct(Command $command, $from)
+    public function __construct(Command $command, Client $from)
     {
         $this->command = $command;
         $this->from = $from;
+
     }
 
     /**
@@ -58,8 +64,9 @@ class CommandNotification extends Notification
     public function toArray($notifiable)
     {
         return [
-            'id' => $this->from->id,
+            'from_id' => $this->from->id,
             'command' => $this->command,
         ];
     }
+
 }

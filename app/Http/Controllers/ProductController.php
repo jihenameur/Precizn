@@ -139,9 +139,6 @@ class ProductController extends Controller
             {
                 throw new Exception($validator->errors());
 
-                //return back()->withInput()->withErrors($validator);
-                // validation failed redirect back to form
-
             }
             if ($request->product_id != null) {
                 $product = Product::find($request->product_id);
@@ -170,26 +167,9 @@ class ProductController extends Controller
                         $images = $request->file('image');
                     }
                 }
-                //dd($images);
-                //dd($request->file('image'));
-                foreach ($images as $image) {
 
-                    $name = $image->getClientOriginalName();
-
-                    $image->move(public_path('public/Products'), $name); // your folder path
-                    $data[] = $name;
-                }
                 $product = new Product();
-
                 $product->name = $request->name;
-                $product['image'] = json_encode($data);
-
-                // if ($request->file('image')) {
-                //     $file = $request->file('image');
-                //     $filename =  $file->getClientOriginalName();
-                //     $file->move(public_path('public/Products'), $filename);
-                //     $product['image'] = $filename;
-                // }
                 $product->description = $request->description;
                 $product->default_price = $request->price;
                 $product->private = 1;
@@ -227,6 +207,16 @@ class ProductController extends Controller
                 foreach (json_decode($request->menu_id) as $key => $value) {
                     $menu = Menu::find($value);
                     $product->menu()->attach($menu, ['supplier_id' => $request->supplier_id]);
+                }
+                foreach ($images as $image) {
+                    $name = Str::uuid()->toString() . '.' . $image->getClientOriginalExtension();
+                    $image->move(public_path('public/Products'), $name); // your folder path
+                    $file = new File();
+                    $file->name = $name;
+                    $file->path = asset('public/Products/' . $name);
+                    $file->user_id = Auth::user()->id;
+                    $file->save();
+                    $file->products()->attach($product);
                 }
                 $res->success($product);
             }
@@ -645,7 +635,7 @@ class ProductController extends Controller
             $product = Product::find($id);
             $product->delete();
 
-            $res->success($product);
+            $res->success("Deleted");
         } catch (\Exception $exception) {
             $res->fail($exception->getMessage());
         }

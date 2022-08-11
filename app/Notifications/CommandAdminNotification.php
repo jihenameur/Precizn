@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use App\Models\Client;
 use App\Models\Command;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -14,15 +15,17 @@ class CommandAdminNotification extends Notification
 
     private $command;
     private $from;
+
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct(Command $command, $from)
+    public function __construct(Command $command, Client $from)
     {
         $this->command = $command;
         $this->from = $from;
+
     }
 
 

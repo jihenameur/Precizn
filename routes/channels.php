@@ -38,3 +38,19 @@ Broadcast::channel('online', function ($user) {
 
     }
 });
+
+Broadcast::channel('.verify.command.{admin_id}', function ($admin_id) {
+    if(Auth::check()){
+        return $admin_id;
+    }
+});
+Broadcast::channel('.supplier.command.{supplier_id}', function ($supplier_id) {
+    if(Auth::check()){
+        return $supplier_id;
+    }
+});
+Broadcast::channel('.client.command.{client_id}', function ($client_id) {
+    if(Auth::check()){
+        return $client_id;
+    }
+});

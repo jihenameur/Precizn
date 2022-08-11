@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use App\Http\Controllers\Auth\VerificationApiController;
 use App\Http\Resources\SupplierResource;
+use App\Jobs\SendCommandClientNotification;
 use App\Models\Client;
 use App\Models\Command;
 use App\Models\File;
@@ -580,7 +581,7 @@ class SupplierController extends Controller
         }
         $validator = Validator::make($request->all(), [
             'command_id' => 'required', // required and number field validation
-            'action' => 'required'
+            'action' => 'required|in:accept,refuse'
 
         ]); // create the validations
         if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
@@ -598,7 +599,9 @@ class SupplierController extends Controller
                 $command->status = 2;
             }
             $command->update();
-            $toUser->notify(new CommandClientNotification($command, $fromUser, $command->status));
+           // $toUser->notify(new CommandClientNotification($command, $fromUser, $command->status));
+            SendCommandClientNotification::dispatch($command,$fromUser,$toUser,$request->action);
+
             -$res->success($command);
         } catch (\Exception $exception) {
             $res->fail($exception->getMessage());

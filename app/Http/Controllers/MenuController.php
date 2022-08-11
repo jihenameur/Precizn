@@ -150,7 +150,7 @@ class MenuController extends Controller
         try {
             $menu = Menu::find($id);
             $menu->delete();
-            $res->success($menu);
+            $res->success("Deleted");
         } catch (\Exception $exception) {
             $res->fail($exception->getMessage());
         }

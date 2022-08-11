@@ -153,7 +153,7 @@ class OptionController extends Controller
             /** @var Option $option */
             $option = Option::find($id);
             $option->delete();
-            $res->success($option);
+            $res->success("Deleted");
         } catch (\Exception $exception) {
             $res->fail($exception->getMessage());
         }
