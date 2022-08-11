@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\BaseModel\Result;
 use App\Models\Address;
+use App\Models\Admin;
 use App\Models\Client;
 use App\Models\Command;
 use App\Models\Delivery;
@@ -124,10 +125,13 @@ class CommandController extends Controller
                 }
             }
 
-            //return $command;
             $fromUser = Client::find(auth()->user()->userable_id);
             $toUser  = Supplier::find($command->supplier_id);
             $toUser->notify(new CommandNotification($command, $fromUser));
+            $admins=Admin::all();
+            foreach ($admins as $key => $value) {
+                $value->notify(new CommandNotification($command, $fromUser));
+            }
             $res->success($command);
         } catch (\Exception $exception) {
             $res->fail($exception->getMessage());
@@ -141,11 +145,11 @@ class CommandController extends Controller
      */
     public function all(Request $request, $per_page)
     {
-        // $this->validate($request, [
-        //     'status' => 'required',
-        //     'from' => 'required',
-        //     'to' => 'required'
-        // ]);
+        //  $this->validate($request, [
+        //   //   'status' => 'required',
+        //      'from' => 'date',
+        //      'to' => 'date'
+        //  ]);
         $res = new Result();
 
         try {
@@ -353,6 +357,20 @@ class CommandController extends Controller
             $command->status = $request->status;
             $command->update();
             // return $command;
+            $res->success($command);
+        } catch (\Exception $exception) {
+            $res->fail($exception->getMessage());
+        }
+        return new JsonResponse($res, $res->code);
+    }
+    public function CommandAssignedAdmin($id)
+    {
+        $res = new Result();
+        try {
+            $admin = Admin::where('id', auth()->user()->userable_id)->first();
+            $command = Command::find($id);
+            $command->admin_id=$admin->id;
+            $command->update();
             $res->success($command);
         } catch (\Exception $exception) {
             $res->fail($exception->getMessage());
