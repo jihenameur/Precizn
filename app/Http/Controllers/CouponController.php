@@ -14,6 +14,13 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 class CouponController extends Controller
 {
+    /**
+     * @OA\Tag(
+     *     name="Coupon",
+     *     description="Authentification & Authorisation ",
+     *
+     * )
+     */
     public function create(Request $request)
     {
         if(!Auth::user()->isAuthorized(['admin'])){
@@ -59,6 +66,7 @@ class CouponController extends Controller
         }
         return new JsonResponse($res, $res->code);
     }
+
     public function getByid($id)
     {
         if(!Auth::user()->isAuthorized(['admin'])){

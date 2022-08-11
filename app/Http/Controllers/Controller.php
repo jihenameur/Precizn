@@ -7,6 +7,34 @@ use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
 
+/**
+ * @OA\Info(
+ *      version="1.0.0",
+ *      title="Thunder Express OpenApi Demo Documentation",
+ *      description="Thunder ExpressOpenApi description",
+ *      @OA\Contact(
+ *          email="admin@thunder-express.com"
+ *      ),
+ *      @OA\License(
+ *          name="Apache 2.0",
+ *          url="http://www.apache.org/licenses/LICENSE-2.0.html"
+ *      )
+ * )
+ *
+ * @OA\Server(
+ *      url=L5_SWAGGER_CONST_HOST,
+ *      description="API Server"
+ * )
+ *
+ *
+ *  @OA\SecurityScheme(
+ *   securityScheme="Authorization",
+ *   type="apiKey",
+ *   name="Authorization",
+ *   in="header"
+ * )
+ *
+ */
 class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
