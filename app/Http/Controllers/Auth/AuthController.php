@@ -25,10 +25,53 @@ use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Tymon\JWTAuth\Exceptions\TokenInvalidException;
 
+/**
+ * @OA\Tag(
+ *     name="Authentification",
+ *     description="Authentification & Authorisation ",
+ *
+ * )
+ */
 class AuthController extends Controller
 {
     use VerifiesEmails;
     public $successStatus = 200;
+
+    /**
+     * @OA\Post(
+     *      path="/loginSuperAdmin",
+     *      operationId="loginSuperAdmin",
+     *      tags={"Authentification"},
+     *      summary="login Admin / SuperAdmin",
+     *      description="Returns Admin info && Bearer Token",
+     *     @OA\Parameter (
+     *     in="query",
+     *     name="email",
+     *     required=true,
+     *     description="email",
+     *     @OA\Schema (type="string")
+     *      ),
+     *     @OA\Parameter (
+     *     in="query",
+     *     name="password",
+     *     required=true,
+     *     description="password",
+     *     @OA\Schema (type="string")
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *       ),
+     *      @OA\Response(
+     *          response=400,
+     *          description="Bad request",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      )
+     *     )
+     */
     function loginAdmin(Request $request)
     {
         $res = new Result();

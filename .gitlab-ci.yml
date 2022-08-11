@@ -63,6 +63,7 @@ deploy-stage:
     - cd $PROJECT_PATH
     - composer install --ignore-platform-reqs
     - php artisan migrate
+    - php artisan l5-swagger:generate
 
 deploy-prod:
   stage: deploy
@@ -75,3 +76,4 @@ deploy-prod:
     - cd /var/www/thunder/api/source/
     - composer install --ignore-platform-reqs
     - php artisan migrate
+    - php artisan l5-swagger:generate
