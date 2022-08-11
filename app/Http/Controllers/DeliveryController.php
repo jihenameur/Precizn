@@ -64,7 +64,6 @@ class DeliveryController extends Controller
             if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
             {
                 throw new Exception($validator->errors());
-
             }
             $role_id = Role::where('short_name', config('roles.backadmin.delivery'))->first();
             $latlong = $this->locationController->GetLocationWithAdresse($request->street, $request->postcode, $request->city, $request->region);
@@ -101,7 +100,7 @@ class DeliveryController extends Controller
         }
         return new JsonResponse($res, $res->code);
     }
-    public function addImage( Request $request)
+    public function addImage(Request $request)
     {
         if (!Auth::user()->isAuthorized(['admin', 'delivery'])) {
             return response()->json([
@@ -133,7 +132,7 @@ class DeliveryController extends Controller
                 $file->user_id = Auth::user()->id;
                 $file->save();
             }
-            $delivery->file_id=$file->id;
+            $delivery->file_id = $file->id;
             $delivery->update();
             $response['delivery'] = [
                 "id"         =>  $delivery->id,
@@ -149,7 +148,7 @@ class DeliveryController extends Controller
         }
         return new JsonResponse($res, $res->code);
     }
-    public function updateImage( Request $request)
+    public function updateImage(Request $request)
     {
         if (!Auth::user()->isAuthorized(['admin', 'delivery'])) {
             return response()->json([
@@ -165,11 +164,10 @@ class DeliveryController extends Controller
             if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
             {
                 throw new Exception($validator->errors());
-
             }
             $delivery = Delivery::find(Auth::user()->userable_id);
             if ($request->file('image')) {
-                $image=File::find($delivery->file_id);
+                $image = File::find($delivery->file_id);
                 unlink('public/Deliverys/' . $image->name);
                 $image->delete();
                 $file = $request->file('image');
@@ -181,7 +179,7 @@ class DeliveryController extends Controller
                 $file->user_id = Auth::user()->id;
                 $file->save();
             }
-            $delivery->file_id=$file->id;
+            $delivery->file_id = $file->id;
             $delivery->update();
             $response['client'] = [
                 "id"         =>  $delivery->id,
@@ -204,11 +202,11 @@ class DeliveryController extends Controller
      */
     public function all($per_page, Request $request)
     {
-        if(!Auth::user()->isAuthorized(['admin'])){
+        if (!Auth::user()->isAuthorized(['admin'])) {
             return response()->json([
                 'success' => false,
                 'massage' => 'unauthorized'
-            ],403);
+            ], 403);
         }
 
         // $this->validate($request, [
@@ -219,14 +217,14 @@ class DeliveryController extends Controller
         try {
             $orderBy = 'firstName';
             $orderByType = "ASC";
-            if($request->has('orderBy') && $request->orderBy != null){
-                $this->validate($request,[
+            if ($request->has('orderBy') && $request->orderBy != null) {
+                $this->validate($request, [
                     'orderBy' => 'required|in:firstName,lastName,region' // complete the akak list
                 ]);
                 $orderBy = $request->orderBy;
             }
-            if($request->has('orderByType') && $request->orderByType != null){
-                $this->validate($request,[
+            if ($request->has('orderByType') && $request->orderByType != null) {
+                $this->validate($request, [
                     'orderByType' => 'required|in:ASC,DESC' // complete the akak list
                 ]);
                 $orderByType = $request->orderByType;
@@ -259,11 +257,11 @@ class DeliveryController extends Controller
     }
     public function getByid($id)
     {
-        if(!Auth::user()->isAuthorized(['admin','delivery'])){
+        if (!Auth::user()->isAuthorized(['admin', 'delivery'])) {
             return response()->json([
                 'success' => false,
                 'massage' => 'unauthorized'
-            ],403);
+            ], 403);
         }
         $res = new Result();
         try {
@@ -321,11 +319,11 @@ class DeliveryController extends Controller
      */
     public function update($id, Request $request)
     {
-        if(!Auth::user()->isAuthorized(['admin','delivery'])){
+        if (!Auth::user()->isAuthorized(['admin', 'delivery'])) {
             return response()->json([
                 'success' => false,
                 'massage' => 'unauthorized'
-            ],403);
+            ], 403);
         }
         $res = new Result();
         try {
@@ -360,19 +358,20 @@ class DeliveryController extends Controller
      */
     public function delete($id)
     {
-        if(!Auth::user()->isAuthorized(['admin'])){
+        if (!Auth::user()->isAuthorized(['admin'])) {
             return response()->json([
                 'success' => false,
                 'massage' => 'unauthorized'
-            ],403);
+            ], 403);
         }
         $res = new Result();
         try {
             $user = User::where('userable_id', $id)
                 ->where('userable_type', 'App\Models\Delivery')->first();
-            $user->is_deleted = true;
-            $user->update();
-            $res->success($user);
+            $delivery = Delivery::find($id);
+            $delivery->delete();
+            $user->delete();
+            $res->success("Deleted");
         } catch (\Exception $exception) {
             $res->fail($exception->getMessage());
         }
@@ -380,11 +379,11 @@ class DeliveryController extends Controller
     }
     public function acceptCommand(Request $request)
     {
-        if(!Auth::user()->isAuthorized(['admin','delivery'])){
+        if (!Auth::user()->isAuthorized(['admin', 'delivery'])) {
             return response()->json([
                 'success' => false,
                 'massage' => 'unauthorized'
-            ],403);
+            ], 403);
         }
         $delivery = Delivery::find($request['delivery_id']);
         $command = Command::find($request['command_id']);
@@ -455,11 +454,11 @@ class DeliveryController extends Controller
     }
     public function ListCommandDelivered($per_page, Request $request)
     {
-        if(!Auth::user()->isAuthorized(['admin','delivery'])){
+        if (!Auth::user()->isAuthorized(['admin', 'delivery'])) {
             return response()->json([
                 'success' => false,
                 'massage' => 'unauthorized'
-            ],403);
+            ], 403);
         }
         $res = new Result();
         try {
@@ -476,11 +475,11 @@ class DeliveryController extends Controller
     }
     public function ListCommandRejected($per_page, Request $request)
     {
-        if(!Auth::user()->isAuthorized(['admin','delivery'])){
+        if (!Auth::user()->isAuthorized(['admin', 'delivery'])) {
             return response()->json([
                 'success' => false,
                 'massage' => 'unauthorized'
-            ],403);
+            ], 403);
         }
         $res = new Result();
         try {
@@ -497,11 +496,11 @@ class DeliveryController extends Controller
     }
     public function gainCommands(Request $request)
     {
-        if(!Auth::user()->isAuthorized(['admin','delivery'])){
+        if (!Auth::user()->isAuthorized(['admin', 'delivery'])) {
             return response()->json([
                 'success' => false,
                 'massage' => 'unauthorized'
-            ],403);
+            ], 403);
         }
         $res = new Result();
         try {
@@ -522,11 +521,11 @@ class DeliveryController extends Controller
     }
     public function CommandDelivered(Request $request)
     {
-        if(!Auth::user()->isAuthorized(['admin','delivery'])){
+        if (!Auth::user()->isAuthorized(['admin', 'delivery'])) {
             return response()->json([
                 'success' => false,
                 'massage' => 'unauthorized'
-            ],403);
+            ], 403);
         }
         $delivery = Delivery::find($request['delivery_id']);
         $command = Command::find($request['command_id']);
@@ -544,11 +543,11 @@ class DeliveryController extends Controller
     }
     public function hoursWork(Request $request)
     {
-        if(!Auth::user()->isAuthorized(['admin','delivery'])){
+        if (!Auth::user()->isAuthorized(['admin', 'delivery'])) {
             return response()->json([
                 'success' => false,
                 'massage' => 'unauthorized'
-            ],403);
+            ], 403);
         }
         $res = new Result();
         try {
@@ -593,11 +592,11 @@ class DeliveryController extends Controller
 
     public function statisDeliv(Request $request)
     {
-        if(!Auth::user()->isAuthorized(['admin','delivery'])){
+        if (!Auth::user()->isAuthorized(['admin', 'delivery'])) {
             return response()->json([
                 'success' => false,
                 'massage' => 'unauthorized'
-            ],403);
+            ], 403);
         }
         $res = new Result();
         try {

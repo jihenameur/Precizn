@@ -215,14 +215,7 @@ class TagController extends Controller
         try {
             $tag = Tag::find($id);
             $tag->delete();
-
-            $response['tag'] = [
-                "id"         =>  $tag->id,
-                "name"     =>  $tag->name
-            ];
-
-
-            $res->success($response);
+            $res->success("Deleted");
         } catch (\Exception $exception) {
             $res->fail($exception->getMessage());
         }

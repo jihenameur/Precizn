@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\BaseModel\Result;
+use App\Jobs\SendCommandAdminNotification;
+use App\Jobs\SendCommandSupplierNotification;
 use App\Models\Address;
 use App\Models\Admin;
 use App\Models\Client;
@@ -127,11 +129,9 @@ class CommandController extends Controller
 
             $fromUser = Client::find(auth()->user()->userable_id);
             $toUser  = Supplier::find($command->supplier_id);
-            $toUser->notify(new CommandNotification($command, $fromUser));
-            $admins=Admin::all();
-            foreach ($admins as $key => $value) {
-                $value->notify(new CommandNotification($command, $fromUser));
-            }
+            SendCommandAdminNotification::dispatch($command,$fromUser);
+            SendCommandSupplierNotification::dispatch($command,$fromUser,$toUser);
+
             $res->success($command);
         } catch (\Exception $exception) {
             $res->fail($exception->getMessage());

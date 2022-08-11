@@ -3,6 +3,7 @@
 namespace App\Notifications;
 
 use App\Models\Command;
+use App\Models\Supplier;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -14,12 +15,14 @@ class CommandClientNotification extends Notification
 
     private $command;
     private $from;
+    private $status;
+
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct(Command $command, $from,$status)
+    public function __construct(Command $command, Supplier $from,$status)
     {
         $this->command = $command;
         $this->from = $from;

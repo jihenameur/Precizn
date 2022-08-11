@@ -140,7 +140,7 @@ class DiscountController extends Controller
         try {
             $discount = Discount::find($id);
             $discount->delete();
-            $res->success($discount);
+            $res->success("Deleted");
         } catch (\Exception $exception) {
             $res->fail($exception->getMessage());
         }
