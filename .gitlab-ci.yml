@@ -65,6 +65,7 @@ deploy-stage:
     - php artisan migrate
     - php artisan l5-swagger:generate
 
+
 deploy-prod:
   stage: deploy
   tags:
