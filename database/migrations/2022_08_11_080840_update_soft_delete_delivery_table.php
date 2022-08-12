@@ -13,7 +13,10 @@ class UpdateSoftDeleteDeliveryTable extends Migration
      */
     public function up()
     {
-        //
+        Schema::table('deliverys', function (Blueprint $table) {
+            $table->softDeletes();
+
+        });
     }
 
     /**
