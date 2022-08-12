@@ -138,7 +138,6 @@ class ProductController extends Controller
             if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
             {
                 throw new Exception($validator->errors());
-
             }
             if ($request->product_id != null) {
                 $product = Product::find($request->product_id);
@@ -271,14 +270,14 @@ class ProductController extends Controller
 
             $orderBy = 'name';
             $orderByType = "ASC";
-            if($request->has('orderBy') && $request->orderBy != null){
-                $this->validate($request,[
+            if ($request->has('orderBy') && $request->orderBy != null) {
+                $this->validate($request, [
                     'orderBy' => 'required|in:name,default_price,available,private' // complete the akak list
                 ]);
                 $orderBy = $request->orderBy;
             }
-            if($request->has('orderByType') && $request->orderByType != null){
-                $this->validate($request,[
+            if ($request->has('orderByType') && $request->orderByType != null) {
+                $this->validate($request, [
                     'orderByType' => 'required|in:ASC,DESC' // complete the akak list
                 ]);
                 $orderByType = $request->orderByType;
@@ -374,13 +373,12 @@ class ProductController extends Controller
         $res = new Result();
         try {
             $products = Product::where('name', 'like', "%$keyword%")
-            ->orderBy($orderBy, $orderByType)
-            ->get();
+                ->orderBy($orderBy, $orderByType)
+                ->get();
 
-            $res->success( [
+            $res->success([
                 'products' => ProductResource::collection($products),
             ]);
-
         } catch (\Exception $exception) {
             $res->fail($exception->getMessage());
         }
@@ -555,16 +553,17 @@ class ProductController extends Controller
             /** @var Product $product */
             $allRequestAttributes = $request->all();
             $product = Product::find($id);
-
             $validator = Validator::make($request->all(), [
                 'name' => 'required',
+                'default_price' => 'required|numeric',
+                'image.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+                'unit_type' => 'required|in:Piece,Kg,L,M'
+
 
             ]); // create the validations
             if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
             {
-                return back()->withInput()->withErrors($validator);
-                // validation failed redirect back to form
-
+                throw new Exception($validator->errors());
             }
             $images = [];
             if ($request->file('image')) {
@@ -576,12 +575,25 @@ class ProductController extends Controller
                     $images = $request->file('image');
                 }
             }
+            $product->name = $request->name;
             $product->description = $request->description;
             $product->default_price = $request->default_price;
+            //$product->private = 1;
             $product->min_period_time = $request->min_period_time;
             $product->max_period_time = $request->max_period_time;
-            $product->private = 0;
+            $product->is_deleted = false;
+            $product->unit_type = $request->unit_type;
+            $product->unit_limit = $request->unit_limit;
+            $product->weight = $request->weight;
+            $product->dimension = $request->dimension;
             $product->update();
+            if ($request->start_hour != null && $request->end_hour != null) {
+                $product_hours = Product_hours::where('product_id', $product->id);
+                $product_hours->product_id  = $product->id;
+                $product_hours->start_hour = $request->start_hour;
+                $product_hours->end_hour = $request->end_hour;
+                $product_hours->update();
+            }
             $product->typeproduct()->detach();
             $product->tag()->detach();
             foreach (json_decode($request->typeProduct) as $key => $value) {
