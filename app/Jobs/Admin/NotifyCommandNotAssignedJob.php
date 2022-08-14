@@ -1,12 +1,10 @@
 <?php
 
-namespace App\Jobs;
+namespace App\Jobs\Admin;
 
-use App\Events\Admin\SupplierVerifyCommandEvent;
-use App\Models\Client;
+use App\Events\Admin\AdminCommandNotAssignedEvent;
+use App\Models\Admin;
 use App\Models\Command;
-use App\Models\Supplier;
-use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -14,24 +12,18 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class SendCommandSupplierNotification implements ShouldQueue
+class NotifyCommandNotAssignedJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
-
     private $command;
-    private $supplier;
-    private $from;
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct(Command $command, Client $from,Supplier $supplier)
+    public function __construct(Command $command)
     {
         $this->command = $command;
-        $this->from = $from;
-        $this->supplier = $supplier;
-
     }
 
     /**
@@ -41,7 +33,11 @@ class SendCommandSupplierNotification implements ShouldQueue
      */
     public function handle()
     {
-        broadcast(new SupplierVerifyCommandEvent($this->supplier));
-        $this->supplier->notify(new \App\Notifications\CommandNotification($this->command,$this->from));
+        // modify to selected admin todo
+        $admins = Admin::all();
+        foreach ($admins as  $admin)
+        {
+            broadcast(new AdminCommandNotAssignedEvent($admin, $this->command));
+        }
     }
 }

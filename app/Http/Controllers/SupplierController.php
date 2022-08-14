@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\BaseModel\Result;
 use App\Helpers\ReqHelper;
-use App\Jobs\SendNewSuuplierNotification;
+use App\Jobs\Admin\SendNewSuuplierNotification;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\Role;
@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use App\Http\Controllers\Auth\VerificationApiController;
 use App\Http\Resources\SupplierResource;
-use App\Jobs\SendCommandClientNotification;
+use App\Jobs\Admin\SendCommandClientNotification;
 use App\Models\Client;
 use App\Models\Command;
 use App\Models\File;

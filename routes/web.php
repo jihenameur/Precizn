@@ -18,7 +18,13 @@ use Laravel\Socialite\Facades\Socialite;
 Auth::routes(['verify' => true]);
 
 Route::get('/', function () {
-    event(new \App\Events\DeliveryPosition(5));
+    //event(new \App\Events\DeliveryPosition(5));
+    $admin = \App\Models\Admin::first();
+    $delivery = \App\Models\Delivery::first();
+    $command = \App\Models\Command::first();
+    $client = \App\Models\Client::first();
+    dispatch(new \App\Jobs\Admin\ChangeDeliveryStatusJob($admin, $delivery, 'dispo'));
+    dispatch(new \App\Jobs\Admin\SendCommandAdminNotification($command,$client));
     return view('welcome');
 });
 

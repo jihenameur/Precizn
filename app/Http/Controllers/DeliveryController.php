@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\BaseModel\Result;
+use App\Jobs\Admin\ChangeDeliveryPositionJob;
 use App\Models\Admin;
 use App\Models\Command;
 use App\Models\Delivery;
@@ -392,11 +393,12 @@ class DeliveryController extends Controller
             ->first();
         $command->delivery_id = $delivery->id;
         $command->update();
-        $delivReq->accept = 1;
-        $delivReq->update();
-        $delivery->available = 0;
+      //  $delivReq->accept = 1;
+       // $delivReq->update();
+       // $delivery->available = 0;
+        Redis::set('available'.$delivery->id,0);
         $delivery->update();
-
+        dispatch(new \App\Jobs\Admin\ChangeDeliveryStatusJob($delivery, Redis::get('available'.$delivery->id)));
         return true;
     }
     public function notifCommand(Request $request)
@@ -669,7 +671,8 @@ class DeliveryController extends Controller
         ]));
 
         // brodcast to admins
-        event(new \App\Events\DeliveryPosition(json_decode(Redis::get('deliveryPostion' . $delivery->id))));
+        event(new \App\Events\Admin\DeliveryPosition(json_decode(Redis::get('deliveryPostion' . $delivery->id))));
+        dispatch(new ChangeDeliveryPositionJob($delivery,json_decode(Redis::get('deliveryPostion' . $delivery->id))));
 
         return response()->json(json_decode(Redis::get('deliveryPostion' . $delivery->id)));
     }

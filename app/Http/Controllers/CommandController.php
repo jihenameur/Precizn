@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\BaseModel\Result;
-use App\Jobs\SendCommandAdminNotification;
-use App\Jobs\SendCommandSupplierNotification;
+use App\Jobs\Admin\SendCommandAdminNotification;
+use App\Jobs\Admin\SendCommandSupplierNotification;
 use App\Models\Address;
 use App\Models\Admin;
 use App\Models\Client;

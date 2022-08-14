@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Jobs;
+namespace App\Jobs\Admin;
 
-use App\Events\AdminVerifyCommandEvent;
+use App\Events\Admin\AdminVerifyCommandEvent;
 use App\Models\Admin;
 use App\Models\Client;
 use App\Models\Command;
@@ -41,7 +41,7 @@ class SendCommandAdminNotification implements ShouldQueue
     {
         $admins = Admin::all();
         foreach ($admins as $admin){
-            broadcast(new AdminVerifyCommandEvent($admin));
+            broadcast(new AdminVerifyCommandEvent($admin,$this->command));
             $admin->notify(new \App\Notifications\CommandAdminNotification($this->command,$this->from));
 
            // broadcast(new \App\Notifications\CommandAdminNotification($this->command, $this->from,$admin));
