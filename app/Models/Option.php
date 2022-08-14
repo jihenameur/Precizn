@@ -12,7 +12,8 @@ class Option extends Model
     protected $fillable = [
         'name',
         'description',
-        "price"
+        "price",
+        "default"
     ];
     protected $with = [
         //'products'

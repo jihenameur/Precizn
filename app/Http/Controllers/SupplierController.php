@@ -259,7 +259,7 @@ class SupplierController extends Controller
      */
     public function getById($id)
     {
-        if (!Auth::user()->isAuthorized(['admin', 'supplier'])) {
+        if (!Auth::user()->isAuthorized(['admin', 'supplier','client'])) {
             return response()->json([
                 'success' => false,
                 'massage' => 'unauthorized'
