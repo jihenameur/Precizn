@@ -28,11 +28,15 @@ class DiscountController extends Controller
         try {
             $validator = Validator::make($request->all(), [
                 'start_date' => 'required',
-                'end_date' => 'required'
+                'end_date' => 'required',
+                'supplier_id' => 'required',
+                'product_id' => 'required',
+                'percentage' => 'required',
+
             ]); // create the validations
             if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
             {
-                throw new Exception($validator->errors());
+                return ($validator->errors());
             }
             $supplier = Supplier::find($request->supplier_id);
             $product = Product::find($request->product_id);
@@ -54,7 +58,10 @@ class DiscountController extends Controller
             $discount->save();
             $res->success($discount);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->message);
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -71,7 +78,10 @@ class DiscountController extends Controller
             $discount = Discount::find($id);
             $res->success($discount);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->message);
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -88,7 +98,10 @@ class DiscountController extends Controller
             $discounts = Discount::paginate($per_page);
             $res->success($discounts);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->message);
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -99,6 +112,18 @@ class DiscountController extends Controller
                 'success' => false,
                 'massage' => 'unauthorized'
             ],403);
+        }
+        $validator = Validator::make($request->all(), [
+            'start_date' => 'required',
+            'end_date' => 'required',
+            'supplier_id' => 'required',
+            'product_id' => 'required',
+            'percentage' => 'required',
+
+        ]); // create the validations
+        if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
+        {
+            return ($validator->errors());
         }
         $res = new Result();
         try {
@@ -124,7 +149,10 @@ class DiscountController extends Controller
 
             $res->success($discount);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->message);
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -142,7 +170,10 @@ class DiscountController extends Controller
             $discount->delete();
             $res->success("Deleted");
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->message);
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }

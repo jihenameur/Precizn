@@ -203,7 +203,10 @@ class ClientController extends Controller
             ];
             $res->success($response);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->message);
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -230,7 +233,7 @@ class ClientController extends Controller
             if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
             {
                 // return $validator->errors();
-                throw new Exception($validator->errors());
+                return ($validator->errors());
 
                 //return back()->withInput()->withErrors($validator);
                 // validation failed redirect back to form
@@ -253,7 +256,7 @@ class ClientController extends Controller
                 $addresse->lat = $latlong[0]['lat'];
                 $addresse->long = $latlong[0]['long'];
             } else {
-                throw new Exception("Err: address not found");
+                return("Err: address not found");
             }
             $chekphoneExist = $this->verificationApiController->checkPhoneExists($request->phone);
             if ($chekphoneExist == "phone exists") {
@@ -311,7 +314,10 @@ class ClientController extends Controller
             $res->success($response);
         } catch (\Exception $exception) {
 
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->message);
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -332,7 +338,7 @@ class ClientController extends Controller
             if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
             {
                 // return $validator->errors();
-                throw new Exception($validator->errors());
+                return($validator->errors());
 
                 //return back()->withInput()->withErrors($validator);
                 // validation failed redirect back to form
@@ -360,7 +366,10 @@ class ClientController extends Controller
 
             $res->success($response);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->message);
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -380,7 +389,7 @@ class ClientController extends Controller
             if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
             {
                 // return $validator->errors();
-                throw new Exception($validator->errors());
+                return($validator->errors());
 
                 //return back()->withInput()->withErrors($validator);
                 // validation failed redirect back to form
@@ -411,17 +420,29 @@ class ClientController extends Controller
 
             $res->success($response);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->message);
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
     public function addfavorite(Request $request)
     {
+
         if (!Auth::user()->isAuthorized(['admin', 'client'])) {
             return response()->json([
                 'success' => false,
                 'massage' => 'unauthorized'
             ], 403);
+        }
+        $validator = Validator::make($request->all(), [
+            'id_supplier' => 'required',
+        ]); // create the validations
+        if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
+        {
+            // return $validator->errors();
+            throw new Exception($validator->errors());
         }
         $res = new Result();
         try {
@@ -433,7 +454,10 @@ class ClientController extends Controller
             $client->favorit()->syncWithoutDetaching($supplier);
             $res->success($client);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->message);
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -445,6 +469,14 @@ class ClientController extends Controller
                 'massage' => 'unauthorized'
             ], 403);
         }
+        $validator = Validator::make($request->all(), [
+            'id_supplier' => 'required',
+        ]); // create the validations
+        if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
+        {
+            // return $validator->errors();
+            throw new Exception($validator->errors());
+        }
         $res = new Result();
         try {
             $user =  Auth::user();
@@ -453,7 +485,10 @@ class ClientController extends Controller
             $client->favorit()->detach($supplier);
             $res->success($client);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->message);
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -475,14 +510,14 @@ class ClientController extends Controller
         try {
             $orderBy = 'firstname';
             $orderByType = "ASC";
-            if($request->has('orderBy') && $request->orderBy != null){
-                $this->validate($request,[
-                    'orderBy' => 'required|in:firstname,lastname,' // complete the akak list
+            if ($request->has('orderBy') && $request->orderBy != null) {
+                $this->validate($request, [
+                    'orderBy' => 'required|in:firstname,lastname,created_at' // complete the akak list
                 ]);
                 $orderBy = $request->orderBy;
             }
-            if($request->has('orderByType') && $request->orderByType != null){
-                $this->validate($request,[
+            if ($request->has('orderByType') && $request->orderByType != null) {
+                $this->validate($request, [
                     'orderByType' => 'required|in:ASC,DESC' // complete the akak list
                 ]);
                 $orderByType = $request->orderByType;
@@ -496,7 +531,10 @@ class ClientController extends Controller
             }
             $res->success($clients);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->message);
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -506,14 +544,14 @@ class ClientController extends Controller
         try {
             $orderBy = 'firstname';
             $orderByType = "ASC";
-            if($request->has('orderBy') && $request->orderBy != null){
-                $this->validate($request,[
-                    'orderBy' => 'required|in:firstname,lastname,' // complete the akak list
+            if ($request->has('orderBy') && $request->orderBy != null) {
+                $this->validate($request, [
+                    'orderBy' => 'required|in:firstname,lastname,created_at' // complete the akak list
                 ]);
                 $orderBy = $request->orderBy;
             }
-            if($request->has('orderByType') && $request->orderByType != null){
-                $this->validate($request,[
+            if ($request->has('orderByType') && $request->orderByType != null) {
+                $this->validate($request, [
                     'orderByType' => 'required|in:ASC,DESC' // complete the akak list
                 ]);
                 $orderByType = $request->orderByType;
@@ -527,7 +565,10 @@ class ClientController extends Controller
             }
             $res->success($clients);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->message);
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -546,14 +587,16 @@ class ClientController extends Controller
         }
         $res = new Result();
         try {
-            $client = Client::find($id);
             $commands = Command::whereHas('client', function ($q) use ($id) {
                 $q->where('id', $id);
             })
                 ->paginate($per_page);
             $res->success($commands);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->message);
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -586,7 +629,10 @@ class ClientController extends Controller
             ];
             $res->success($clt);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->message);
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -610,7 +656,10 @@ class ClientController extends Controller
 
             $res->success($favorits);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->message);
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -672,7 +721,7 @@ class ClientController extends Controller
             ]); // create the validations
             if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
             {
-                throw new Exception($validator->errors());
+                return($validator->errors());
             }
             $allRequestAttributes = $request->all();
             $client = Client::find($id);
@@ -720,7 +769,10 @@ class ClientController extends Controller
 
             $res->success($clt);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->message);
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -744,7 +796,7 @@ class ClientController extends Controller
             ]); // create the validations
             if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
             {
-                throw new Exception($validator->errors());
+                return($validator->errors());
             }
             $client = Client::find($id);
             $user = User::where('userable_id', $id)
@@ -778,7 +830,10 @@ class ClientController extends Controller
 
             $res->success($clt);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->message);
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -806,7 +861,10 @@ class ClientController extends Controller
 
             $res->success($client);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->message);
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -826,7 +884,10 @@ class ClientController extends Controller
             $adresses = Address::where('user_id ', $user->id)->paginate($per_page);
             $res->success($adresses);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->message);
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -856,17 +917,17 @@ class ClientController extends Controller
             User::where('id', $user->id)->update([
                 'status_id' => $request->status_id
             ]);
-
-
             $res->success($user);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->message);
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
     public function resetPWClient(Request $request)
     {
-
         $validator = Validator::make($request->all(), [
             'email' => 'required|email',   // required and email format validation
             'tel' => 'required'
@@ -894,13 +955,15 @@ class ClientController extends Controller
             ];
             $res->success($clt);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->message);
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
     public function verifySmsResetPW(Request $request)
     {
-
         $res = new Result();
         try {
             $validator = Validator::make($request->all(), [
@@ -912,7 +975,7 @@ class ClientController extends Controller
             if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
             {
                 // return $validator->errors();
-                throw new Exception($validator->errors());
+                return($validator->errors());
             }
             $user = User::where('email', $request->email)->first();
             if ($request['code'] == $user->smscode) {
@@ -952,7 +1015,10 @@ class ClientController extends Controller
                 $res->fail('Code not verified');
             }
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->message);
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
 
@@ -985,7 +1051,6 @@ class ClientController extends Controller
                     $q->where('client_id', $client->id);
                     $q->where('supplier_id', $supplier->id);
                 })->get();
-                //dd($favorit);
                 if ($favorit->isEmpty()) {
                     $product = Product::whereHas('suppliers', function ($q) use ($supplier) {
                         $q->where('supplier_id', $supplier->id);
@@ -1000,13 +1065,13 @@ class ClientController extends Controller
                     $i++;
                 }
             }
-
-
             $paginate = new Paginate();
-
             $res->success($paginate->paginate($supp, $per_page));
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->message);
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -1032,6 +1097,14 @@ class ClientController extends Controller
                 'massage' => 'unauthorized'
             ], 403);
         }
+        $validator = Validator::make($request->all(), [
+            'category_id' => 'required'
+        ]); // create the validations
+        if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
+        {
+            // return $validator->errors();
+            throw new Exception($validator->errors());
+        }
         $res = new Result();
         try {
             $user =  Auth::user();
@@ -1048,7 +1121,6 @@ class ClientController extends Controller
                     $q->where('client_id', $client->id);
                     $q->where('supplier_id', $supplier->id);
                 })->get();
-                //dd($favorit);
                 if ($favorit->isEmpty()) {
                     $product = Product::whereHas('suppliers', function ($q) use ($supplier) {
                         $q->where('supplier_id', $supplier->id);
@@ -1072,7 +1144,10 @@ class ClientController extends Controller
 
             $res->success($paginate->paginate($supp, $per_page));
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->message);
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -1101,7 +1176,10 @@ class ClientController extends Controller
 
             $res->success($user);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->message);
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }

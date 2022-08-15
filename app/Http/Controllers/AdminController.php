@@ -44,14 +44,8 @@ class AdminController extends Controller
             ]); // create the validations
             if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
             {
-                // return $validator->errors();
-                throw new Exception($validator->errors());
-
-                //return back()->withInput()->withErrors($validator);
-                // validation failed redirect back to form
+               return ($validator->errors());
             }
-            //else {
-
             $allRequestAttributes = $request->all();
             $role_id = Role::where('short_name', config('roles.backadmin.superadmin'))->first()->id;
             $user = new User($allRequestAttributes);
@@ -88,7 +82,10 @@ class AdminController extends Controller
 
             $res->success($response);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->message);
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -108,18 +105,15 @@ class AdminController extends Controller
                 'email' => 'required|email|unique:users,email',   // required and email format validation
                 'password' => 'required|min:8', // required and number field validation
                 'confirm_password' => 'required|same:password',
+                'tel' => 'required',
 
             ]); // create the validations
             if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
             {
                 // return $validator->errors();
-                throw new Exception($validator->errors());
+                return ($validator->errors());
 
-                //return back()->withInput()->withErrors($validator);
-                // validation failed redirect back to form
             }
-            //else {
-
             $allRequestAttributes = $request->all();
             $role_id = Role::where('short_name', config('roles.backadmin.admin'))->first()->id;
             $user = new User($allRequestAttributes);
@@ -156,7 +150,10 @@ class AdminController extends Controller
 
             $res->success($response);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->message);
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -175,11 +172,14 @@ class AdminController extends Controller
             if ($keyword !== null) {
                 $keyword = $this->cleanKeywordSpaces($keyword);
 
-                return ($this->getFilterByKeywordClosure($keyword));
+                $admins=$this->getFilterByKeywordClosure($keyword);
             }
             $res->success($admins);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->message);
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -190,9 +190,15 @@ class AdminController extends Controller
             $admin = Admin::where('id', '=', $id)->first();
             $res->success($admin);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+            $res->fail('erreur serveur');
         }
         return new JsonResponse($res, $res->code);
+    }
+    private function cleanKeywordSpaces($keyword)
+    {
+        $keyword = trim($keyword);
+        $keyword = preg_replace('/\s+/', ' ', $keyword);
+        return $keyword;
     }
     /**
      * Get filter by keyword
@@ -227,7 +233,10 @@ class AdminController extends Controller
 
             $res->success($user);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->message);
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -254,7 +263,7 @@ class AdminController extends Controller
             ]); // create the validations
             if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
             {
-                throw new Exception($validator->errors());
+                return $validator->errors();
 
                 //return back()->withInput()->withErrors($validator);
                 // validation failed redirect back to form
@@ -268,7 +277,10 @@ class AdminController extends Controller
 
             $res->success($admin);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->message);
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -279,9 +291,11 @@ class AdminController extends Controller
             $delivery = json_decode(Redis::get('deliveryPostion' . $id));
             $res->success($delivery);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->message);
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
-
 }

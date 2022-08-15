@@ -46,7 +46,10 @@ class AnnonceController extends Controller
                 $res->success($annnonces);
             }
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->message);
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -70,17 +73,20 @@ class AnnonceController extends Controller
                 "description" => "required"
             ]);
             if ($validator->fails()) {
-                throw new Exception($validator->errors());
+                return ($validator->errors());
 
                 //return back()->withInput()->withErrors($validator);
-            } else {
+            }
                 $annonce = new Annonces($request->all());
                 $annonce = $this->model->create($request->all());
                 $annonce->save();
-            }
+
             $res->success($annonce);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->message);
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -115,7 +121,10 @@ class AnnonceController extends Controller
             $annonce = Annonces::find($id);
             $res->success($annonce);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->message);
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -142,7 +151,10 @@ class AnnonceController extends Controller
             $annonce->update();
             $res->success($annonce);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->message);
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -177,9 +189,12 @@ class AnnonceController extends Controller
         try {
             $annonce = Annonces::find($id);
             $annonce->delete();
-            $res->success($annonce);
+            $res->success('deleted');
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->message);
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -198,9 +213,12 @@ class AnnonceController extends Controller
             foreach ($annonces as $annonce) {
                 $annonce->delete();
             }
-            $res->success($annonces);
+            $res->success('destroyed');
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->message);
+            }
+            $res->fail('erreur serveur 500');
         }
     }
 }

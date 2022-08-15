@@ -23,11 +23,11 @@ class CategoryController extends Controller
 
     public function create(Request $request)
     {
-        if(!Auth::user()->isAuthorized(['admin'])){
+        if (!Auth::user()->isAuthorized(['admin'])) {
             return response()->json([
                 'success' => false,
                 'massage' => 'unauthorized'
-            ],403);
+            ], 403);
         }
         $res = new Result();
         try {
@@ -39,30 +39,28 @@ class CategoryController extends Controller
             ]); // create the validations
             if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
             {
-                throw new Exception($validator->errors());
-
-
-            } else {
-
-                $category = new Category();
-                $category->name = $request->name;
-                $category->parent_id = $request->parent_id;
-                $category->order_id = $request->order_id;
-                $category->description = $request->description;
-                $category->save();
-
-                $response['category'] = [
-                    "id"         =>  $category->id,
-                    "name"     =>  $category->name,
-                    "parent_id"     =>  $category->parent_id,
-                    "order_id"     =>  $category->order_id,
-                    "description"     =>  $category->description,
-                ];
+                return $validator->errors();
             }
+
+            $category = new Category();
+            $category->name = $request->name;
+            $category->parent_id = $request->parent_id;
+            $category->order_id = $request->order_id;
+            $category->description = $request->description;
+            $category->save();
+
+            $response['category'] = [
+                "id"         =>  $category->id,
+                "name"     =>  $category->name,
+                "parent_id"     =>  $category->parent_id,
+                "order_id"     =>  $category->order_id,
+                "description"     =>  $category->description,
+            ];
+
 
             $res->success($response);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+            $res->fail('erreur serveur');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -80,7 +78,10 @@ class CategoryController extends Controller
 
             $res->success($children);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->message);
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -93,11 +94,14 @@ class CategoryController extends Controller
     {
         $res = new Result();
         try {
-            $category = Category::findOrFail($id);
+            $category = Category::find($id);
             $parent = $category->parent;
             $res->success($parent);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->message);
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -111,7 +115,10 @@ class CategoryController extends Controller
 
             $res->success($suppliers);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->message);
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -127,7 +134,10 @@ class CategoryController extends Controller
                 ->paginate($per_page);
             $res->success($suppliers);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->message);
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -142,7 +152,10 @@ class CategoryController extends Controller
                 ->paginate($per_page);
             $res->success($suppliers);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->message);
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -150,10 +163,13 @@ class CategoryController extends Controller
     {
         $res = new Result();
         try {
-          $category=Category::find($id);
+            $category = Category::find($id);
             $res->success($category);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->message);
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -176,7 +192,10 @@ class CategoryController extends Controller
             }
             $res->success($categorys);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->message);
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -188,7 +207,10 @@ class CategoryController extends Controller
                 ->get();
             $res->success($categorys);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->message);
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -226,11 +248,11 @@ class CategoryController extends Controller
      */
     public function update($id, Request $request)
     {
-        if(!Auth::user()->isAuthorized(['admin'])){
+        if (!Auth::user()->isAuthorized(['admin'])) {
             return response()->json([
                 'success' => false,
                 'massage' => 'unauthorized'
-            ],403);
+            ], 403);
         }
         $res = new Result();
         $category = Category::find($id);
@@ -244,13 +266,8 @@ class CategoryController extends Controller
             ]); // create the validations
             if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
             {
-                throw new Exception($validator->errors());
-
-                //return back()->withInput()->withErrors($validator);
-                // validation failed redirect back to form
-
+                return $validator->errors();
             } else {
-
                 $category->name = $request->name;
                 $category->parent_id = $request->parent_id;
                 $category->order_id = $request->order_id;
@@ -268,7 +285,10 @@ class CategoryController extends Controller
 
             $res->success($response);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->message);
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -280,21 +300,23 @@ class CategoryController extends Controller
      */
     public function delete($id)
     {
-        if(!Auth::user()->isAuthorized(['admin'])){
+        if (!Auth::user()->isAuthorized(['admin'])) {
             return response()->json([
                 'success' => false,
                 'massage' => 'unauthorized'
-            ],403);
+            ], 403);
         }
         /** @var Category $category */
         $res = new Result();
         $category = Category::find($id);
-
         try {
             $category->delete();
             $res->success($category);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->message);
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
