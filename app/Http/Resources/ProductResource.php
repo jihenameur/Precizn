@@ -22,13 +22,16 @@ class ProductResource extends JsonResource
             'private' =>$this->private,
             'min_period_time' =>$this->min_period_time,
             'max_period_time' =>$this->max_period_time,
+            'available' =>$this->available,
+            'unit_type' =>$this->unit_type,
+            'unit_limit' =>$this->unit_limit,
+            'weight' =>$this->weight,
+            'dimension' =>$this->dimension,
             'options' => ProductOptionsResource::collection($this->options),
             'image' => FileResource::collection($this->files),
             'type_product' => TypeProductResource::collection($this->typeproduct),
             'tags' => TagResource::collection($this->tag),
             'supplier' => SupplierResource::collection($this->suppliers)
-
-
         ];
     }
 }
