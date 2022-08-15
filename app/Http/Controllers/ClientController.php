@@ -67,12 +67,20 @@ class ClientController extends Controller
             $suppliers = Supplier::all();
             $sizeAllSupp = count($suppliers);
             $client =  Auth::user();
-            $addres = Address::where('user_id', $client->id)
+            $address = Address::where('user_id', $client->id)
                 ->where('status', 1)
                 ->first();
-            if ($addres == null) {
-                $res->fail("Address not found");
-                return new JsonResponse($res, $res->code);
+            if ($address == null) {
+                if($request->has('lat') && $request->lat != null &&
+                $request->has('long') && $request->long != null
+                ){
+                    $address = (object)[];
+                    $address->lat = $request->lat ;
+                    $address->long = $request->long;
+                }else{
+                    $res->fail("Address not found");
+                    return new JsonResponse($res, $res->code);
+                }
             }
             $supps = [];
             $distances = [];
@@ -91,7 +99,7 @@ class ClientController extends Controller
                             unset($suppliers[$j]);
                         }
 
-                        $dists = $this->locationController->getdistances($addres, $supps);
+                        $dists = $this->locationController->getdistances($address, $supps);
 
                         $k = 0;
                         for ($j = count($distances); $j < $x; $j++) {
@@ -107,7 +115,7 @@ class ClientController extends Controller
                             unset($suppliers[$j]);
                         }
 
-                        $distns = $this->locationController->getdistances($addres, $supps);
+                        $distns = $this->locationController->getdistances($address, $supps);
 
                         $k = 0;
 
@@ -174,7 +182,7 @@ class ClientController extends Controller
                     $q->where('name', 'like', "%$product%");
                 })
                     ->get();
-                $dists = $this->locationController->getdistances($addres, $suppl);
+                $dists = $this->locationController->getdistances($address, $suppl);
                 foreach ($dists as $dist) {
                     if ($dist['distance'] <= 2) {
                         array_push($suppliersRecommanded, $dist); // add it to the result
