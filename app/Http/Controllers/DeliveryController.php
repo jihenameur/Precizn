@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\BaseModel\Result;
+use App\Jobs\Admin\ChangeDeliveryPositionJob;
 use App\Models\Admin;
 use App\Models\Command;
 use App\Models\Delivery;
@@ -103,7 +104,7 @@ class DeliveryController extends Controller
             $res->success($delivery);
         } catch (\Exception $exception) {
              if(env('APP_DEBUG')){
-                $res->fail($exception->message);
+                $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
         }
@@ -151,7 +152,7 @@ class DeliveryController extends Controller
             $res->success($response);
         } catch (\Exception $exception) {
              if(env('APP_DEBUG')){
-                $res->fail($exception->message);
+                $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
         }
@@ -201,7 +202,7 @@ class DeliveryController extends Controller
             $res->success($response);
         } catch (\Exception $exception) {
              if(env('APP_DEBUG')){
-                $res->fail($exception->message);
+                $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
         }
@@ -264,7 +265,7 @@ class DeliveryController extends Controller
             $res->success($delivery);
         } catch (\Exception $exception) {
              if(env('APP_DEBUG')){
-                $res->fail($exception->message);
+                $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
         }
@@ -286,7 +287,7 @@ class DeliveryController extends Controller
             $res->success($delivery);
         } catch (\Exception $exception) {
              if(env('APP_DEBUG')){
-                $res->fail($exception->message);
+                $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
         }
@@ -325,7 +326,7 @@ class DeliveryController extends Controller
             $res->success($delivery);
         } catch (\Exception $exception) {
              if(env('APP_DEBUG')){
-                $res->fail($exception->message);
+                $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
         }
@@ -381,7 +382,7 @@ class DeliveryController extends Controller
             $res->success($delivery);
         } catch (\Exception $exception) {
              if(env('APP_DEBUG')){
-                $res->fail($exception->message);
+                $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
         }
@@ -411,7 +412,7 @@ class DeliveryController extends Controller
             $res->success("Deleted");
         } catch (\Exception $exception) {
              if(env('APP_DEBUG')){
-                $res->fail($exception->message);
+                $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
         }
@@ -425,6 +426,7 @@ class DeliveryController extends Controller
                 'massage' => 'unauthorized'
             ], 403);
         }
+
         $validator = Validator::make($request->all(), [
             'delivery_id' => 'required',
             'command_id' => 'required'
@@ -450,11 +452,12 @@ class DeliveryController extends Controller
 
         } catch (\Exception $exception) {
              if(env('APP_DEBUG')){
-                $res->fail($exception->message);
+                $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
+
     }
     public function notifCommand(Request $request)
     {
@@ -491,7 +494,7 @@ class DeliveryController extends Controller
             $res->fail('No Delivery disp');
         } catch (\Exception $exception) {
              if(env('APP_DEBUG')){
-                $res->fail($exception->message);
+                $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
         }
@@ -523,7 +526,7 @@ class DeliveryController extends Controller
 
         } catch (\Exception $exception) {
              if(env('APP_DEBUG')){
-                $res->fail($exception->message);
+                $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
         }
@@ -555,7 +558,7 @@ class DeliveryController extends Controller
             $res->success($commands);
         } catch (\Exception $exception) {
              if(env('APP_DEBUG')){
-                $res->fail($exception->message);
+                $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
         }
@@ -586,7 +589,7 @@ class DeliveryController extends Controller
             $res->success($commands);
         } catch (\Exception $exception) {
              if(env('APP_DEBUG')){
-                $res->fail($exception->message);
+                $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
         }
@@ -623,7 +626,7 @@ class DeliveryController extends Controller
             $res->success($daygain);
         } catch (\Exception $exception) {
              if(env('APP_DEBUG')){
-                $res->fail($exception->message);
+                $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
         }
@@ -658,7 +661,7 @@ class DeliveryController extends Controller
         $res->success("command delivered");
     } catch (\Exception $exception) {
          if(env('APP_DEBUG')){
-                $res->fail($exception->message);
+                $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
     }    }
@@ -721,7 +724,7 @@ class DeliveryController extends Controller
             $res->success($hoursWork);
         } catch (\Exception $exception) {
              if(env('APP_DEBUG')){
-                $res->fail($exception->message);
+                $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
         }
@@ -803,7 +806,7 @@ class DeliveryController extends Controller
             $res->success($stat);
         } catch (\Exception $exception) {
              if(env('APP_DEBUG')){
-                $res->fail($exception->message);
+                $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
         }
@@ -829,7 +832,8 @@ class DeliveryController extends Controller
         ]));
 
         // brodcast to admins
-        event(new \App\Events\DeliveryPosition(json_decode(Redis::get('deliveryPostion' . $delivery->id))));
+        event(new \App\Events\Admin\DeliveryPosition(json_decode(Redis::get('deliveryPostion' . $delivery->id))));
+        dispatch(new ChangeDeliveryPositionJob($delivery,json_decode(Redis::get('deliveryPostion' . $delivery->id))));
 
         return response()->json(json_decode(Redis::get('deliveryPostion' . $delivery->id)));
     }
@@ -862,7 +866,7 @@ class DeliveryController extends Controller
             $res->success($user);
         } catch (\Exception $exception) {
              if(env('APP_DEBUG')){
-                $res->fail($exception->message);
+                $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
         }

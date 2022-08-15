@@ -212,7 +212,7 @@ class ClientController extends Controller
             $res->success($response);
         } catch (\Exception $exception) {
              if(env('APP_DEBUG')){
-                $res->fail($exception->message);
+                $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
         }
@@ -323,7 +323,7 @@ class ClientController extends Controller
         } catch (\Exception $exception) {
 
              if(env('APP_DEBUG')){
-                $res->fail($exception->message);
+                $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
         }
@@ -375,7 +375,7 @@ class ClientController extends Controller
             $res->success($response);
         } catch (\Exception $exception) {
              if(env('APP_DEBUG')){
-                $res->fail($exception->message);
+                $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
         }
@@ -429,7 +429,7 @@ class ClientController extends Controller
             $res->success($response);
         } catch (\Exception $exception) {
              if(env('APP_DEBUG')){
-                $res->fail($exception->message);
+                $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
         }
@@ -463,7 +463,7 @@ class ClientController extends Controller
             $res->success($client);
         } catch (\Exception $exception) {
              if(env('APP_DEBUG')){
-                $res->fail($exception->message);
+                $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
         }
@@ -494,7 +494,7 @@ class ClientController extends Controller
             $res->success($client);
         } catch (\Exception $exception) {
              if(env('APP_DEBUG')){
-                $res->fail($exception->message);
+                $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
         }
@@ -540,7 +540,7 @@ class ClientController extends Controller
             $res->success($clients);
         } catch (\Exception $exception) {
              if(env('APP_DEBUG')){
-                $res->fail($exception->message);
+                $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
         }
@@ -574,7 +574,7 @@ class ClientController extends Controller
             $res->success($clients);
         } catch (\Exception $exception) {
              if(env('APP_DEBUG')){
-                $res->fail($exception->message);
+                $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
         }
@@ -602,7 +602,7 @@ class ClientController extends Controller
             $res->success($commands);
         } catch (\Exception $exception) {
              if(env('APP_DEBUG')){
-                $res->fail($exception->message);
+                $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
         }
@@ -638,7 +638,7 @@ class ClientController extends Controller
             $res->success($clt);
         } catch (\Exception $exception) {
              if(env('APP_DEBUG')){
-                $res->fail($exception->message);
+                $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
         }
@@ -665,7 +665,7 @@ class ClientController extends Controller
             $res->success($favorits);
         } catch (\Exception $exception) {
              if(env('APP_DEBUG')){
-                $res->fail($exception->message);
+                $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
         }
@@ -778,7 +778,7 @@ class ClientController extends Controller
             $res->success($clt);
         } catch (\Exception $exception) {
              if(env('APP_DEBUG')){
-                $res->fail($exception->message);
+                $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
         }
@@ -839,7 +839,7 @@ class ClientController extends Controller
             $res->success($clt);
         } catch (\Exception $exception) {
              if(env('APP_DEBUG')){
-                $res->fail($exception->message);
+                $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
         }
@@ -870,7 +870,7 @@ class ClientController extends Controller
             $res->success($client);
         } catch (\Exception $exception) {
              if(env('APP_DEBUG')){
-                $res->fail($exception->message);
+                $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
         }
@@ -893,7 +893,7 @@ class ClientController extends Controller
             $res->success($adresses);
         } catch (\Exception $exception) {
              if(env('APP_DEBUG')){
-                $res->fail($exception->message);
+                $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
         }
@@ -928,7 +928,7 @@ class ClientController extends Controller
             $res->success($user);
         } catch (\Exception $exception) {
              if(env('APP_DEBUG')){
-                $res->fail($exception->message);
+                $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
         }
@@ -964,7 +964,7 @@ class ClientController extends Controller
             $res->success($clt);
         } catch (\Exception $exception) {
              if(env('APP_DEBUG')){
-                $res->fail($exception->message);
+                $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
         }
@@ -1024,7 +1024,7 @@ class ClientController extends Controller
             }
         } catch (\Exception $exception) {
              if(env('APP_DEBUG')){
-                $res->fail($exception->message);
+                $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
         }
@@ -1077,7 +1077,7 @@ class ClientController extends Controller
             $res->success($paginate->paginate($supp, $per_page));
         } catch (\Exception $exception) {
              if(env('APP_DEBUG')){
-                $res->fail($exception->message);
+                $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
         }
@@ -1153,7 +1153,7 @@ class ClientController extends Controller
             $res->success($paginate->paginate($supp, $per_page));
         } catch (\Exception $exception) {
              if(env('APP_DEBUG')){
-                $res->fail($exception->message);
+                $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
         }
@@ -1185,7 +1185,7 @@ class ClientController extends Controller
             $res->success($user);
         } catch (\Exception $exception) {
              if(env('APP_DEBUG')){
-                $res->fail($exception->message);
+                $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
         }

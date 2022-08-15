@@ -49,8 +49,9 @@ Broadcast::channel('.supplier.command.{supplier_id}', function ($supplier_id) {
         return $supplier_id;
     }
 });
-Broadcast::channel('.client.command.{client_id}', function ($client_id) {
-    if(Auth::check()){
-        return $client_id;
+
+Broadcast::channel('.admin.{admin_id}', function ($admin_id) {
+    if(Auth::check()){ // verify  role
+        return $admin_id;
     }
 });

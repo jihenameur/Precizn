@@ -2,7 +2,7 @@
 
 namespace App\Jobs;
 
-use App\Events\ClientVerifyCommandEvent;
+use App\Events\Admin\ClientVerifyCommandEvent;
 use App\Models\Client;
 use App\Models\Command;
 use App\Models\Supplier;

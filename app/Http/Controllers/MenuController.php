@@ -55,7 +55,7 @@ class MenuController extends Controller
             $res->success($menu);
         } catch (\Exception $exception) {
              if(env('APP_DEBUG')){
-                $res->fail($exception->message);
+                $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
         }
@@ -77,7 +77,7 @@ class MenuController extends Controller
             $res->success($products);
         } catch (\Exception $exception) {
              if(env('APP_DEBUG')){
-                $res->fail($exception->message);
+                $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
         }
@@ -97,7 +97,7 @@ class MenuController extends Controller
             $res->success($menu);
         } catch (\Exception $exception) {
              if(env('APP_DEBUG')){
-                $res->fail($exception->message);
+                $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
         }
@@ -138,7 +138,7 @@ class MenuController extends Controller
             $res->success($menu);
         } catch (\Exception $exception) {
              if(env('APP_DEBUG')){
-                $res->fail($exception->message);
+                $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
         }
@@ -159,7 +159,7 @@ class MenuController extends Controller
             $res->success("Deleted");
         } catch (\Exception $exception) {
              if(env('APP_DEBUG')){
-                $res->fail($exception->message);
+                $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
         }

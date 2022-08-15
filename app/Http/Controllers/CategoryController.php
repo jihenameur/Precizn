@@ -79,7 +79,7 @@ class CategoryController extends Controller
             $res->success($children);
         } catch (\Exception $exception) {
              if(env('APP_DEBUG')){
-                $res->fail($exception->message);
+                $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
         }
@@ -99,7 +99,7 @@ class CategoryController extends Controller
             $res->success($parent);
         } catch (\Exception $exception) {
              if(env('APP_DEBUG')){
-                $res->fail($exception->message);
+                $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
         }
@@ -116,7 +116,7 @@ class CategoryController extends Controller
             $res->success($suppliers);
         } catch (\Exception $exception) {
              if(env('APP_DEBUG')){
-                $res->fail($exception->message);
+                $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
         }
@@ -135,7 +135,7 @@ class CategoryController extends Controller
             $res->success($suppliers);
         } catch (\Exception $exception) {
              if(env('APP_DEBUG')){
-                $res->fail($exception->message);
+                $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
         }
@@ -153,7 +153,7 @@ class CategoryController extends Controller
             $res->success($suppliers);
         } catch (\Exception $exception) {
              if(env('APP_DEBUG')){
-                $res->fail($exception->message);
+                $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
         }
@@ -167,7 +167,7 @@ class CategoryController extends Controller
             $res->success($category);
         } catch (\Exception $exception) {
              if(env('APP_DEBUG')){
-                $res->fail($exception->message);
+                $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
         }
@@ -193,7 +193,7 @@ class CategoryController extends Controller
             $res->success($categorys);
         } catch (\Exception $exception) {
              if(env('APP_DEBUG')){
-                $res->fail($exception->message);
+                $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
         }
@@ -208,7 +208,7 @@ class CategoryController extends Controller
             $res->success($categorys);
         } catch (\Exception $exception) {
              if(env('APP_DEBUG')){
-                $res->fail($exception->message);
+                $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
         }
@@ -286,7 +286,7 @@ class CategoryController extends Controller
             $res->success($response);
         } catch (\Exception $exception) {
              if(env('APP_DEBUG')){
-                $res->fail($exception->message);
+                $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
         }
@@ -314,7 +314,7 @@ class CategoryController extends Controller
             $res->success($category);
         } catch (\Exception $exception) {
              if(env('APP_DEBUG')){
-                $res->fail($exception->message);
+                $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
         }

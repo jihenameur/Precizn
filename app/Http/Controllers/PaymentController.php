@@ -37,7 +37,7 @@ class PaymentController extends Controller
 
         } catch (\Exception $exception) {
              if(env('APP_DEBUG')){
-                $res->fail($exception->message);
+                $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
         }
@@ -70,7 +70,7 @@ class PaymentController extends Controller
                             $payment->save();
                         }catch (\Exception $exception) {
                              if(env('APP_DEBUG')){
-                $res->fail($exception->message);
+                $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
                         }
@@ -83,7 +83,7 @@ class PaymentController extends Controller
                             $payment->save();
                         }catch (\Exception $exception) {
                              if(env('APP_DEBUG')){
-                $res->fail($exception->message);
+                $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
                         }
@@ -120,7 +120,7 @@ class PaymentController extends Controller
 
         }catch (\Exception $exception) {
              if(env('APP_DEBUG')){
-                $res->fail($exception->message);
+                $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
         }

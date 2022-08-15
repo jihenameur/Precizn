@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Events;
+namespace App\Events\Admin;
 
 use App\Models\Admin;
+use App\Models\Command;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
@@ -11,18 +12,19 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class AdminVerifyCommandEvent implements ShouldBroadcast
+class AdminCommandNotAssignedEvent implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
-
+    private $command;
     private $admin;
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct(Admin $admin)
+    public function __construct(Admin $admin, Command $command)
     {
+        $this->command = $command;
         $this->admin = $admin;
     }
 
@@ -33,6 +35,19 @@ class AdminVerifyCommandEvent implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('.verify.command.'.$this->admin->id);
+        return new PrivateChannel('.admin.'.$this->admin->id);
+    }
+
+    public function broadcastAs()
+    {
+        return 'action';
+    }
+
+    public function broadcastWith()
+    {
+        return [
+            "type_event" => "COMMAND_NOT_ASSIGNED",
+            "command" => $this->command,
+        ];
     }
 }
