@@ -72,7 +72,7 @@ class SupplierController extends Controller
             if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
             {
                 // return $validator->errors();
-                throw new Exception($validator->errors());
+                return($validator->errors());
             }
             $role_id = Role::where('short_name', config('roles.backadmin.supplier'))->first()->id;
 
@@ -141,7 +141,10 @@ class SupplierController extends Controller
             $res->success($response);
             SendNewSuuplierNotification::dispatch($supplier);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->message);
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -163,7 +166,7 @@ class SupplierController extends Controller
             if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
             {
                 // return $validator->errors();
-                throw new Exception($validator->errors());
+                return($validator->errors());
             }
             $supplier = Supplier::find(Auth::user()->userable_id);
             if ($request->type == "principal") {
@@ -203,7 +206,10 @@ class SupplierController extends Controller
 
             $res->success($response);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->message);
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -247,7 +253,10 @@ class SupplierController extends Controller
             }
             $res->success($suppliers);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->message);
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -271,7 +280,10 @@ class SupplierController extends Controller
             $supplier = Supplier::where('id', '=', $id)->first();
             $res->success($supplier);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->message);
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -309,7 +321,10 @@ class SupplierController extends Controller
                 'suppliers' => SupplierResource::collection($suppliers),
             ]);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->message);
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -384,7 +399,10 @@ class SupplierController extends Controller
 
             $res->success($response);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->message);
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -408,7 +426,7 @@ class SupplierController extends Controller
             ]); // create the validations
             if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
             {
-                throw new Exception($validator->errors());
+                return($validator->errors());
             }
             $supplier = Supplier::find($id);
             $user = User::where('userable_id', $id)
@@ -427,7 +445,10 @@ class SupplierController extends Controller
 
             $res->success($supplier);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->message);
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -455,7 +476,10 @@ class SupplierController extends Controller
 
             $res->success($supplier);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->message);
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -479,7 +503,10 @@ class SupplierController extends Controller
             ];
             $res->success($clt);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->message);
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -498,7 +525,7 @@ class SupplierController extends Controller
             if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
             {
                 // return $validator->errors();
-                throw new Exception($validator->errors());
+                return($validator->errors());
             }
             $user = User::where('tel', $request->tel)->first();
             if ($request['code'] == $user->smscode) {
@@ -531,7 +558,10 @@ class SupplierController extends Controller
                 $res->fail('Code not verified');
             }
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->message);
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
 
@@ -567,7 +597,10 @@ class SupplierController extends Controller
 
             $res->success($user);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->message);
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -604,7 +637,10 @@ class SupplierController extends Controller
 
             -$res->success($command);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->message);
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -636,7 +672,10 @@ class SupplierController extends Controller
 
             $res->success("Deleted");
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->message);
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }

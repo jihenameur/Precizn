@@ -17,7 +17,11 @@ class Product extends Model
         'default_price',
         'private',
         'min_period_time',
-        'max_period_time'
+        'max_period_time',
+        'unit_type',
+        'unit_limit',
+        'weight',
+        'dimension'
     ];
     protected $with = [
         //  'suppliers'

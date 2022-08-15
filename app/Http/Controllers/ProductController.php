@@ -42,9 +42,6 @@ class ProductController extends Controller
                 'massage' => 'unauthorized'
             ], 403);
         }
-
-
-        //dd(json_decode($request->typeProduct));
         $res = new Result();
         try {
             $validator = Validator::make($request->all(), [
@@ -52,12 +49,10 @@ class ProductController extends Controller
                 'default_price' => 'required|numeric',
                 'image.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
                 'unit_type' => 'required|in:Piece,Kg,L,M'
-
-
             ]); // create the validations
             if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
             {
-                throw new Exception($validator->errors());
+                return($validator->errors());
             } else {
                 $images = [];
 
@@ -115,7 +110,10 @@ class ProductController extends Controller
             }
             $res->success($product);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->message);
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -137,7 +135,7 @@ class ProductController extends Controller
             ]); // create the validations
             if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
             {
-                throw new Exception($validator->errors());
+               return ($validator->errors());
             }
             if ($request->product_id != null) {
                 $product = Product::find($request->product_id);
@@ -220,7 +218,10 @@ class ProductController extends Controller
                 $res->success($product);
             }
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->message);
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -231,6 +232,16 @@ class ProductController extends Controller
                 'success' => false,
                 'massage' => 'unauthorized'
             ], 403);
+        }
+        $validator = Validator::make($request->all(), [
+            'product_id' => 'required',
+            'supplier_id' => 'required',
+            'price' => 'required'
+
+        ]); // create the validations
+        if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
+        {
+           return ($validator->errors());
         }
         $res = new Result();
         try {
@@ -247,7 +258,10 @@ class ProductController extends Controller
 
             $res->success($product);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->message);
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -298,7 +312,10 @@ class ProductController extends Controller
                 'products' => ProductResource::collection($products->items()),
             ]);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->message);
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -321,7 +338,10 @@ class ProductController extends Controller
             ];
             $res->success($prd);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->message);
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -345,7 +365,10 @@ class ProductController extends Controller
                 'products' => ProductResource::collection($products->items()),
             ]);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->message);
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -380,7 +403,10 @@ class ProductController extends Controller
                 'products' => ProductResource::collection($products),
             ]);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->message);
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -402,7 +428,10 @@ class ProductController extends Controller
                 ->paginate($per_page);
             $res->success($product);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->message);
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -445,7 +474,10 @@ class ProductController extends Controller
 
             $res->success($products);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->message);
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -457,6 +489,15 @@ class ProductController extends Controller
                 'success' => false,
                 'massage' => 'unauthorized'
             ], 403);
+        }
+        $validator = Validator::make($request->all(), [
+            'idSupplier' => 'required',
+            'id_tag' => 'required'
+
+        ]); // create the validations
+        if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
+        {
+           return ($validator->errors());
         }
         $res = new Result();
         $dt = new DateTime();
@@ -509,7 +550,10 @@ class ProductController extends Controller
 
             $res->success($paginate->paginate($products, $per_page));
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->message);
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -521,6 +565,14 @@ class ProductController extends Controller
                 'massage' => 'unauthorized'
             ], 403);
         }
+        $validator = Validator::make($request->all(), [
+            'available' => 'required'
+
+        ]); // create the validations
+        if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
+        {
+           return ($validator->errors());
+        }
         $res = new Result();
         try {
             $product = Product::find($id);
@@ -529,7 +581,10 @@ class ProductController extends Controller
 
             $res->success($product);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->message);
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -563,7 +618,7 @@ class ProductController extends Controller
             ]); // create the validations
             if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
             {
-                throw new Exception($validator->errors());
+                return ($validator->errors());
             }
             $images = [];
             if ($request->file('image')) {
@@ -622,7 +677,10 @@ class ProductController extends Controller
             }
             $res->success($product);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->message);
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -649,7 +707,10 @@ class ProductController extends Controller
 
             $res->success("Deleted");
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->message);
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }

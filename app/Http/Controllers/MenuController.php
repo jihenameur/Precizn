@@ -32,17 +32,11 @@ class MenuController extends Controller
         $res = new Result();
         try {
             $validator = Validator::make($request->all(), [
-                'name' => 'required',
-                // 'price' => 'required',
-
+                'name' => 'required'
             ]); // create the validations
             if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
             {
-                //return $validator->errors();
-                throw new Exception($validator->errors());
-
-                //return back()->withInput()->withErrors($validator);
-                // validation failed redirect back to form
+                return ($validator->errors());
 
             }
 
@@ -60,7 +54,10 @@ class MenuController extends Controller
 
             $res->success($menu);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->message);
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -79,7 +76,10 @@ class MenuController extends Controller
             })->paginate($per_page);
             $res->success($products);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->message);
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -96,7 +96,10 @@ class MenuController extends Controller
             $menu = Menu::find($id);
             $res->success($menu);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->message);
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -134,7 +137,10 @@ class MenuController extends Controller
 
             $res->success($menu);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->message);
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -152,7 +158,10 @@ class MenuController extends Controller
             $menu->delete();
             $res->success("Deleted");
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->message);
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
