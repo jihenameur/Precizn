@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Redis;
 class AssignDeliveryCommand extends Command
 {
     private $redis_helper;
+    public $i;
     /**
      * The name and signature of the console command.
      *
@@ -36,6 +37,7 @@ class AssignDeliveryCommand extends Command
     {
         parent::__construct();
         $this->redis_helper = new RedisHelper();
+        $this->i = 0;
     }
 
     /**
@@ -77,11 +79,29 @@ class AssignDeliveryCommand extends Command
 
     }
 
-    private function CalculateDistance($from,$to)
+    private function CalculateDistance($deliveries, $supplier)
     {
-        // feature call google maps API
+        $from_latlong = '';
+        $to_latlong = $supplier->lat . "," . $supplier->long;
 
-        return 1;
+        foreach ($deliveries as $delivery) {
+            $from_latlong = $from_latlong . ($delivery->lat . "," . $delivery->long. "|");
+        }
+
+        $distance_data = file_get_contents(
+            'https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=' . $from_latlong . '&destinations=' . $to_latlong . '&key=AIzaSyCYRBZBDovYe4GKiOH2PRyDtTWO6ymAZXA'
+        );
+        $distance_arr = json_decode($distance_data);
+        $distances = array();
+        foreach ($distance_arr->rows as $key => $element) {
+            $distance = $element->elements[0]->distance->text;
+            $distance = preg_replace("/[^0-9.]/", "",  $distance);
+            $distance *= 1.609344;
+            $distance = number_format($distance, 1, '.', '');
+            array_push($distances, $distance);
+
+        }
+        return $distances;
     }
 
     private function ComputeTrialsLimit($command)
@@ -114,11 +134,13 @@ class AssignDeliveryCommand extends Command
     private function GetFreeDeliveriesList($command, $pre_assigned)
     {
         $supplier = Supplier::findOrFail($command->supplier_id);
-        $deliveries = Delivery::where('available',1)->where('cycle','OFF')->whereNotIn('id',$pre_assigned ? ($this->redis_helper->getAllPreAssignedDeliveriesToCommand($command->id) ?? []) : [])->get()->map(function ($item) use ($supplier){
-            return (object)[
+        $deliveries = Delivery::where('available',1)->where('cycle','OFF')->whereNotIn('id',$pre_assigned ? ($this->redis_helper->getAllPreAssignedDeliveriesToCommand($command->id) ?? []) : [])->get();
+        $distances = $this->CalculateDistance($deliveries,$supplier);
+        $deliveries->map(function ($item) use ($distances){
+            $bucket =  (object)[
                 "model" => $item,
                 "id" => $item->id,
-                "distance" => $this->CalculateDistance(["lat"=> $item->lat, "long"=> $item->long],["lat"=> $supplier->lat, "long"=> $supplier->long])
+                "distance" => $distances[$this->i]
             ] ;
         });
 
