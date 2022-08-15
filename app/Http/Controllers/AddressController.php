@@ -46,12 +46,8 @@ class AddressController extends Controller
             ]); // create the validations
             if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
             {
-                throw new Exception($validator->errors());
-
-                //return back()->withInput()->withErrors($validator);
-                // validation failed redirect back to form
-
-            } else {
+                return $validator->errors();
+            }
                 $latlong = $this->locationController->GetLocationWithAdresse($request->street, $request->postcode, $request->city, $request->region);
                 if (is_array($latlong) && $latlong[0]['long'] > 0) {
                     $request['lat'] = $latlong[0]['lat'];
@@ -75,10 +71,13 @@ class AddressController extends Controller
                 $addresse->lat = $request['lat'];
                 $addresse->long = $request['long'];
                 $addresse->save();
-            }
-            $res->success($addresse);
+
+        $res->success($addresse);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->getMessage());
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -133,7 +132,10 @@ class AddressController extends Controller
             $address = Address::where('user_id', $user->id)->get();
             $res->success($address);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->getMessage());
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -180,12 +182,12 @@ class AddressController extends Controller
             ]); // create the validations
             if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
             {
-                throw new Exception($validator->errors());
+                return ($validator->errors());
 
                 //return back()->withInput()->withErrors($validator);
                 // validation failed redirect back to form
 
-            } else {
+            }
                 $latlong = $this->locationController->GetLocationWithAdresse($request->street, $request->postcode, $request->city, $request->region);
                 if (is_array($latlong) && $latlong[0]['long'] > 0) {
                     $request['lat'] = $latlong[0]['lat'];
@@ -197,10 +199,13 @@ class AddressController extends Controller
                 $adresse->fill($allRequestAttributes);
 
                 $adresse->update();
-            }
+
             $res->success($adresse);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->getMessage());
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }

@@ -43,12 +43,11 @@ class CommandController extends Controller
         try {
             $validator = Validator::make($request->all(), [
                 'date' => 'required',
-                // 'supplier_id' => 'required',
 
             ]); // create the validations
             if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
             {
-                throw new Exception($validator->errors());
+                return $validator->errors();
             }
 
             $command = new Command();
@@ -134,7 +133,10 @@ class CommandController extends Controller
 
             $res->success($command);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->getMessage());
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -184,7 +186,10 @@ class CommandController extends Controller
 
             $res->success($commands);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->getMessage());
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -211,7 +216,10 @@ class CommandController extends Controller
 
             $res->success($commands);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->getMessage());
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -225,7 +233,10 @@ class CommandController extends Controller
             //return $panier;
             $res->success($panier);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->getMessage());
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -236,7 +247,10 @@ class CommandController extends Controller
             $command = Command::find($id);
             $res->success($command);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->getMessage());
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -297,11 +311,7 @@ class CommandController extends Controller
             ]); // create the validations
             if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
             {
-                throw new Exception($validator->errors());
-
-                // return back()->withInput()->withErrors($validator);
-                // validation failed redirect back to form
-
+                return $validator->errors();
             }
             $client = Client::find($request->client_id);
             $command->client_id = $client->id;
@@ -336,7 +346,10 @@ class CommandController extends Controller
             //return $command;
             $res->success($command);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->getMessage());
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -348,7 +361,7 @@ class CommandController extends Controller
         ]); // create the validations
         if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
         {
-            throw new Exception($validator->errors());
+            return $validator->errors();
         }
         $res = new Result();
         try {
@@ -359,21 +372,35 @@ class CommandController extends Controller
             // return $command;
             $res->success($command);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->getMessage());
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
-    public function CommandAssignedAdmin($id)
+    public function CommandAssignedAdmin(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+            'command_id' => 'required'
+
+        ]); // create the validations
+        if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
+        {
+            return $validator->errors();
+        }
         $res = new Result();
         try {
             $admin = Admin::where('id', auth()->user()->userable_id)->first();
-            $command = Command::find($id);
+            $command = Command::find($request->command_id);
             $command->admin_id=$admin->id;
             $command->update();
             $res->success($command);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->getMessage());
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -395,7 +422,10 @@ class CommandController extends Controller
             $command->delete();
             $res->success($command);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->getMessage());
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }

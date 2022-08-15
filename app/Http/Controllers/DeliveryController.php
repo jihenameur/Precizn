@@ -57,14 +57,20 @@ class DeliveryController extends Controller
         try {
             $validator = Validator::make($request->all(), [
                 'firstName' => 'required',
+                'lastName' => 'required',
+                'vehicle' => 'required',
+                'Mark_vehicle' => 'required',
+                'start_worktime' => 'required',
+                'end_worktime' => 'required',
                 'email' => 'required|email|unique:users,email',   // required and email format validation
                 'password' => 'required|min:8', // required and number field validation
                 'confirm_password' => 'required|same:password',
+                'tel' => 'required',
 
             ]); // create the validations
             if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
             {
-                throw new Exception($validator->errors());
+                return $validator->errors();
             }
             $role_id = Role::where('short_name', config('roles.backadmin.delivery'))->first();
             $latlong = $this->locationController->GetLocationWithAdresse($request->street, $request->postcode, $request->city, $request->region);
@@ -97,7 +103,10 @@ class DeliveryController extends Controller
 
             $res->success($delivery);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->getMessage());
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -117,10 +126,7 @@ class DeliveryController extends Controller
             if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
             {
                 // return $validator->errors();
-                throw new Exception($validator->errors());
-
-                //return back()->withInput()->withErrors($validator);
-                // validation failed redirect back to form
+                return $validator->errors();
             }
             $delivery = Delivery::find(Auth::user()->userable_id);
             if ($request->file('image')) {
@@ -145,7 +151,10 @@ class DeliveryController extends Controller
 
             $res->success($response);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->getMessage());
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -164,7 +173,7 @@ class DeliveryController extends Controller
             ]); // create the validations
             if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
             {
-                throw new Exception($validator->errors());
+                return $validator->errors();
             }
             $delivery = Delivery::find(Auth::user()->userable_id);
             if ($request->file('image')) {
@@ -192,7 +201,10 @@ class DeliveryController extends Controller
 
             $res->success($response);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->getMessage());
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -220,7 +232,7 @@ class DeliveryController extends Controller
             $orderByType = "ASC";
             if ($request->has('orderBy') && $request->orderBy != null) {
                 $this->validate($request, [
-                    'orderBy' => 'required|in:firstName,lastName,region' // complete the akak list
+                    'orderBy' => 'required|in:firstName,lastName,region,created_at' // complete the akak list
                 ]);
                 $orderBy = $request->orderBy;
             }
@@ -252,7 +264,10 @@ class DeliveryController extends Controller
 
             $res->success($delivery);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->getMessage());
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -271,7 +286,10 @@ class DeliveryController extends Controller
 
             $res->success($delivery);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->getMessage());
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -307,7 +325,10 @@ class DeliveryController extends Controller
                 ->get();
             $res->success($delivery);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->getMessage());
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -325,6 +346,19 @@ class DeliveryController extends Controller
                 'success' => false,
                 'massage' => 'unauthorized'
             ], 403);
+        }
+        $validator = Validator::make($request->all(), [
+            'firstName' => 'required',
+            'lastName' => 'required',
+            'vehicle' => 'required',
+            'Mark_vehicle' => 'required',
+            'start_worktime' => 'required',
+            'end_worktime' => 'required'
+
+        ]); // create the validations
+        if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
+        {
+            return $validator->errors();
         }
         $res = new Result();
         try {
@@ -347,7 +381,10 @@ class DeliveryController extends Controller
 
             $res->success($delivery);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->getMessage());
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -374,7 +411,10 @@ class DeliveryController extends Controller
             $user->delete();
             $res->success("Deleted");
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->getMessage());
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -386,20 +426,38 @@ class DeliveryController extends Controller
                 'massage' => 'unauthorized'
             ], 403);
         }
-        $delivery = Delivery::find($request['delivery_id']);
-        $command = Command::find($request['command_id']);
-        $delivReq = RequestDelivery::where('delivery_id', $request['delivery_id'])
-            ->where('command_id', $request['command_id'])
-            ->first();
-        $command->delivery_id = $delivery->id;
-        $command->update();
-      //  $delivReq->accept = 1;
-       // $delivReq->update();
-       // $delivery->available = 0;
-        Redis::set('available'.$delivery->id,0);
-        $delivery->update();
-        dispatch(new \App\Jobs\Admin\ChangeDeliveryStatusJob($delivery, Redis::get('available'.$delivery->id)));
-        return true;
+
+        $validator = Validator::make($request->all(), [
+            'delivery_id' => 'required',
+            'command_id' => 'required'
+        ]); // create the validations
+        if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
+        {
+            return $validator->errors();
+        }
+        $res = new Result();
+        try {
+            $delivery = Delivery::find($request['delivery_id']);
+            $command = Command::find($request['command_id']);
+            $delivReq = RequestDelivery::where('delivery_id', $request['delivery_id'])
+                ->where('command_id', $request['command_id'])
+                ->first();
+            $command->delivery_id = $delivery->id;
+            $command->update();
+            $delivReq->accept = 1;
+            $delivReq->update();
+            $delivery->available = 0;
+            $delivery->update();
+            $res->success("command accepted");
+
+        } catch (\Exception $exception) {
+             if(env('APP_DEBUG')){
+                $res->fail($exception->getMessage());
+            }
+            $res->fail('erreur serveur 500');
+        }
+        return new JsonResponse($res, $res->code);
+
     }
     public function notifCommand(Request $request)
     {
@@ -435,32 +493,60 @@ class DeliveryController extends Controller
             // return 'No Delivery disp';
             $res->fail('No Delivery disp');
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->getMessage());
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
     public function rejectCommand(Request $request)
     {
-        $delivery = Delivery::find($request['delivery_id']);
-        $command = Command::find($request['command_id']);
-        $delivReq = RequestDelivery::where('delivery_id', $request['delivery_id'])
-            ->where('command_id', $request['command_id'])
-            ->get();
+        $validator = Validator::make($request->all(), [
+            'delivery_id' => 'required',
+            'command_id' => 'required'
+        ]); // create the validations
+        if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
+        {
+            return $validator->errors();
+        }
+        $res = new Result();
+        try {
+            $delivery = Delivery::find($request['delivery_id']);
+            $command = Command::find($request['command_id']);
+            $delivReq = RequestDelivery::where('delivery_id', $request['delivery_id'])
+                ->where('command_id', $request['command_id'])
+                ->get();
 
-        $command->delivery_id = $delivery->id;
-        $command->update();
-        $delivReq[0]->accept = 0;
-        $delivReq[0]->update();
+            $command->delivery_id = $delivery->id;
+            $command->update();
+            $delivReq[0]->accept = 0;
+            $delivReq[0]->update();
+            $res->success("command rejected");
 
-        return true;
+        } catch (\Exception $exception) {
+             if(env('APP_DEBUG')){
+                $res->fail($exception->getMessage());
+            }
+            $res->fail('erreur serveur 500');
+        }
+        return new JsonResponse($res, $res->code);
     }
     public function ListCommandDelivered($per_page, Request $request)
     {
+
         if (!Auth::user()->isAuthorized(['admin', 'delivery'])) {
             return response()->json([
                 'success' => false,
                 'massage' => 'unauthorized'
             ], 403);
+        }
+        $validator = Validator::make($request->all(), [
+            'delivery_id' => 'required'
+        ]); // create the validations
+        if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
+        {
+            return $validator->errors();
         }
         $res = new Result();
         try {
@@ -471,7 +557,10 @@ class DeliveryController extends Controller
                 ->paginate($per_page);
             $res->success($commands);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->getMessage());
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -483,6 +572,13 @@ class DeliveryController extends Controller
                 'massage' => 'unauthorized'
             ], 403);
         }
+        $validator = Validator::make($request->all(), [
+            'delivery_id' => 'required'
+        ]); // create the validations
+        if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
+        {
+            return $validator->errors();
+        }
         $res = new Result();
         try {
             $commands = Command::whereHas('requestDelivery', function ($q) use ($request) {
@@ -492,7 +588,10 @@ class DeliveryController extends Controller
             })->paginate($per_page);
             $res->success($commands);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->getMessage());
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -503,6 +602,15 @@ class DeliveryController extends Controller
                 'success' => false,
                 'massage' => 'unauthorized'
             ], 403);
+        }
+        $validator = Validator::make($request->all(), [
+            'delivery_id' => 'required',
+            'date' => 'required|date'
+
+        ]); // create the validations
+        if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
+        {
+            return $validator->errors();
         }
         $res = new Result();
         try {
@@ -517,7 +625,10 @@ class DeliveryController extends Controller
             // return $daygain;
             $res->success($daygain);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->getMessage());
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -529,6 +640,17 @@ class DeliveryController extends Controller
                 'massage' => 'unauthorized'
             ], 403);
         }
+        $validator = Validator::make($request->all(), [
+            'delivery_id' => 'required',
+            'command_id' => 'required'
+
+        ]); // create the validations
+        if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
+        {
+            return $validator->errors();
+        }
+        $res = new Result();
+        try {
         $delivery = Delivery::find($request['delivery_id']);
         $command = Command::find($request['command_id']);
         $command->status = 2;
@@ -536,8 +658,13 @@ class DeliveryController extends Controller
         $delivery->available = 1;
         $delivery->update();
 
-        return true;
-    }
+        $res->success("command delivered");
+    } catch (\Exception $exception) {
+         if(env('APP_DEBUG')){
+                $res->fail($exception->getMessage());
+            }
+            $res->fail('erreur serveur 500');
+    }    }
     public function generateInvoicePDF()
     {
         $pdf = PDF::loadView('myPDF');
@@ -550,6 +677,15 @@ class DeliveryController extends Controller
                 'success' => false,
                 'massage' => 'unauthorized'
             ], 403);
+        }
+        $validator = Validator::make($request->all(), [
+            'action' => 'required',
+            'delivery_id' => 'required'
+
+        ]); // create the validations
+        if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
+        {
+            return $validator->errors();
         }
         $res = new Result();
         try {
@@ -587,7 +723,10 @@ class DeliveryController extends Controller
             }
             $res->success($hoursWork);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->getMessage());
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -599,6 +738,16 @@ class DeliveryController extends Controller
                 'success' => false,
                 'massage' => 'unauthorized'
             ], 403);
+        }
+        $validator = Validator::make($request->all(), [
+            'from' => 'required|date',
+            'to' => 'required|date',
+            'delivery_id' => 'required',
+
+        ]); // create the validations
+        if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
+        {
+            return $validator->errors();
         }
         $res = new Result();
         try {
@@ -656,12 +805,24 @@ class DeliveryController extends Controller
             $stat = ["gainsDay" => $gain, "enLigne" => $sumTime, "courses" => count($commands), "priceCourses" => $totalgain, "tips" => $tips, "total" => $totalgain + $tips];
             $res->success($stat);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->getMessage());
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
     public function sendDeliveryPosition(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+            'long' => 'required',
+            'lat' => 'required'
+
+        ]); // create the validations
+        if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
+        {
+            return $validator->errors();
+        }
         $delivery =  Auth::user()->userable;
         $value = Redis::set('deliveryPostion' . $delivery->id, json_encode([
             'id' => $delivery->id,
@@ -691,7 +852,7 @@ class DeliveryController extends Controller
         ]); // create the validations
         if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
         {
-            throw new Exception($validator->errors());
+            return $validator->errors();
         }
         $res = new Result();
         try {
@@ -704,7 +865,10 @@ class DeliveryController extends Controller
 
             $res->success($user);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->getMessage());
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }

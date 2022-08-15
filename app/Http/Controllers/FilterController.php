@@ -8,6 +8,8 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rules\In;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Auth;
 
 class FilterController extends Controller
 {
@@ -20,6 +22,7 @@ class FilterController extends Controller
     //get suppliers
     public function FilterFournisseur(Request $request)
     {
+
         $res = new Result();
         try {
             $Result = [];
@@ -95,7 +98,10 @@ class FilterController extends Controller
             //return $SupplierProche;
             $res->success($SupplierProche);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->getMessage());
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }

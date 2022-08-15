@@ -19,12 +19,14 @@ class DeliveryRatingController extends Controller
         $res = new Result();
         try {
             $validator = Validator::make($request->all(), [
-                'rating' => 'required'
+                'rating' => 'required',
+                'client_id' => 'required',
+                'delivery_id' => 'required'
 
             ]); // create the validations
             if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
             {
-                throw new Exception($validator->errors());
+                return ($validator->errors());
 
             }
             $user =  Auth::user();
@@ -46,7 +48,10 @@ class DeliveryRatingController extends Controller
             $delivery->update();
             $res->success($deliveryRating);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->getMessage());
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }

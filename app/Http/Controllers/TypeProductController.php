@@ -37,7 +37,7 @@ class TypeProductController extends Controller
             ]); // create the validations
             if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
             {
-                throw new Exception($validator->errors());
+                return($validator->errors());
 
                 //return back()->withInput()->withErrors($validator);
                 // validation failed redirect back to form
@@ -66,7 +66,10 @@ class TypeProductController extends Controller
 
             $res->success($response);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->getMessage());
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -112,7 +115,10 @@ class TypeProductController extends Controller
 
             $res->success($response);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->getMessage());
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -160,7 +166,10 @@ class TypeProductController extends Controller
             }
             $res->success($TypeProduct);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->getMessage());
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -178,7 +187,10 @@ class TypeProductController extends Controller
 
             $res->success($TypeProduct);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->getMessage());
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }

@@ -123,7 +123,7 @@ class SocialAuthController extends Controller
            }
 
         }catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+            $res->fail('erreur serveur 500');
             return new JsonResponse($res, $res->code);
         }
     }

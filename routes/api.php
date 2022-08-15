@@ -66,6 +66,7 @@ Route::post('addClient', [ClientController::class, 'create']);
 Route::post('addDelivery', [DeliveryController::class, 'create']);
 Route::post('addSuperAdmin', [AdminController::class, 'create']);
 Route::get('allCategoryParent', [CategoryController::class, 'allCategoryParent']);
+Route::get('getCategory/{per_page}', [CategoryController::class, 'all']);
 
 Route::group(['middleware' => ['jwt.verify']], function () {
     Route::get('getAllSupplier/{per_page}', [SupplierController::class, 'all']);
@@ -107,7 +108,6 @@ Route::group(['middleware' => ['jwt.verify']], function () {
     Route::get('getcategorybyid/{id}', [CategoryController::class, 'categorybyid']);
 
     Route::get('getCategorysupplier/{id}/{per_page}', [CategoryController::class, 'getCategorysupplier']);
-    Route::get('getCategory/{per_page}', [CategoryController::class, 'all']);
     Route::post('updateCategory/{id}', [CategoryController::class, 'update']);
     Route::delete('deleteCategory/{id}', [CategoryController::class, 'delete']);
     Route::get('getCategorysupplierDelivery/{id}/{per_page}', [CategoryController::class, 'getCategorysupplierDelivery']);
@@ -181,7 +181,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
     Route::get('getAllDelivery/{per_page}', [DeliveryController::class, 'all']);
     Route::post('updateDelivery/{id}', [DeliveryController::class, 'update']);
     Route::delete('deleteDelivery/{id}', [DeliveryController::class, 'delete']);
-    Route::get('acceptCommand', [DeliveryController::class, 'acceptCommand']);
+    Route::post('acceptCommand', [DeliveryController::class, 'acceptCommand']);
     Route::get('notifCommand', [DeliveryController::class, 'notifCommand']);
     Route::get('rejectCommand', [DeliveryController::class, 'rejectCommand']);
     Route::get('ListCommandDelivered/{per_page}', [DeliveryController::class, 'ListCommandDelivered']);
@@ -206,9 +206,11 @@ Route::group(['middleware' => ['jwt.verify']], function () {
      */
     Route::post('addadmin', [AdminController::class, 'createAdmin']);
     Route::put('updateAdmin/{id}', [AdminController::class, 'updateAdmin']);
-    Route::get('getByid/{id}', [AdminController::class, 'getByid']);
+    Route::get('alladmin/{per_page}', [AdminController::class, 'all']);
     Route::delete('deleteAdmin/{id}', [AdminController::class, 'deleteAdmin']);
     Route::post('confirmemailsupplier/{id}', [AdminController::class, 'ConfirmEmailSupplier']);
+    Route::get('getByid/{id}', [AdminController::class, 'getByid']);
+    Route::post('updateadmin/{id}', [AdminController::class, 'updateAdmin']);
 
     /**
      * public Notification
@@ -234,7 +236,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
     Route::delete('commandStatus/{id}', [CommandController::class, 'commandStatus']);
     Route::get('getCommandPanier/{id}', [CommandController::class, 'getCommandPanier']);
     Route::get('getCommand/{id}', [CommandController::class, 'getCommand']);
-    Route::post('commandassignedadmin/{id}', [CommandController::class, 'CommandAssignedAdmin']);
+    Route::post('commandassignedadmin', [CommandController::class, 'CommandAssignedAdmin']);
 
     /**
      * public Coupon
@@ -326,7 +328,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
     // });
     Route::get('getAllClient', [ClientController::class, 'all']);
     Route::post('addCommand', [CommandController::class, 'create']);
-    Route::get('index', [ClientController::class, 'index']);
+    Route::post('index', [ClientController::class, 'index']);
     Route::post('updateClient/{id}', [ClientController::class, 'update']);
     /*
          * payement endpoints
