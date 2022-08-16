@@ -39,7 +39,7 @@ class SeederAdmin extends Seeder
             [
                 'gender' => '1',
                 'password' => Hash::make($this->password),
-                'email' => 'admin@gmail.com',
+                'email' => 'admin@thunder-express.com',
                 'firstName'=>'admin',
                 'lastName'=>'admin',
                 'tel' => '+21626333445'
