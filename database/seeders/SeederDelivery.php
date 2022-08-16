@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Client;
 use App\Models\Delivery;
 use App\Models\Role;
 use App\Models\User;
@@ -11,71 +12,60 @@ use Illuminate\Support\Facades\Hash;
 
 class SeederDelivery extends Seeder
 {
-    protected $password = '12345678';
+    protected $password = 'password';
+    public $postion = [
+        ['lat' => 35.87114686073671, 'long' => 10.603245858720085],
+        ['lat' => 35.8588004603057, 'long' => 10.602687959208176],
+        ['lat' => 35.850278583516896, 'long' => 10.61637795400609],
+        ['lat' => 35.84318211773907, 'long' => 10.584963922143647],
+        ['lat' => 35.83114450339894, 'long' => 10.628308419670157],
+        ['lat' => 35.82300242262979, 'long' => 10.636161927690619],
+        ['lat' => 35.8356327290493, 'long' => 10.637234811297786],
+        ['lat' => 35.84036422713682, 'long' => 10.630582932958056],
+        ['lat' => 35.857200504196165, 'long' => 10.615219239758517],
+        ['lat' => 35.85956564528116, 'long' => 10.60406125020781],
+    ];
 
-     /**
+    /**
      * Run the database seeds.
      *
      * @return void
      */
     public function run()
     {
-        $deliverys = $this->getDeliveryList();
-        $this->createDelivery($deliverys);
-    }
 
-    /**
-     * Get available application deliverys list
-     *
-     * @return string[][]
-     */
-    private function getDeliveryList(): array
-    {
-        $deliverys = [
+        $faker = \Faker\Factory::create();
+        $password = 'password';
+        for ($i = 0; $i < 10; $i++) {
+            $user = new User();
+            $user->email = $faker->email();
+            $user->tel = $faker->numerify('+216########');
+            $user->password = Hash::make($this->password);
+            $user->status_id = 1;
 
-            [
+            $delivery = new Delivery();
+            $delivery->firstName = $faker->firstName();
+            $delivery->lastName = $faker->lastName();
+            $delivery->vehicle = rand(0, 2);
+            $delivery->available = rand(0, 1);
+            $delivery->street = $faker->streetName();
+            $delivery->region = $faker->country();
+            $delivery->postcode = $faker->postcode();
+            $delivery->city = $faker->city();
+            $delivery->lat = $this->postion[$i]['lat'];
+            $delivery->long = $this->postion[$i]['long'];
+            $delivery->Mark_vehicle = $faker->company();
 
-             'lat'=>35.886399,
-             'long'=>10.5915072,
-            'available'=>1,
-            'email'=> 'devilry123@gmail.com',
-            'password'=>Hash::make($this->password),
-            'vehicle'=>1],
-            [
+            $delivery->start_worktime = date('H:i:s', rand(28800,54000));
+            $delivery->end_worktime = date('H:i:s', rand(1,54000));
+            $delivery->salary = rand(0, 500);
 
-                'lat'=>35.816399,
-                'long'=>10.5115072,
-                'available'=>1,
-                'email'=> 'devilry1234@gmail.com',
-                'password'=>Hash::make($this->password),
-                'vehicle'=>1],
-            [
-
-                'lat'=>35.806399,
-                'long'=>10.5015072,
-                'available'=>1,
-                'email'=> 'devilry1235@gmail.com',
-                'password'=>Hash::make($this->password),
-                'vehicle'=>1],
-        ];
-        return $deliverys;
-    }
-
-    /**
-     * Create delivery
-     *
-     * @param array $deliverys
-     */
-    private function createDelivery(array $deliverys): void
-    {
-        foreach ($deliverys as $delivery) {
-            $user =  User::create(Arr::except($delivery, [  'available','lat','long', 'vehicle']));
-            $deli =  Delivery::create(Arr::except($delivery, ['email', 'password'   ]));
-            $deli->user()->save($user);
-            $deli->save();
-            $role= Role::find(4);
+            $delivery->save();
+            $delivery->user()->save($user);
+            $role = Role::find(4);
             $user->roles()->attach($role);
-
         }
     }
+
+
 }

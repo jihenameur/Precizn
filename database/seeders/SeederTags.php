@@ -7,7 +7,7 @@ use Illuminate\Database\Seeder;
 
 class SeederTags extends Seeder
 {
-   /**
+    /**
      * Run the database seeds.
      *
      * @return void
@@ -51,7 +51,7 @@ class SeederTags extends Seeder
             ['name' => 'Malsouka… '],
             ['name' => 'Semoule '],
             ['name' => 'riz'],
-            ['name' => 'Couscous  '], 
+            ['name' => 'Couscous  '],
             ['name' => 'Orge… '],
             ['name' => 'Lentilles   '],
             ['name' => 'Maïs '],
@@ -79,14 +79,14 @@ class SeederTags extends Seeder
             ['name' => 'Arômes naturels (Eau de fleur orange et de rose…)'],
             ['name' => 'Sirops'],
             ['name' => 'Sauces de dessert'],
-            ['name' => 'Flocons d’avoines, barres et autres types de céréales.'],   
+            ['name' => 'Flocons d’avoines, barres et autres types de céréales.'],
             ['name' => 'Chamia, miel, confiture, beurre de cacahuète, et d’autres pâtes à tartiner…'],
             ['name' => 'Croissant, cake et brioche'],
             ['name' => 'Les pains et les biscottes.'],
             ['name' => 'Lait entier et demi écrémé'],
             ['name' => 'Lben, Raieb'],
             ['name' => 'Ricotta'],
-            ['name' => 'Beurre'],     
+            ['name' => 'Beurre'],
             ['name' => 'Yaourt à boire'],
             ['name' => 'Yaourt blancs'],
             ['name' => 'Yaourt dessert'],
@@ -144,5 +144,4 @@ class SeederTags extends Seeder
             Tag::create($tag);
         }
     }
-
 }

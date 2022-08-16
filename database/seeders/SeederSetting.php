@@ -27,11 +27,12 @@ class SeederSetting extends Seeder
     private function getSettingList(): array
     {
         $settings = [
-            
-            ['delivery_price' => 4, 
-             'delivery_price_km' => 1
-             ]
-            
+
+            [
+                'delivery_price' => 4,
+                'delivery_price_km' => 1
+            ]
+
         ];
         return $settings;
     }
@@ -44,11 +45,8 @@ class SeederSetting extends Seeder
     private function createSetting(array $settings): void
     {
         foreach ($settings as $setting) {
-            $sett= new Setting(Arr::except($setting,[]));
+            $sett = new Setting(Arr::except($setting, []));
             $sett->save();
-         
-          
-
         }
     }
 }

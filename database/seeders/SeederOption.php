@@ -30,14 +30,36 @@ class SeederOption extends Seeder
     {
         $options = [
 
-            ['name' => 'hrissa',
-             'description' => 'hrissa',
-             'price'=>0,
-             'default'=>1],
-            ['name' => 'fromage',
-              'description' => 'fromage.',
-              'price'=>1,
-              'default'=>1]
+            [
+                'name' => 'Hrissa',
+                'description' => 'hrissa',
+                'price' => 0,
+                'default' => 0
+            ],
+            [
+                'name' => 'Mayonnaise',
+                'description' => 'Mayonnaise',
+                'price' => 0,
+                'default' => 0
+            ],
+            [
+                'name' => 'Oignons',
+                'description' => 'Oignons',
+                'price' => 0,
+                'default' => 0
+            ],
+            [
+                'name' => 'Fromage',
+                'description' => 'fromage.',
+                'price' => 1,
+                'default' => 1
+            ],
+            [
+                'name' => 'Jambon',
+                'description' => 'Jambon.',
+                'price' => 1,
+                'default' => 1
+            ]
         ];
         return $options;
     }
@@ -50,15 +72,8 @@ class SeederOption extends Seeder
     private function createProduct(array $options): void
     {
         foreach ($options as $option) {
-            $op= new Option(Arr::except($option,[]));
+            $op = new Option(Arr::except($option, []));
             $op->save();
-            $product= Product::find(1);
-            $op->products()->attach($product, [
-                'supplier_id' => 1
-
-              ]);
-
-
         }
     }
 }
