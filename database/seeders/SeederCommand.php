@@ -26,11 +26,11 @@ class SeederCommand extends Seeder
         $clients = Client::all();
         $supps = Supplier::all();
 
-        for ($i = 0; $i < 10; $i++) {
+        for ($i = 0; $i < 100; $i++) {
             $client = $clients[rand(1, $clients->count() - 1)];
             $command = new Command();
             $command->client_id = $client->id;
-            $command->date = $faker->dateTimeInInterval('-1 days', '+3 week');
+            $command->date = $faker->dateTimeInInterval('-1 week','+1 day');
             $command->mode_pay = rand(0, 2);
             $command->delivery_price = rand(4, 6);
             $command->total_price = rand(1, 20);
