@@ -61,6 +61,7 @@ class SeederAdmin extends Seeder
            'firstName',
            'gender',
            'lastName']));
+           $user->status_id = 1;
             /** @var supplier $cli */
             $adm =  Admin::create(Arr::except($admin, ['email', 'password','tel']));
             $adm->user()->save($user);
