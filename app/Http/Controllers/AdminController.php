@@ -15,6 +15,13 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redis;
 
 use Tymon\JWTAuth\Facades\JWTAuth;
+/**
+ * @OA\Tag(
+ *     name="Administrateur",
+ *     description="Gestion administrateur ",
+ *
+ * )
+ */
 
 class AdminController extends Controller
 {
@@ -30,6 +37,87 @@ class AdminController extends Controller
         $this->model = $model;
         $this->res = $res;
     }
+ 
+    /**
+     * @OA\Post(
+     *      path="/addSuperAdmin",
+     *      operationId="addSuperAdmin",
+     *      tags={"Administrateur"},
+     *     security={{"Authorization":{}}},
+     *      summary="create Admin / SuperAdmin",
+     *      description="create admin",
+     *     @OA\Parameter (
+     *     in="query",
+     *     name="firstname",
+     *     required=true,
+     *     description="firstname",
+     *     @OA\Schema (type="string")
+     *      ),
+     *     @OA\Parameter (
+     *     in="query",
+     *     name="lastname",
+     *     required=true,
+     *     description="lastname",
+     *     @OA\Schema (type="string")
+     *      ),
+     *  @OA\Parameter (
+     *     in="query",
+     *     name="gender",
+     *     required=true,
+     *     description="gender",
+     *     @OA\Schema (type="string")
+     *      ),
+     * *     @OA\Parameter (
+     *     in="query",
+     *     name="tel",
+     *     required=false,
+     *     description="téléphone",
+     *     @OA\Schema (type="string")
+     *      ),
+     *     @OA\Parameter (
+     *     in="query",
+     *     name="email",
+     *     required=true,
+     *     description="email",
+     *     @OA\Schema (type="string")
+     *      ),
+     *     @OA\Parameter (
+     *     in="query",
+     *     name="password",
+     *     required=true,
+     *     description="password",
+     *     @OA\Schema (type="string")
+     *      ),
+     * *     @OA\Parameter (
+     *     in="query",
+     *     name="confirm_password",
+     *     required=true,
+     *     description="confirm_password",
+     *     @OA\Schema (type="string")
+     *      ),
+     * 
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *       ),
+     *     @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=400,
+     *          description="The email has already been taken",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     *    @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     *     )
+     */
     public function create(Request $request)
     {
         $res = new Result();
@@ -161,10 +249,41 @@ class AdminController extends Controller
         return new JsonResponse($res, $res->code);
     }
 
-    /**
-     * Filter or get all
-     *
-     * @return Collection|Model[]|mixed|void
+   /**
+     * @OA\Get(
+     *      path="/get_admins/{per_page}",
+     *      operationId="get_admins",
+     *      tags={"Administrateur"},
+     *     security={{"Authorization":{}}},
+     *      summary="Get List Of admins",
+     *      description="Returns all admins and associated provinces.",
+     *    @OA\Parameter(
+     *          name="per_page",
+     *          in="path",
+     *          required=true, 
+     *         
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *      ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     * @OA\Response(
+     *      response=400,
+     *      description="Bad Request"
+     *   ),
+     * @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     *  )
      */
     public function all($per_page, Request $request)
     {
@@ -183,6 +302,41 @@ class AdminController extends Controller
         }
         return new JsonResponse($res, $res->code);
     }
+        /**
+     * @OA\Get(
+     *      path="/getByid/{id}",
+     *     tags={"Administrateur"},
+     *     security={{"Authorization":{}}},
+     *      operationId="getByid",
+     *      summary="Get admin by admin id",
+     *     @OA\Parameter(
+     *          name="id",
+     *          in="path",
+     *          required=true, 
+     *         
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *      ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     * @OA\Response(
+     *      response=400,
+     *      description="Bad Request"
+     *   ),
+     * @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     * )
+     */
     public function getByid($id)
     {
         $res = new Result();
@@ -208,6 +362,42 @@ class AdminController extends Controller
 
         return $admins;
     }
+     /**
+     * @OA\Delete(
+     *      path="/deleteAdmin/{id}",
+     *      operationId="deleteAdmin",
+     *      tags={"Administrateur"},
+     *     security={{"Authorization":{}}},
+     *      summary="delete admin",
+     *      description="delete one admin.",
+     *     @OA\Parameter(
+     *          name="id",
+     *          in="path",
+     *          required=true, 
+     *         
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *      ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     * @OA\Response(
+     *      response=400,
+     *      description="Bad Request"
+     *   ),
+     * @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     *  )
+     */
     public function deleteAdmin($id)
     {
         if (!Auth::user()->isAuthorized(['superadmin'])) {
@@ -232,11 +422,75 @@ class AdminController extends Controller
         return new JsonResponse($res, $res->code);
     }
     /**
-     * @inheritDoc
-     *
-     * @param null $id
-     * @param null $params
-     * @return Supplier|mixed|void
+     * @OA\Put(
+     *      path="/updateAdmin/{id}",
+     *      operationId="updateAdmin",
+     *      tags={"Administrateur"},
+     *     security={{"Authorization":{}}},
+     *      summary="update Admin / SuperAdmin",
+     *      description="update admin",
+     *     @OA\Parameter(
+     *          name="id",
+     *          in="path",
+     *          required=true, 
+     *         
+     *      ),
+     *     @OA\Parameter (
+     *     in="query",
+     *     name="firstname",
+     *     required=true,
+     *     description="firstname",
+     *     @OA\Schema (type="string")
+     *      ),
+     *     @OA\Parameter (
+     *     in="query",
+     *     name="lastname",
+     *     required=true,
+     *     description="lastname",
+     *     @OA\Schema (type="string")
+     *      ),
+     *  @OA\Parameter (
+     *     in="query",
+     *     name="gender",
+     *     required=true,
+     *     description="gender",
+     *     @OA\Schema (type="string")
+     *      ),
+     * *     @OA\Parameter (
+     *     in="query",
+     *     name="tel",
+     *     required=false,
+     *     description="téléphone",
+     *     @OA\Schema (type="string")
+     *      ),
+     *     @OA\Parameter (
+     *     in="query",
+     *     name="email",
+     *     required=true,
+     *     description="email",
+     *     @OA\Schema (type="string")
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *       ),
+     *     @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=400,
+     *          description="The email has already been taken",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     *    @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     *     )
      */
     public function updateAdmin($id, Request $request)
     {
@@ -272,6 +526,43 @@ class AdminController extends Controller
         }
         return new JsonResponse($res, $res->code);
     }
+     /**
+     * @OA\Post(
+     *      path="/getlastpostiondelivery/{id}",
+     *      operationId="getLastPostionDelivery",
+     *      tags={"Administrateur"},
+     *     security={{"Authorization":{}}},
+     *      summary="get last postion of Delivery ",
+     *      description="last position of delivery",
+     *     @OA\Parameter(
+     *          name="id",
+     *          in="path",
+     *          required=true, 
+     *         
+     *      ),
+     *   @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *       ),
+     *     @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=400,
+     *          description="The email has already been taken",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     *    @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     *    
+     *     )
+     */
     public function getLastPostionDelivery($id)
     {
         $res = new Result();
