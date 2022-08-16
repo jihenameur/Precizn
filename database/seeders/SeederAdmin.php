@@ -39,7 +39,7 @@ class SeederAdmin extends Seeder
             [
                 'gender' => '1',
                 'password' => Hash::make($this->password),
-                'email' => 'admin@gmail.com',
+                'email' => 'admin@thunder-express.com',
                 'firstName'=>'admin',
                 'lastName'=>'admin',
                 'tel' => '+21626333445'
@@ -61,6 +61,7 @@ class SeederAdmin extends Seeder
            'firstName',
            'gender',
            'lastName']));
+           $user->status_id = 1;
             /** @var supplier $cli */
             $adm =  Admin::create(Arr::except($admin, ['email', 'password','tel']));
             $adm->user()->save($user);
