@@ -30,7 +30,13 @@ use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
-
+/**
+ * @OA\Tag(
+ *     name="Client",
+ *     description="Gestion client ",
+ *
+ * )
+ */
 class ClientController extends Controller
 {
     protected $controller;
@@ -218,7 +224,120 @@ class ClientController extends Controller
         }
         return new JsonResponse($res, $res->code);
     }
-
+   /**
+     * @OA\Post(
+     *      path="/addClient",
+     *      operationId="addClient",
+     *      tags={"Client"},
+     *     security={{"Authorization":{}}},
+     *      summary="create client" ,
+     *      description="create client",
+     *     @OA\Parameter (
+     *     in="query",
+     *     name="firstname",
+     *     required=true,
+     *     description="firstname",
+     *     @OA\Schema (type="string")
+     *      ),
+     *     @OA\Parameter (
+     *     in="query",
+     *     name="lastname",
+     *     required=true,
+     *     description="lastname",
+     *     @OA\Schema (type="string")
+     *      ),
+     *  @OA\Parameter (
+     *     in="query",
+     *     name="gender",
+     *     required=true,
+     *     description="gender",
+     *     @OA\Schema (type="string")
+     *      ),
+     * *    @OA\Parameter (
+     *     in="query",
+     *     name="tel",
+     *     required=false,
+     *     description="téléphone",
+     *     @OA\Schema (type="string")
+     *      ),
+     *     @OA\Parameter (
+     *     in="query",
+     *     name="email",
+     *     required=true,
+     *     description="email",
+     *     @OA\Schema (type="string")
+     *      ),
+     *     @OA\Parameter (
+     *     in="query",
+     *     name="password",
+     *     required=true,
+     *     description="password",
+     *     @OA\Schema (type="string")
+     *      ),
+     *     @OA\Parameter (
+     *     in="query",
+     *     name="confirm_password",
+     *     required=true,
+     *     description="confirm_password",
+     *     @OA\Schema (type="string")
+     *      ),
+     *    @OA\Parameter (
+     *     in="query",
+     *     name="street",
+     *     required=true,
+     *     description="street",
+     *     @OA\Schema (type="string")
+     *      ),
+     *   @OA\Parameter (
+     *     in="query",
+     *     name="postcode",
+     *     required=true,
+     *     description="postcode",
+     *     @OA\Schema (type="string")
+     *      ),
+     *  @OA\Parameter (
+     *     in="query",
+     *     name="city",
+     *     required=true,
+     *     description="city",
+     *     @OA\Schema (type="string")
+     *      ),
+     *   @OA\Parameter (
+     *     in="query",
+     *     name="city",
+     *     required=true,
+     *     description="city",
+     *     @OA\Schema (type="string")
+     *      ),
+     *    @OA\Parameter (
+     *     in="query",
+     *     name="region",
+     *     required=true,
+     *     description="region",
+     *     @OA\Schema (type="string")
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *       ),
+     *     @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=400,
+     *          description="Bad request. User ID must be an integer and bigger than 0",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     *    @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     *   )
+     */
     public function create(Request $request)
     {
         $typeAddress = [
@@ -329,7 +448,43 @@ class ClientController extends Controller
         }
         return new JsonResponse($res, $res->code);
     }
-
+     /**
+     * @OA\Post(
+     *      path="/addImage",
+     *      operationId="addImage",
+     *      tags={"Client"},
+     *     security={{"Authorization":{}}},
+     *      summary="create image client" ,
+     *      description="create image client",
+     *     @OA\Parameter (
+     *     in="query",
+     *     name="image",
+     *     required=true,
+     *     description="image",
+     *     @OA\Schema (type="string")
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *       ),
+     *     @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=400,
+     *          description="Bad request. User ID must be an integer and bigger than 0",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     *    @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     *     )
+     */
     public function addImage(Request $request)
     {
         if (!Auth::user()->isAuthorized(['admin', 'client'])) {
@@ -381,6 +536,43 @@ class ClientController extends Controller
         }
         return new JsonResponse($res, $res->code);
     }
+    /**
+     * @OA\Post(
+     *      path="/updateimage",
+     *      operationId="updateimage",
+     *      tags={"Client"},
+     *     security={{"Authorization":{}}},
+     *      summary="update image client" ,
+     *      description="update image client",
+     *     @OA\Parameter (
+     *     in="query",
+     *     name="image",
+     *     required=true,
+     *     description="image",
+     *     @OA\Schema (type="string")
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *       ),
+     *     @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=400,
+     *          description="Bad request. User ID must be an integer and bigger than 0",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     *    @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     *     )
+     */
     public function updateImage(Request $request)
     {
         if (!Auth::user()->isAuthorized(['admin', 'client'])) {
@@ -435,6 +627,43 @@ class ClientController extends Controller
         }
         return new JsonResponse($res, $res->code);
     }
+    /**
+     * @OA\Post(
+     *      path="/addfavorite",
+     *      operationId="addfavorite",
+     *      tags={"Client"},
+     *     security={{"Authorization":{}}},
+     *      summary="add favorite to supplier" ,
+     *      description="add favorite to supplier",
+     *     @OA\Parameter (
+     *     in="query",
+     *     name="id_supplier",
+     *     required=true,
+     *     description="id_supplier",
+     *     @OA\Schema (type="string")
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *       ),
+     *     @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=400,
+     *          description="Bad request. User ID must be an integer and bigger than 0",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     *    @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     *     )
+     */
     public function addfavorite(Request $request)
     {
 
@@ -469,6 +698,43 @@ class ClientController extends Controller
         }
         return new JsonResponse($res, $res->code);
     }
+     /**
+     * @OA\Delete(
+     *      path="/deletefavorite",
+     *      operationId="deletefavorite",
+     *      tags={"Client"},
+     *     security={{"Authorization":{}}},
+     *      summary="delete favorite to supplier" ,
+     *      description="delete favorite to supplier",
+     *     @OA\Parameter (
+     *     in="query",
+     *     name="id_supplier",
+     *     required=true,
+     *     description="id_supplier",
+     *     @OA\Schema (type="string")
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *       ),
+     *     @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=400,
+     *          description="Bad request. User ID must be an integer and bigger than 0",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     *    @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     *     )
+     */
     public function deletefavorite(Request $request)
     {
         if (!Auth::user()->isAuthorized(['admin', 'client'])) {
@@ -504,6 +770,42 @@ class ClientController extends Controller
      * Filter or get all
      *
      * @return Collection|Model[]|mixed|void
+     */
+      /**
+     * @OA\Get(
+     *      path="/getAllClient/{per_page}",
+     *      operationId="getAllClient",
+     *      tags={"Client"},
+     *     security={{"Authorization":{}}},
+     *      summary="Get List Of clients",
+     *      description="Returns all clients and associated provinces.",
+     *    @OA\Parameter(
+     *          name="per_page",
+     *          in="path",
+     *          required=true, 
+     *         
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *      ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     * @OA\Response(
+     *      response=400,
+     *      description="Bad Request"
+     *   ),
+     * @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     *  )
      */
     public function all($per_page, Request $request)
     {
@@ -546,6 +848,42 @@ class ClientController extends Controller
         }
         return new JsonResponse($res, $res->code);
     }
+    /**
+     * @OA\Get(
+     *      path="/getlistclients/{per_page}",
+     *      operationId="getlistclients",
+     *      tags={"Client"},
+     *     security={{"Authorization":{}}},
+     *      summary="Get List Of clients",
+     *      description="Returns all clients and associated provinces.",
+     *    @OA\Parameter(
+     *          name="per_page",
+     *          in="path",
+     *          required=true, 
+     *         
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *      ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     * @OA\Response(
+     *      response=400,
+     *      description="Bad Request"
+     *   ),
+     * @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     *  )
+     */
     public function allClient(Request $request)
     {
         $res = new Result();
@@ -585,6 +923,48 @@ class ClientController extends Controller
      *
      * @return Collection|Model[]|mixed|void
      */
+    /**
+     * @OA\Get(
+     *      path="/getClientCommands/{id}/{per_page}",
+     *      operationId="getClientCommands",
+     *      tags={"Client"},
+     *     security={{"Authorization":{}}},
+     *      summary="Get customers where has order.",
+     *      description="Returns all customers where has order.",
+     *    @OA\Parameter(
+     *          name="id",
+     *          in="path",
+     *          required=true, 
+     *         
+     *      ),
+     *    @OA\Parameter(
+     *          name="per_page",
+     *          in="path",
+     *          required=true, 
+     *         
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *      ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     * @OA\Response(
+     *      response=400,
+     *      description="Bad Request"
+     *   ),
+     * @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     *  )
+     */
     public function getClientCommands($id, $per_page)
     {
         if (!Auth::user()->isAuthorized(['admin', 'client'])) {
@@ -608,6 +988,41 @@ class ClientController extends Controller
         }
         return new JsonResponse($res, $res->code);
     }
+     /**
+     * @OA\Get(
+     *      path="/getClient/{id}",
+     *     tags={"Client"},
+     *     security={{"Authorization":{}}},
+     *      operationId="getClient",
+     *      summary="Get client by client id",
+     *     @OA\Parameter(
+     *          name="id",
+     *          in="path",
+     *          required=true, 
+     *         
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *      ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     * @OA\Response(
+     *      response=400,
+     *      description="Bad Request"
+     *   ),
+     * @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     * )
+     */
     public function getClient($id)
     {
         $res = new Result();
@@ -644,6 +1059,35 @@ class ClientController extends Controller
         }
         return new JsonResponse($res, $res->code);
     }
+      /**
+     * @OA\Get(
+     *      path="/getClientFavorits",
+     *     tags={"Client"},
+     *     security={{"Authorization":{}}},
+     *      operationId="getClientFavorits",
+     *      summary="Get favorits  ",
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *      ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     * @OA\Response(
+     *      response=400,
+     *      description="Bad Request"
+     *   ),
+     * @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     * )
+     */
     public function getClientFavorits()
     {
         if (!Auth::user()->isAuthorized(['admin', 'client'])) {
@@ -709,6 +1153,105 @@ class ClientController extends Controller
      * @param null $id
      * @param null $params
      * @return Client|mixed|void
+     */
+    /**
+     * @OA\Put(
+     *      path="/updateClient/{id}",
+     *      operationId="updateClient",
+     *      tags={"Administrateur"},
+     *     security={{"Authorization":{}}},
+     *      summary="update client",
+     *      description="update client",
+     *     @OA\Parameter(
+     *          name="id",
+     *          in="path",
+     *          required=true, 
+     *         
+     *      ),
+     *     @OA\Parameter (
+     *     in="query",
+     *     name="firstname",
+     *     required=true,
+     *     description="firstname",
+     *     @OA\Schema (type="string")
+     *      ),
+     *     @OA\Parameter (
+     *     in="query",
+     *     name="lastname",
+     *     required=true,
+     *     description="lastname",
+     *     @OA\Schema (type="string")
+     *      ),
+     *  @OA\Parameter (
+     *     in="query",
+     *     name="gender",
+     *     required=true,
+     *     description="gender",
+     *     @OA\Schema (type="string")
+     *      ),
+     * *     @OA\Parameter (
+     *     in="query",
+     *     name="tel",
+     *     required=false,
+     *     description="téléphone",
+     *     @OA\Schema (type="string")
+     *      ),
+     *     @OA\Parameter (
+     *     in="query",
+     *     name="email",
+     *     required=true,
+     *     description="email",
+     *     @OA\Schema (type="string")
+     *      ),
+     * @OA\Parameter (
+     *     in="query",
+     *     name="street",
+     *     required=true,
+     *     description="street",
+     *     @OA\Schema (type="string")
+     *      ),
+     *   @OA\Parameter (
+     *     in="query",
+     *     name="postcode",
+     *     required=true,
+     *     description="postcode",
+     *     @OA\Schema (type="string")
+     *      ),
+     *  @OA\Parameter (
+     *     in="query",
+     *     name="city",
+     *     required=true,
+     *     description="city",
+     *     @OA\Schema (type="string")
+     *      ),
+     *   @OA\Parameter (
+     *     in="query",
+     *     name="city",
+     *     required=true,
+     *     description="city",
+     *     @OA\Schema (type="string")
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *       ),
+     *     @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=400,
+     *          description="The email has already been taken",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     *    @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     *     )
      */
     public function update($id, Request $request)
     {
@@ -784,6 +1327,63 @@ class ClientController extends Controller
         }
         return new JsonResponse($res, $res->code);
     }
+     /**
+     * @OA\Put(
+     *      path="/updateClienPW/{id}",
+     *      operationId="updateClienPW",
+     *      tags={"Administrateur"},
+     *     security={{"Authorization":{}}},
+     *      summary="update password client",
+     *      description="update password client",
+     *     @OA\Parameter(
+     *          name="id",
+     *          in="path",
+     *          required=true, 
+     *         
+     *      ),
+     *     @OA\Parameter (
+     *     in="query",
+     *     name="oldpassword",
+     *     required=true,
+     *     description="oldpassword",
+     *     @OA\Schema (type="string")
+     *      ),
+     *     @OA\Parameter (
+     *     in="query",
+     *     name="newpassword",
+     *     required=true,
+     *     description="newpassword",
+     *     @OA\Schema (type="string")
+     *      ),
+     *  @OA\Parameter (
+     *     in="query",
+     *     name="confirm_password",
+     *     required=true,
+     *     description="confirm_password",
+     *     @OA\Schema (type="string")
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *       ),
+     *     @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=400,
+     *          description="The email has already been taken",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     *    @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     *     )
+     */
     public function updateClienPW($id, Request $request)
     {
         if (!Auth::user()->isAuthorized(['admin', 'client'])) {
@@ -851,6 +1451,42 @@ class ClientController extends Controller
      * @param null $id
      * @return bool|mixed|void
      */
+    /**
+     * @OA\Delete(
+     *      path="/destroyClient/{id}",
+     *      operationId="destroyClient",
+     *      tags={"Client"},
+     *     security={{"Authorization":{}}},
+     *      summary="delete client",
+     *      description="delete one client.",
+     *     @OA\Parameter(
+     *          name="id",
+     *          in="path",
+     *          required=true, 
+     *         
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *      ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     * @OA\Response(
+     *      response=400,
+     *      description="Bad Request"
+     *   ),
+     * @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     *  )
+     */
     public function delete($id)
     {
         if (!Auth::user()->isAuthorized(['admin'])) {
@@ -876,7 +1512,7 @@ class ClientController extends Controller
         }
         return new JsonResponse($res, $res->code);
     }
-    // get addresses wehere id client
+   
     public function getAddressesClient($id, $per_page)
     {
         if (!Auth::user()->isAuthorized(['admin', 'client'])) {
@@ -899,7 +1535,49 @@ class ClientController extends Controller
         }
         return new JsonResponse($res, $res->code);
     }
-
+  /**
+     * @OA\Get(
+     *      path="/statusClient",
+     *     tags={"Client"},
+     *     security={{"Authorization":{}}},
+     *      operationId="statusClient",
+     *      summary="Get client by client id && status",
+     *     @OA\Parameter (
+     *     in="query",
+     *     name="id",
+     *     required=true,
+     *     description="id_client",
+     *     @OA\Schema (type="string")
+     *      ),
+     *    @OA\Parameter (
+     *     in="query",
+     *     name="status_id",
+     *     required=true,
+     *     description="status_id",
+     *     @OA\Schema (type="string")
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *      ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     * @OA\Response(
+     *      response=400,
+     *      description="Bad Request"
+     *   ),
+     * @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     * )
+     */
     public function statusClient(Request $request)
     {
 
@@ -934,6 +1612,53 @@ class ClientController extends Controller
         }
         return new JsonResponse($res, $res->code);
     }
+    /**
+     * @OA\Get(
+     *      path="/resetPWClient",
+     *     tags={"Client"},
+     *     security={{"Authorization":{}}},
+     *      operationId="resetPWClient",
+     *      summary="reset password",
+     *     @OA\Parameter (
+     *     in="query",
+     *     name="email",
+     *     required=true,
+     *     description="email",
+     *     @OA\Schema (type="string")
+     *      ),
+     *    @OA\Parameter (
+     *     in="query",
+     *     name="tel",
+     *     required=true,
+     *     description="tel",
+     *     @OA\Schema (type="string")
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *      ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     * @OA\Response(
+     *      response=400,
+     *      description="Bad Request"
+     *   ),
+     * @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     *   * @OA\Response(
+     *      response=500,
+     *      description="erreur serveur 500"
+     *   ),
+     * )
+     */
     public function resetPWClient(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -1034,6 +1759,42 @@ class ClientController extends Controller
         //  DB::table('users')->where('id', Auth::id())->update(['phone_verified_at' => date_format($date, 'Y-m-d H:i:s')]);
 
     }
+     /**
+     * @OA\Get(
+     *      path="/ClientGetSupplier/{per_page}",
+     *      operationId="ClientGetSupplier",
+     *      tags={"Client"},
+     *     security={{"Authorization":{}}},
+     *      summary="Get customers where has favorite supplier.",
+     *      description="Returns all customers where has favorite supplier.",
+     *    @OA\Parameter(
+     *          name="per_page",
+     *          in="path",
+     *          required=true, 
+     *         
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *      ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     * @OA\Response(
+     *      response=400,
+     *      description="Bad Request"
+     *   ),
+     * @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     *  )
+     */
     public function ClientGetSupplier($per_page, Request $request)
     {
         if (!Auth::user()->isAuthorized(['admin', 'client'])) {
@@ -1097,6 +1858,48 @@ class ClientController extends Controller
 
         return $supp;
     }
+     /**
+     * @OA\Get(
+     *      path="/ClientGetSupplierByCategory/{per_page}",
+     *     tags={"Client"},
+     *     security={{"Authorization":{}}},
+     *      operationId="ClientGetSupplierByCategory",
+     *      summary="Get supplier by category id ",
+     *     @OA\Parameter(
+     *          name="per_page",
+     *          in="path",
+     *          required=true, 
+     *         
+     *      ),
+     *     @OA\Parameter (
+     *     in="query",
+     *     name="category_id",
+     *     required=true,
+     *     description="category_id",
+     *     @OA\Schema (type="string")
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *      ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     * @OA\Response(
+     *      response=400,
+     *      description="Bad Request"
+     *   ),
+     * @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     * )
+     */
     public function ClientGetSupplierByCategory($per_page, Request $request)
     {
         if (!Auth::user()->isAuthorized(['admin', 'client'])) {
@@ -1162,8 +1965,42 @@ class ClientController extends Controller
 
 
 
+  
     /**
-     * deleted client
+     * @OA\Delete(
+     *      path="/deleteClient/{id}",
+     *      operationId="deleteClient",
+     *      tags={"Client"},
+     *     security={{"Authorization":{}}},
+     *      summary="delete client",
+     *      description="delete one client.",
+     *     @OA\Parameter(
+     *          name="id",
+     *          in="path",
+     *          required=true, 
+     *         
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *      ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     * @OA\Response(
+     *      response=400,
+     *      description="Bad Request"
+     *   ),
+     * @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     *  )
      */
     public function deleteClient($id)
     {
