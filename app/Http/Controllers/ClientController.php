@@ -815,6 +815,8 @@ class ClientController extends Controller
                 'massage' => 'unauthorized'
             ], 403);
         }
+        $orderBy = 'created_at';
+        $orderByType = "DESC";
         if ($request->has('orderBy') && $request->orderBy != null) {
             $this->validate($request, [
                 'orderBy' => 'required|in:firstname,lastname,created_at' // complete the akak list
@@ -829,8 +831,7 @@ class ClientController extends Controller
         }
         $res = new Result();
         try {
-            $orderBy = 'created_at';
-            $orderByType = "DESC";
+
 
             $keyword = $request->has('keyword') ? $request->get('keyword') : null;
             $clients = Client::orderBy($orderBy, $orderByType)->paginate($per_page);
