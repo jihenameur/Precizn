@@ -119,7 +119,7 @@ class CategoryController extends Controller
 
             $res->success($response);
         } catch (\Exception $exception) {
-            $res->fail('erreur serveur');
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
