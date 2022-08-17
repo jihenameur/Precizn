@@ -2,20 +2,18 @@
 
 namespace Database\Seeders;
 
-use App\Models\Address;
-use App\Models\Admin;
-use App\Models\Category;
-use App\Models\Product;
+use Illuminate\Database\Seeder;
 use App\Models\Role;
 use App\Models\Supplier;
 use App\Models\User;
-use Illuminate\Database\Seeder;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Hash;
+use App\Models\Admin;
 
-class SeederAdmin extends Seeder
+class SuperAdminSeeder extends Seeder
 {
     protected $password = 'password';
+
     /**
      * Run the database seeds.
      *
@@ -23,29 +21,28 @@ class SeederAdmin extends Seeder
      */
     public function run()
     {
-        $admins = $this->getAdminList();
-        $this->createAdmin($admins);
+        $SuperAdmins = $this->getSuperAdminList();
+        $this->createSuperAdmin($SuperAdmins);
     }
-
-    /**
+     /**
      * Get clients list
      *
      * @param $role
      * @return array[]
      */
-    private function getAdminList(): array
+    private function getSuperAdminList(): array
     {
-        $admins = [
+        $SuperAdmins = [
             [
                 'gender' => '1',
                 'password' => Hash::make($this->password),
-                'email' => 'admin@thunder-express.com',
-                'firstName'=>'admin',
-                'lastName'=>'admin',
-                'tel' => '+21626333445'
+                'email' => 'superadmin@thunder-express.com',
+                'firstName'=>'superadmin',
+                'lastName'=>'superadmin',
+                'tel' => '+21626000000'
             ]
         ];
-        return $admins;
+        return $SuperAdmins;
     }
 
     /**
@@ -53,24 +50,23 @@ class SeederAdmin extends Seeder
      *
      * @param array $admins
      */
-    private function createAdmin(array $admins): void
+    private function createSuperAdmin(array $SuperAdmins): void
     {
-        foreach ($admins as $admin) {
+        foreach ($SuperAdmins as $SuperAdmin) {
             /** @var User $user */
-            $user = new  User(Arr::except($admin, [
+            $user = new  User(Arr::except($SuperAdmin, [
            'firstName',
            'gender',
            'lastName']));
            $user->status_id = 1;
             /** @var supplier $cli */
-            $adm =  Admin::create(Arr::except($admin, ['email', 'password','tel']));
+            $adm =  Admin::create(Arr::except($SuperAdmin, ['email', 'password','tel']));
             $adm->user()->save($user);
             $adm->save();
-            $role= Role::find(2);
+            $role= Role::find(1);
             $user->roles()->attach($role);
 
         }
     }
-
 
 }

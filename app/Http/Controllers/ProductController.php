@@ -169,7 +169,7 @@ class ProductController extends Controller
             ]); // create the validations
             if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
             {
-                return($validator->errors());
+                return ($validator->errors());
             } else {
                 $images = [];
 
@@ -181,7 +181,6 @@ class ProductController extends Controller
                         $images = $request->file('image');
                     }
                 }
-
 
 
                 $product = new Product();
@@ -227,7 +226,7 @@ class ProductController extends Controller
             }
             $res->success($product);
         } catch (\Exception $exception) {
-             if(env('APP_DEBUG')){
+            if (env('APP_DEBUG')) {
                 $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
@@ -349,6 +348,7 @@ class ProductController extends Controller
      *   ),
      *  )
      */
+
     public function createPrivateProduct(Request $request)
     {
         if (!Auth::user()->isAuthorized(['admin', 'supplier'])) {
@@ -367,7 +367,7 @@ class ProductController extends Controller
             ]); // create the validations
             if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
             {
-               return ($validator->errors());
+                return ($validator->errors());
             }
             if ($request->product_id != null) {
                 $product = Product::find($request->product_id);
@@ -412,7 +412,7 @@ class ProductController extends Controller
                 $product->save();
                 if ($request->start_hour != null && $request->end_hour != null) {
                     $product_hours = new Product_hours();
-                    $product_hours->product_id  = $product->id;
+                    $product_hours->product_id = $product->id;
                     $product_hours->start_hour = $request->start_hour;
                     $product_hours->end_hour = $request->end_hour;
                     $product_hours->save();
@@ -450,13 +450,14 @@ class ProductController extends Controller
                 $res->success($product);
             }
         } catch (\Exception $exception) {
-             if(env('APP_DEBUG')){
+            if (env('APP_DEBUG')) {
                 $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
+
      /**
      * @OA\Post(
      *      path="/productToSupplier",
@@ -508,6 +509,7 @@ class ProductController extends Controller
      *   ),
      *  )
      */
+
     public function productToSupplier(Request $request)
     {
         if (!Auth::user()->isAuthorized(['admin', 'supplier'])) {
@@ -524,7 +526,7 @@ class ProductController extends Controller
         ]); // create the validations
         if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
         {
-           return ($validator->errors());
+            return ($validator->errors());
         }
         $res = new Result();
         try {
@@ -541,13 +543,14 @@ class ProductController extends Controller
 
             $res->success($product);
         } catch (\Exception $exception) {
-             if(env('APP_DEBUG')){
+            if (env('APP_DEBUG')) {
                 $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
+
     /**
      * Filter or get all
      *
@@ -603,23 +606,24 @@ class ProductController extends Controller
             ], 403);
         }
 
+        $orderBy = 'created_at';
+        $orderByType = "DESC";
+        if ($request->has('orderBy') && $request->orderBy != null) {
+            $this->validate($request, [
+                'orderBy' => 'required|in:name,default_price,available,private' // complete the akak list
+            ]);
+            $orderBy = $request->orderBy;
+
+        }
+        if ($request->has('orderByType') && $request->orderByType != null) {
+            $this->validate($request, [
+                'orderByType' => 'required|in:ASC,DESC' // complete the akak list
+            ]);
+            $orderByType = $request->orderByType;
+        }
         $res = new Result();
         try {
 
-            $orderBy = 'name';
-            $orderByType = "ASC";
-            if ($request->has('orderBy') && $request->orderBy != null) {
-                $this->validate($request, [
-                    'orderBy' => 'required|in:name,default_price,available,private' // complete the akak list
-                ]);
-                $orderBy = $request->orderBy;
-            }
-            if ($request->has('orderByType') && $request->orderByType != null) {
-                $this->validate($request, [
-                    'orderByType' => 'required|in:ASC,DESC' // complete the akak list
-                ]);
-                $orderByType = $request->orderByType;
-            }
             $keyword = $request->has('keyword') ? $request->get('keyword') : null;
             $products = Product::orderBy($orderBy, $orderByType)->paginate($per_page);
             if ($keyword !== null) {
@@ -636,13 +640,14 @@ class ProductController extends Controller
                 'products' => ProductResource::collection($products->items()),
             ]);
         } catch (\Exception $exception) {
-             if(env('APP_DEBUG')){
+            if (env('APP_DEBUG')) {
                 $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
+
       /**
      * @OA\Get(
      *      path="/getProduct/{id}",
@@ -678,6 +683,7 @@ class ProductController extends Controller
      *   ),
      * )
      */
+
     public function getProduct($id)
     {
         if (!Auth::user()->isAuthorized(['admin', 'supplier', 'client'])) {
@@ -697,13 +703,14 @@ class ProductController extends Controller
             ];
             $res->success($prd);
         } catch (\Exception $exception) {
-             if(env('APP_DEBUG')){
+            if (env('APP_DEBUG')) {
                 $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
+
 /**
      * @OA\Get(
      *      path="/getAllPublicProduct/{per_page}",
@@ -744,6 +751,7 @@ class ProductController extends Controller
      *   ),
      *  )
  */
+
     public function getAllPublicProduct($per_page)
     {
         if (!Auth::user()->isAuthorized(['admin', 'supplier'])) {
@@ -764,13 +772,14 @@ class ProductController extends Controller
                 'products' => ProductResource::collection($products->items()),
             ]);
         } catch (\Exception $exception) {
-             if(env('APP_DEBUG')){
+            if (env('APP_DEBUG')) {
                 $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
+
     /**
      * Clean keyword from extra spaces
      *
@@ -802,13 +811,14 @@ class ProductController extends Controller
                 'products' => ProductResource::collection($products),
             ]);
         } catch (\Exception $exception) {
-             if(env('APP_DEBUG')){
+            if (env('APP_DEBUG')) {
                 $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
+
     /**
      * @OA\Get(
      *      path="/getSupplierProducts/{per_page}",
@@ -849,6 +859,7 @@ class ProductController extends Controller
      *   ),
      *  )
      */
+
     public function getSupplierProduct($per_page)
     {
         if (!Auth::user()->isAuthorized(['supplier'])) {
@@ -867,13 +878,14 @@ class ProductController extends Controller
                 ->paginate($per_page);
             $res->success($product);
         } catch (\Exception $exception) {
-             if(env('APP_DEBUG')){
+            if (env('APP_DEBUG')) {
                 $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
+
     public function getdispoHourProductsSupplier($id)
     {
         if (!Auth::user()->isAuthorized(['admin', 'supplier', 'client'])) {
@@ -893,7 +905,6 @@ class ProductController extends Controller
             })
                 ->where('is_deleted', false)
                 ->where('available', true)
-
                 ->get();
             $products = [];
 
@@ -913,7 +924,7 @@ class ProductController extends Controller
 
             $res->success($products);
         } catch (\Exception $exception) {
-             if(env('APP_DEBUG')){
+            if (env('APP_DEBUG')) {
                 $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
@@ -969,7 +980,7 @@ class ProductController extends Controller
         ]); // create the validations
         if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
         {
-           return ($validator->errors());
+            return ($validator->errors());
         }
         $res = new Result();
         $dt = new DateTime();
@@ -1000,7 +1011,6 @@ class ProductController extends Controller
                         }
                     })
                     ->where('available', true)
-
                     ->get();
             }
             $products = [];
@@ -1022,13 +1032,14 @@ class ProductController extends Controller
 
             $res->success($paginate->paginate($products, $per_page));
         } catch (\Exception $exception) {
-             if(env('APP_DEBUG')){
+            if (env('APP_DEBUG')) {
                 $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
+
      /**
      * @OA\Put(
      *      path="/ProductsSupplierNotAvailable/{id}",
@@ -1071,6 +1082,7 @@ class ProductController extends Controller
      *   ),
      *  )
      */
+
     public function ProductsSupplierNotAvailable($id, Request $request)
     {
         if (!Auth::user()->isAuthorized(['admin', 'supplier'])) {
@@ -1085,7 +1097,7 @@ class ProductController extends Controller
         ]); // create the validations
         if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
         {
-           return ($validator->errors());
+            return ($validator->errors());
         }
         $res = new Result();
         try {
@@ -1095,13 +1107,14 @@ class ProductController extends Controller
 
             $res->success($product);
         } catch (\Exception $exception) {
-             if(env('APP_DEBUG')){
+            if (env('APP_DEBUG')) {
                 $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
+
     /**
      * @inheritDoc
      *
@@ -1275,44 +1288,53 @@ class ProductController extends Controller
             $product->update();
             if ($request->start_hour != null && $request->end_hour != null) {
                 $product_hours = Product_hours::where('product_id', $product->id);
-                $product_hours->product_id  = $product->id;
+                $product_hours->product_id = $product->id;
                 $product_hours->start_hour = $request->start_hour;
                 $product_hours->end_hour = $request->end_hour;
                 $product_hours->update();
             }
-            $product->typeproduct()->detach();
-            $product->tag()->detach();
-            foreach (json_decode($request->typeProduct) as $key => $value) {
-                $typeProduct = TypeProduct::find($value);
-                $product->typeproduct()->attach($typeProduct);
-            }
-            foreach (json_decode($request->tags) as $key => $value) {
-                $tag = TypeProduct::find($value);
-                $product->tag()->attach($tag);
-            }
-            foreach ($images as $image) {
-                $name = Str::uuid()->toString() . '.' . $image->getClientOriginalExtension();
-                $image->move(public_path('public/Products'), $name); // your folder path
-                $file = new File();
-                $file->name = $name;
-                $file->path = asset('public/Products/' . $name);
-                $file->user_id = Auth::user()->id;
-                $file->save();
-                $oldImagepath = $product->files;
-                foreach ($oldImagepath as $key => $value) {
-                    unlink('public/Products/' . $value->name);
+            if ($request->typeProduct) {
+                $product->typeproduct()->detach();
+                foreach (json_decode($request->typeProduct) as $key => $value) {
+                    $typeProduct = TypeProduct::find($value);
+                    $product->typeproduct()->attach($typeProduct);
                 }
-                $product->files()->detach();
-
-                $file->products()->attach($product);
             }
-            $res->success($product);
-        } catch (\Exception $exception) {
-             if(env('APP_DEBUG')){
-                $res->fail($exception->getMessage());
+            if ($request->tags) {
+                $product->tag()->detach();
+                foreach (json_decode($request->tags) as $key => $value) {
+                    $tag = TypeProduct::find($value);
+                    $product->tag()->attach($tag);
+                }
             }
-            $res->fail('erreur serveur 500');
-        }
+            if ($images) {
+                foreach ($images as $image) {
+                    $name = Str::uuid()->toString() . '.' . $image->getClientOriginalExtension();
+                    $image->move(public_path('public/Products'), $name); // your folder path
+                    $file = new File();
+                    $file->name = $name;
+                    $file->path = asset('public/Products/' . $name);
+                    $file->user_id = Auth::user()->id;
+                    $file->save();
+                    $oldImagepath = $product->files;
+                    if ($oldImagepath) {
+                        foreach ($oldImagepath as $key => $value) {
+                            unlink('public/Products/' . $value->name);
+                        }
+                        $product->files()->detach();
+                    }
+                        $file->products()->attach($product);
+                    }
+                }
+                $res->success($product);
+            }
+        catch
+            (\Exception $exception) {
+                if (env('APP_DEBUG')) {
+                    $res->fail($exception->getMessage());
+                }
+                $res->fail('erreur serveur 500');
+            }
         return new JsonResponse($res, $res->code);
     }
 
@@ -1374,7 +1396,7 @@ class ProductController extends Controller
 
             $res->success("Deleted");
         } catch (\Exception $exception) {
-             if(env('APP_DEBUG')){
+            if (env('APP_DEBUG')) {
                 $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');

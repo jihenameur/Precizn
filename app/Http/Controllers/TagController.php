@@ -97,8 +97,8 @@ class TagController extends Controller
         // }
         $res = new Result();
         try {
-            $orderBy = 'name';
-            $orderByType = "ASC";
+            $orderBy = 'created_at';
+            $orderByType = "DESC";
             if($request->has('orderBy') && $request->orderBy != null){
                 $this->validate($request,[
                     'orderBy' => 'required|in:name' // complete the akak list

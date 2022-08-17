@@ -12,27 +12,47 @@ use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Laravel\Socialite\Facades\Socialite;
 use Tymon\JWTAuth\Facades\JWTAuth;
-
+use Google_Client;
+use Facebook;
 class SocialAuthController extends Controller
 {
     public function signInWithSocial(Request $request)
     {
-        $this->validate($request, [
-            'provider' => 'required',
-            'token' => 'required',
+        $this->validate($request,[
+           'provider' => 'required|in:google,facebook,instagram',
+           'token' => 'required',
         ]);
-
         $res = new Result();
+        $user = false;
+        $payload = false;
+        try{
 
-        try {
-            $user_provider = Socialite::driver($request->provider)->stateless()->userFromToken($request->token);
-            $user = User::where('social', 'like', '%' . $user_provider->id . '%')->orWhere('social', 'like', '%' . $user_provider->token . '%')->first();
+        switch ($request->provider){
+           case 'google':
+               $google_client = new Google_Client(['client_id' => env('GOOGLE_CLIENT_ID','301650164530-et91fi88dd6inchum8fnikq35ndq2qbu.apps.googleusercontent.com')]);
+               $payload = $google_client->verifyIdToken($request->token);
+               if ($payload) {
+                   $userid = $payload['sub'];
+                   $user = User::where('social','like','%'.$request->token.'%')->orWhere('social','like','%'.$payload['id'].'%')->first();
+               } else {
+                   $res->fail('google token invalid');
+                   return new JsonResponse($res, $res->code);
+               }
+               break;
+           default:
+               $fb = new Facebook\Facebook([
+                   'app_id' => '615083823624561',
+                   'app_secret' => 'f556cf9c889d554a22c8a41f05eb3270',
+                   'default_graph_version' => 'v2.10',
+               ]);
+                $payload = $fb->get('/me?fields=id,name,email',$request->token)->getDecodedBody();
+        }
+
             $new_user = new User();
             $client = new Client();
-            if ($user) {
-                // login
+            if($user)
+            {
                 $token = JWTAuth::fromUser($user);
                 $client = Client::find($user->userable_id);
                 $address = Address::where('user_id', $user->id)
@@ -61,18 +81,20 @@ class SocialAuthController extends Controller
                 $customClaims = ['name' => $user->name]; // Here you can pass user data on claims
                 $response = [
                     'token' => $token,
-                    'client' => $clt
+                    'user' => $clt
                 ];
                 $res->success($response);
                 return new JsonResponse($res, $res->code);
-            } else {
+
+            }
+            else{
                 // create a new user
 
-                $new_user->email = $user_provider->email ? $user_provider->email : ($user_provider->id ? $user_provider->id : 'unset');
+                $new_user->email = $payload['email'] ? $payload['email'] : ($payload['sub'] ? $payload['id'] : 'unset');
                 $new_user->social = json_encode([
                     $request->provider => [
-                        'id' => $user_provider->id ?? null,
-                        'token' => $user_provider->token
+                        'id' => $payload['id'] ?? null,
+                        'token' => $request->token
                     ]
                 ]);
                 $role_id = Role::where('short_name', config('roles.backadmin.client'))->first()->id;
@@ -80,8 +102,8 @@ class SocialAuthController extends Controller
                 $new_user->refresh();
 
 
-                $client->firstname = $user_provider->name ? $user_provider->name : ($user_provider->id ? $user_provider->id : 'unset');
-                $client->lastname = $user_provider->name ? $user_provider->name : ($user_provider->id ? $user_provider->id : 'unset');
+                $client->firstname = $payload['name'] ? $payload['name'] : ($payload['sub'] ? $payload['sub'] : 'unset');
+                $client->lastname = $payload['name'] ? $payload['name'] : ($payload['sub'] ? $payload['sub'] : 'unset');
                 $client->save();
                 $client->refresh();
                 $client->user()->save($new_user);
@@ -113,17 +135,19 @@ class SocialAuthController extends Controller
                 $customClaims = ['name' => $new_user->name]; // Here you can pass user data on claims
                 $response = [
                     'token' => $token,
-                    'client' => $clt
+                    'user' => $clt
                 ];
                 $res->success($response);
                 return new JsonResponse($res, $res->code);
+
             }
-        } catch (\Exception $exception) {
-            if (env('APP_DEBUG')) {
-                $res->fail($exception->getMessage());
-            }
-            $res->fail('erreur serveur 500');
+
+            $res->fail(json_encode($payload));
+            return new JsonResponse($res, $res->code);
+        }catch (\Exception $exception) {
+            $res->fail($exception);
             return new JsonResponse($res, $res->code);
         }
     }
+
 }

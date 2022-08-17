@@ -97,22 +97,23 @@ class CouponController extends Controller
                 'massage' => 'unauthorized'
             ],403);
         }
+        $orderBy = 'created_at';
+        $orderByType = "DESC";
+        if($request->has('orderBy') && $request->orderBy != null){
+            $this->validate($request,[
+                'orderBy' => 'required|in:title,id,created_at' // complete the  list
+            ]);
+            $orderBy = $request->orderBy;
+        }
+        if($request->has('orderByType') && $request->orderByType != null){
+            $this->validate($request,[
+                'orderByType' => 'required|in:ASC,DESC' // complete the  list
+            ]);
+            $orderByType = $request->orderByType;
+        }
         $res = new Result();
         try {
-           $orderBy = 'title';
-            $orderByType = "ASC";
-            if($request->has('orderBy') && $request->orderBy != null){
-                $this->validate($request,[
-                    'orderBy' => 'required|in:title,id,created_at' // complete the  list
-                ]);
-                $orderBy = $request->orderBy;
-            }
-            if($request->has('orderByType') && $request->orderByType != null){
-                $this->validate($request,[
-                    'orderByType' => 'required|in:ASC,DESC' // complete the  list
-                ]);
-                $orderByType = $request->orderByType;
-            }
+
             $keyword = $request->has('keyword') ? $request->get('keyword') : null;
             if ($keyword !== null) {
                 $keyword = $this->cleanKeywordSpaces($keyword);

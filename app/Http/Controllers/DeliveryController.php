@@ -226,22 +226,23 @@ class DeliveryController extends Controller
         //     'available' => 'numeric',
         //     'region' => 'numeric'
         // ]);
+        $orderBy = 'created_at';
+        $orderByType = "DESC";
+        if ($request->has('orderBy') && $request->orderBy != null) {
+            $this->validate($request, [
+                'orderBy' => 'required|in:firstName,lastName,region,created_at' // complete the akak list
+            ]);
+            $orderBy = $request->orderBy;
+        }
+        if ($request->has('orderByType') && $request->orderByType != null) {
+            $this->validate($request, [
+                'orderByType' => 'required|in:ASC,DESC' // complete the akak list
+            ]);
+            $orderByType = $request->orderByType;
+        }
         $res = new Result();
         try {
-            $orderBy = 'firstName';
-            $orderByType = "ASC";
-            if ($request->has('orderBy') && $request->orderBy != null) {
-                $this->validate($request, [
-                    'orderBy' => 'required|in:firstName,lastName,region,created_at' // complete the akak list
-                ]);
-                $orderBy = $request->orderBy;
-            }
-            if ($request->has('orderByType') && $request->orderByType != null) {
-                $this->validate($request, [
-                    'orderByType' => 'required|in:ASC,DESC' // complete the akak list
-                ]);
-                $orderByType = $request->orderByType;
-            }
+
             $keyword = $request->has('keyword') ? $request->get('keyword') : null;
             $disponible = $request->has('available') ? $request->available :  null;
             $region = $request->has('region') ? $request->region :  null;

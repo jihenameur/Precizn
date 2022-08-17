@@ -7,7 +7,7 @@ use Illuminate\Database\Seeder;
 
 class SeederWriting extends Seeder
 {
-   /**
+    /**
      * Run the database seeds.
      *
      * @return void
@@ -26,10 +26,10 @@ class SeederWriting extends Seeder
     private function getWritingList(): array
     {
         $writings = [
-            
+
             ['comment' => 'Un excellent restaurant, Les pizzas sont au top.
-            Je recommande ce restaurant','client_id'=>1, 'supplier_id'=>1,'note'=>4],
-            ['comment' => 'Staff accueillant.  Service rapide. Goût excellent de la pizza.','client_id'=>1, 'supplier_id'=>1,'note'=>4],
+            Je recommande ce restaurant', 'client_id' => 1, 'supplier_id' => 1, 'note' => 4],
+            ['comment' => 'Staff accueillant.  Service rapide. Goût excellent de la pizza.', 'client_id' => 1, 'supplier_id' => 1, 'note' => 4],
         ];
         return $writings;
     }
@@ -43,7 +43,6 @@ class SeederWriting extends Seeder
     {
         foreach ($writings as $writing) {
             Writing::create($writing);
-           
         }
     }
 }

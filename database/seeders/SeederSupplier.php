@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Address;
 use App\Models\Category;
+use App\Models\Delivery;
 use App\Models\Product;
 use App\Models\Role;
 use App\Models\Supplier;
@@ -14,7 +15,20 @@ use Illuminate\Support\Facades\Hash;
 
 class SeederSupplier extends Seeder
 {
-    protected $password = '12345678';
+    protected $password = 'password';
+    public $postion = [
+        ['lat' => 35.87114686073671, 'long' => 10.603245858720085],
+        ['lat' => 35.8588004603057, 'long' => 10.602687959208176],
+        ['lat' => 35.850278583516896, 'long' => 10.61637795400609],
+        ['lat' => 35.84318211773907, 'long' => 10.584963922143647],
+        ['lat' => 35.83114450339894, 'long' => 10.628308419670157],
+        ['lat' => 35.82300242262979, 'long' => 10.636161927690619],
+        ['lat' => 35.8356327290493, 'long' => 10.637234811297786],
+        ['lat' => 35.84036422713682, 'long' => 10.630582932958056],
+        ['lat' => 35.857200504196165, 'long' => 10.615219239758517],
+        ['lat' => 35.85956564528116, 'long' => 10.60406125020781],
+    ];
+
     /**
      * Run the database seeds.
      *
@@ -22,86 +36,38 @@ class SeederSupplier extends Seeder
      */
     public function run()
     {
-        $role = Role::where('name', config('roles.backadmin.supplier'))->first();
+        $faker = \Faker\Factory::create();
+        $password = 'password';
+        for ($i = 0; $i < 10; $i++) {
+            $user = new User();
+            $user->email = $faker->email();
+            $user->tel = $faker->numerify('+216########');
+            $user->password = Hash::make($this->password);
+            $user->status_id = 1;
+            $supplier = new Supplier();
+            $supplier->name = $faker->company();
+            $supplier->qantityVente = 0;
+            $supplier->starttime = date('H:i:s', rand(1, 14000));
+            $supplier->closetime = date('H:i:s', rand(1, 54000));
+            $supplier->delivery = 1;
+            $supplier->take_away = 1;
+            $supplier->on_site = 1;
+            $supplier->firstName = $faker->firstName();
+            $supplier->lastName = $faker->lastName();
+            $supplier->street = $faker->streetName();
+            $supplier->region = $faker->country();
+            $supplier->postcode = $faker->postcode();
+            $supplier->city = $faker->city();
+            $supplier->lat = $this->postion[$i]['lat'];
+            $supplier->long = $this->postion[$i]['long'];
+            $supplier->commission = rand(0, 10);
 
-        $suppliers = $this->getSuppliersList();
-        $this->createSupplier($suppliers);
-    }
-
-    /**
-     * Get clients list
-     *
-     * @param $role
-     * @return array[]
-     */
-    private function getSuppliersList(): array
-    {
-        $suppliers = [
-            [
-                'name' => 'thunder',
-                // 'min_period_time'=>20,
-                // 'max_period_time'=>30,
-                'star' => 0,
-                'qantityVente' => 0,
-                'starttime' => '11:00',
-                'closetime' => "00:00",
-                'delivery' => 0,
-                'take_away' => 1,
-                'on_site' => 1,
-                'password' => Hash::make($this->password),
-                'email' => 'thunder123@gmail.com',
-                'street' => 'hammam sousse',
-                'postcode' => '4000',
-                'city' => 'Sousse',
-                'region' => 'tunisie',
-                'lat' => 35.886399,
-                'long' => 10.5915072,
-                'tel' => '+21626333555',
-                'firstName' => 'mohammed',
-                'lastName' => 'salah'
-            ]
-        ];
-        return $suppliers;
-    }
-
-    /**
-     * Create suppliers list into the DB
-     *
-     * @param array $suppliers
-     */
-    private function createSupplier(array $suppliers): void
-    {
-        foreach ($suppliers as $supplier) {
-            /** @var User $user */
-            $user = new  User(Arr::except($supplier, [
-                'name',
-                'image',
-                'star',
-                'qantityVente',
-                'starttime',
-                'closetime',
-                'delivery',
-                'take_away',
-                'on_site',
-                'street',
-                'postcode',
-                'city',
-                'region',
-                'lat',
-                'long',
-                'firstName',
-                'lastName'
-            ]));
-            /** @var supplier $cli */
-            $supp =  Supplier::create(Arr::except($supplier, ['email', 'password','tel']));
-            $supp->user()->save($user);
-            $supp->save();
-            $category = Category::find(1);
-            $supp->categorys()->attach($category);
+            $supplier->save();
+            $supplier->user()->save($user);
             $role = Role::find(3);
             $user->roles()->attach($role);
-            $product = Product::find(1);
-            $supp->products()->attach($product);
         }
     }
+
+
 }

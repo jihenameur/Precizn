@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\BaseModel\Result;
+use App\Models\Category;
+use App\Models\TypeProduct;
 use App\Models\TypeProduct as ModelsTypeProduct;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -188,6 +190,27 @@ class TypeProductController extends Controller
             $res->success($TypeProduct);
         } catch (\Exception $exception) {
              if(env('APP_DEBUG')){
+                $res->fail($exception->getMessage());
+            }
+            $res->fail('erreur serveur 500');
+        }
+        return new JsonResponse($res, $res->code);
+    }
+    public function delete($id)
+    {
+        if (!Auth::user()->isAuthorized(['admin'])) {
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ], 403);
+        }
+        $res = new Result();
+        $typeproduct = TypeProduct::find($id);
+        try {
+            $typeproduct->delete();
+            $res->success('Deleted');
+        } catch (\Exception $exception) {
+            if(env('APP_DEBUG')){
                 $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');

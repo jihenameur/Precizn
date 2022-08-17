@@ -782,8 +782,8 @@ class ClientController extends Controller
      *    @OA\Parameter(
      *          name="per_page",
      *          in="path",
-     *          required=true, 
-     *         
+     *          required=true,
+     *
      *      ),
      *      @OA\Response(
      *          response=200,
@@ -815,23 +815,24 @@ class ClientController extends Controller
                 'massage' => 'unauthorized'
             ], 403);
         }
-
+        $orderBy = 'created_at';
+        $orderByType = "DESC";
+        if ($request->has('orderBy') && $request->orderBy != null) {
+            $this->validate($request, [
+                'orderBy' => 'required|in:firstname,lastname,created_at' // complete the akak list
+            ]);
+            $orderBy = $request->orderBy;
+        }
+        if ($request->has('orderByType') && $request->orderByType != null) {
+            $this->validate($request, [
+                'orderByType' => 'required|in:ASC,DESC' // complete the akak list
+            ]);
+            $orderByType = $request->orderByType;
+        }
         $res = new Result();
         try {
-            $orderBy = 'firstname';
-            $orderByType = "ASC";
-            if ($request->has('orderBy') && $request->orderBy != null) {
-                $this->validate($request, [
-                    'orderBy' => 'required|in:firstname,lastname,created_at' // complete the akak list
-                ]);
-                $orderBy = $request->orderBy;
-            }
-            if ($request->has('orderByType') && $request->orderByType != null) {
-                $this->validate($request, [
-                    'orderByType' => 'required|in:ASC,DESC' // complete the akak list
-                ]);
-                $orderByType = $request->orderByType;
-            }
+
+
             $keyword = $request->has('keyword') ? $request->get('keyword') : null;
             $clients = Client::orderBy($orderBy, $orderByType)->paginate($per_page);
             if ($keyword !== null) {
@@ -859,8 +860,8 @@ class ClientController extends Controller
      *    @OA\Parameter(
      *          name="per_page",
      *          in="path",
-     *          required=true, 
-     *         
+     *          required=true,
+     *
      *      ),
      *      @OA\Response(
      *          response=200,
@@ -934,14 +935,14 @@ class ClientController extends Controller
      *    @OA\Parameter(
      *          name="id",
      *          in="path",
-     *          required=true, 
-     *         
+     *          required=true,
+     *
      *      ),
      *    @OA\Parameter(
      *          name="per_page",
      *          in="path",
-     *          required=true, 
-     *         
+     *          required=true,
+     *
      *      ),
      *      @OA\Response(
      *          response=200,
@@ -998,8 +999,8 @@ class ClientController extends Controller
      *     @OA\Parameter(
      *          name="id",
      *          in="path",
-     *          required=true, 
-     *         
+     *          required=true,
+     *
      *      ),
      *      @OA\Response(
      *          response=200,
@@ -1165,8 +1166,8 @@ class ClientController extends Controller
      *     @OA\Parameter(
      *          name="id",
      *          in="path",
-     *          required=true, 
-     *         
+     *          required=true,
+     *
      *      ),
      *     @OA\Parameter (
      *     in="query",
@@ -1338,8 +1339,8 @@ class ClientController extends Controller
      *     @OA\Parameter(
      *          name="id",
      *          in="path",
-     *          required=true, 
-     *         
+     *          required=true,
+     *
      *      ),
      *     @OA\Parameter (
      *     in="query",
@@ -1462,8 +1463,8 @@ class ClientController extends Controller
      *     @OA\Parameter(
      *          name="id",
      *          in="path",
-     *          required=true, 
-     *         
+     *          required=true,
+     *
      *      ),
      *      @OA\Response(
      *          response=200,
@@ -1512,7 +1513,7 @@ class ClientController extends Controller
         }
         return new JsonResponse($res, $res->code);
     }
-   
+
     public function getAddressesClient($id, $per_page)
     {
         if (!Auth::user()->isAuthorized(['admin', 'client'])) {
@@ -1770,8 +1771,8 @@ class ClientController extends Controller
      *    @OA\Parameter(
      *          name="per_page",
      *          in="path",
-     *          required=true, 
-     *         
+     *          required=true,
+     *
      *      ),
      *      @OA\Response(
      *          response=200,
@@ -1868,8 +1869,8 @@ class ClientController extends Controller
      *     @OA\Parameter(
      *          name="per_page",
      *          in="path",
-     *          required=true, 
-     *         
+     *          required=true,
+     *
      *      ),
      *     @OA\Parameter (
      *     in="query",
@@ -1965,7 +1966,7 @@ class ClientController extends Controller
 
 
 
-  
+
     /**
      * @OA\Delete(
      *      path="/deleteClient/{id}",
@@ -1977,8 +1978,8 @@ class ClientController extends Controller
      *     @OA\Parameter(
      *          name="id",
      *          in="path",
-     *          required=true, 
-     *         
+     *          required=true,
+     *
      *      ),
      *      @OA\Response(
      *          response=200,

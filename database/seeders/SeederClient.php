@@ -2,15 +2,19 @@
 
 namespace Database\Seeders;
 
+use App\Models\Address;
 use App\Models\Client;
 use App\Models\Role;
+use App\Models\Status;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Hash;
 
 class SeederClient extends Seeder
-{protected $password = '12345678';
+{
+    protected $password = 'password';
+
     /**
      * Run the database seeds.
      *
@@ -18,63 +22,26 @@ class SeederClient extends Seeder
      */
     public function run()
     {
-       // $role = Role::where('name',config('roles.backadmin.client'))->first();
+        $faker = \Faker\Factory::create();
+        $password = 'password';
+        for ($i = 0; $i < 10; $i++) {
+            $user = new User();
+            $user->email = $faker->email();
+            $user->tel = $faker->numerify('+216########');
+            $user->password = Hash::make($this->password);
+            $user->status_id = 1;
 
-        $clients = $this->getClientsList();
-        $this->createClients($clients);
-    }
+            $client = new Client();
+            $client->firstname = $faker->firstName();
+            $client->lastname = $faker->lastName();
+            $client->gender = rand(0, 1);
 
-    /**
-     * Get clients list
-     *
-     * @param $role
-     * @return array[]
-     */
-    private function getClientsList(): array
-    {
-        $clients = [
-            [
-                'password' => Hash::make($this->password),
-                'email' => 'webifyTechnology@gmail.com',
-                'firstname' => 'webify',
-                'lastname' => 'webify technology',        
-                'gender'=>1,
-               // 'role_id' => $role->id
-            
-            ],
-            [
-                'email' => 'maldiv@gmail.com',
-                'gender'=>1,
-                'firstname' => 'Maldiv',
-                'lastname' => 'Quest',
-                'password' => Hash::make($this->password),
-           
-               // 'role_id' => $role->id
-       
-
-
-            ]
-        ];
-        return $clients;
-    }
-
-    /**
-     * Create suppliers list into the DB
-     *
-     * @param array $suppliers
-     */
-    private function createClients(array $clients): void
-    {
-        foreach ($clients as $client) {
-            /** @var User $user */
-            $user = User::create(Arr::except($client, ['firstname', 'lastname', 'gender']));
-            /** @var supplier $cli */
-            $cli = new Client(Arr::except($client, ['email', 'password']));
-            $cli->save();
-            $cli->user()->save($user);
-            $role= Role::find(5);
+            $client->save();
+            $client->user()->save($user);
+            $role = Role::find(5);
             $user->roles()->attach($role);
         }
     }
+
 
 }

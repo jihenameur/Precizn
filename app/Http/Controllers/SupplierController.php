@@ -40,15 +40,16 @@ class SupplierController extends Controller
     protected $controller;
 
     public function __construct(
-        Request $request,
-        Supplier $model,
-        LocationController $locationController,
-        Result $res,
-        ReqHelper $reqHelper,
+        Request                   $request,
+        Supplier                  $model,
+        LocationController        $locationController,
+        Result                    $res,
+        ReqHelper                 $reqHelper,
         VerificationApiController $verificationApiController
 
 
-    ) {
+    )
+    {
         $this->model = $model;
         $this->locationController = $locationController;
         $this->res = $res;
@@ -251,7 +252,7 @@ class SupplierController extends Controller
             if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
             {
                 // return $validator->errors();
-                return($validator->errors());
+                return ($validator->errors());
             }
             $role_id = Role::where('short_name', config('roles.backadmin.supplier'))->first()->id;
 
@@ -311,22 +312,24 @@ class SupplierController extends Controller
             //     return $supplier;
             // }
             $response['supplier'] = [
-                "id"         =>  $supplier->id,
-                "name"      =>  $supplier->name,
-                "firstName"     =>  $supplier->firstName,
-                "lastName"     =>  $supplier->lastName
+                "id" => $supplier->id,
+                "name" => $supplier->name,
+                "firstName" => $supplier->firstName,
+                "lastName" => $supplier->lastName
 
             ];
             $res->success($response);
             JobsSendNewSuuplierNotification::dispatch($supplier);
+
         } catch (\Exception $exception) {
-             if(env('APP_DEBUG')){
+            if (env('APP_DEBUG')) {
                 $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
+
     public function addImage(Request $request)
     {
         if (!Auth::user()->isAuthorized(['admin', 'supplier'])) {
@@ -345,7 +348,7 @@ class SupplierController extends Controller
             if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
             {
                 // return $validator->errors();
-                return($validator->errors());
+                return ($validator->errors());
             }
             $supplier = Supplier::find(Auth::user()->userable_id);
             if ($request->type == "principal") {
@@ -374,18 +377,18 @@ class SupplierController extends Controller
                 }
             }
             $response['supplier'] = [
-                "id"         =>  $supplier->id,
-                "name"     =>  $supplier->name,
-                "firstname"     =>  $supplier->firstName,
-                "lastname"     =>  $supplier->firstName,
-                "image"     =>  $file->path,
+                "id" => $supplier->id,
+                "name" => $supplier->name,
+                "firstname" => $supplier->firstName,
+                "lastname" => $supplier->firstName,
+                "image" => $file->path,
                 "type" => $file->supplier[0]->pivot->type
 
             ];
 
             $res->success($response);
         } catch (\Exception $exception) {
-             if(env('APP_DEBUG')){
+            if (env('APP_DEBUG')) {
                 $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
@@ -442,23 +445,22 @@ class SupplierController extends Controller
                 'massage' => 'unauthorized'
             ], 403);
         }
+        $orderBy = 'created_at';
+        $orderByType = "DESC";
+        if ($request->has('orderBy') && $request->orderBy != null) {
+            $this->validate($request, [
+                'orderBy' => 'required|in:firstName,lastName,id' // complete the akak list
+            ]);
+            $orderBy = $request->orderBy;
+        }
+        if ($request->has('orderByType') && $request->orderByType != null) {
+            $this->validate($request, [
+                'orderByType' => 'required|in:ASC,DESC' // complete the akak list
+            ]);
+            $orderByType = $request->orderByType;
+        }
         $res = new Result();
         try {
-
-            $orderBy = 'name';
-            $orderByType = "ASC";
-            if ($request->has('orderBy') && $request->orderBy != null) {
-                $this->validate($request, [
-                    'orderBy' => 'required|in:firstName,lastName,' // complete the akak list
-                ]);
-                $orderBy = $request->orderBy;
-            }
-            if ($request->has('orderByType') && $request->orderByType != null) {
-                $this->validate($request, [
-                    'orderByType' => 'required|in:ASC,DESC' // complete the akak list
-                ]);
-                $orderByType = $request->orderByType;
-            }
             $keyword = $request->has('keyword') ? $request->get('keyword') : null;
             $suppliers = Supplier::orderBy($orderBy, $orderByType)->paginate($per_page);
             if ($keyword !== null) {
@@ -468,7 +470,7 @@ class SupplierController extends Controller
             }
             $res->success($suppliers);
         } catch (\Exception $exception) {
-             if(env('APP_DEBUG')){
+            if (env('APP_DEBUG', true)) {
                 $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
@@ -518,7 +520,7 @@ class SupplierController extends Controller
      */
     public function getById($id)
     {
-        if (!Auth::user()->isAuthorized(['admin', 'supplier','client'])) {
+        if (!Auth::user()->isAuthorized(['admin', 'supplier', 'client'])) {
             return response()->json([
                 'success' => false,
                 'massage' => 'unauthorized'
@@ -530,7 +532,7 @@ class SupplierController extends Controller
             $supplier = Supplier::where('id', '=', $id)->first();
             $res->success($supplier);
         } catch (\Exception $exception) {
-             if(env('APP_DEBUG')){
+            if (env('APP_DEBUG')) {
                 $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
@@ -562,22 +564,22 @@ class SupplierController extends Controller
         $res = new Result();
         try {
 
-            $suppliers =  Supplier::where('name', 'like', "%$keyword%")
+            $suppliers = Supplier::where('name', 'like', "%$keyword%")
                 ->orderBy($orderBy, $orderByType)
-
                 ->get();
 
             $res->success([
                 'suppliers' => SupplierResource::collection($suppliers),
             ]);
         } catch (\Exception $exception) {
-             if(env('APP_DEBUG')){
+            if (env('APP_DEBUG')) {
                 $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
+
     /**
      * @inheritDoc
      *
@@ -804,22 +806,23 @@ class SupplierController extends Controller
                 $supplier->categorys()->attach($category);
             }
             $response['supplier'] = [
-                "id"         =>  $supplier->id,
-                "name"      =>  $supplier->name,
-                "firstName"     =>  $supplier->firstName,
-                "lastName"     =>  $supplier->lastName
+                "id" => $supplier->id,
+                "name" => $supplier->name,
+                "firstName" => $supplier->firstName,
+                "lastName" => $supplier->lastName
 
             ];
 
             $res->success($response);
         } catch (\Exception $exception) {
-             if(env('APP_DEBUG')){
+            if (env('APP_DEBUG')) {
                 $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
+
        /**
      * @OA\Post(
      *      path="/updatesupplierpassword/{id}",
@@ -877,6 +880,7 @@ class SupplierController extends Controller
      *   ),
      *     )
      */
+
     public function updateSupplierPW($id, Request $request)
     {
         if (!Auth::user()->isAuthorized(['admin', 'supplier'])) {
@@ -897,7 +901,7 @@ class SupplierController extends Controller
             ]); // create the validations
             if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
             {
-                return($validator->errors());
+                return ($validator->errors());
             }
             $supplier = Supplier::find($id);
             $user = User::where('userable_id', $id)
@@ -916,13 +920,14 @@ class SupplierController extends Controller
 
             $res->success($supplier);
         } catch (\Exception $exception) {
-             if(env('APP_DEBUG')){
+            if (env('APP_DEBUG')) {
                 $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
+
     /**
      * @inheritDoc
      *
@@ -948,13 +953,14 @@ class SupplierController extends Controller
 
             $res->success($supplier);
         } catch (\Exception $exception) {
-             if(env('APP_DEBUG')){
+            if (env('APP_DEBUG')) {
                 $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
+
     public function resetPWSupplier(Request $request)
     {
         $res = new Result();
@@ -975,13 +981,14 @@ class SupplierController extends Controller
             ];
             $res->success($clt);
         } catch (\Exception $exception) {
-             if(env('APP_DEBUG')){
+            if (env('APP_DEBUG')) {
                 $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
+
     public function verifySmsResetPW(Request $request)
     {
 
@@ -997,7 +1004,7 @@ class SupplierController extends Controller
             if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
             {
                 // return $validator->errors();
-                return($validator->errors());
+                return ($validator->errors());
             }
             $user = User::where('tel', $request->tel)->first();
             if ($request['code'] == $user->smscode) {
@@ -1030,7 +1037,7 @@ class SupplierController extends Controller
                 $res->fail('Code not verified');
             }
         } catch (\Exception $exception) {
-             if(env('APP_DEBUG')){
+            if (env('APP_DEBUG')) {
                 $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
@@ -1041,6 +1048,7 @@ class SupplierController extends Controller
         //  DB::table('users')->where('id', Auth::id())->update(['phone_verified_at' => date_format($date, 'Y-m-d H:i:s')]);
 
     }
+
     /**
      * @OA\Get(
      *      path="/statusSupplier",
@@ -1084,6 +1092,7 @@ class SupplierController extends Controller
      *   ),
      * )
      */
+
     public function statusSupplier(Request $request)
     {
         if (!Auth::user()->isAuthorized(['admin'])) {
@@ -1112,13 +1121,14 @@ class SupplierController extends Controller
 
             $res->success($user);
         } catch (\Exception $exception) {
-             if(env('APP_DEBUG')){
+            if (env('APP_DEBUG')) {
                 $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
+
      /**
      * @OA\Post(
      *      path="/supplieraccceptrefusecommand",
@@ -1162,6 +1172,7 @@ class SupplierController extends Controller
      *   ),
      * )
      */
+
     public function supplierAccceptRefuseCommand(Request $request)
     {
         if (!Auth::user()->isAuthorized(['admin', 'supplier'])) {
@@ -1183,25 +1194,31 @@ class SupplierController extends Controller
         try {
             $command = Command::find($request->command_id);
             $fromUser = Supplier::find(auth()->user()->userable_id);
-            $toUser  = Client::find($command->client_id);
+            $toUser = Client::find($command->client_id);
             if ($request->action == 'accept') {
                 $command->status = 1;
             } else if ($request->action == 'refuse') {
                 $command->status = 2;
             }
             $command->update();
+
            // $toUser->notify(new CommandClientNotification($command, $fromUser, $command->status));
             JobsSendCommandClientNotification::dispatch($command,$fromUser,$toUser,$request->action);
 
+            // $toUser->notify(new CommandClientNotification($command, $fromUser, $command->status));
+            JobsSendCommandClientNotification::dispatch($command, $fromUser, $toUser, $request->action);
+
+
             -$res->success($command);
         } catch (\Exception $exception) {
-             if(env('APP_DEBUG')){
+            if (env('APP_DEBUG')) {
                 $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
+
     /**
      * deleted supplier
      */
@@ -1209,7 +1226,7 @@ class SupplierController extends Controller
      * @OA\Delete(
      *      path="/deleteSupplier/{id}",
      *      operationId="deleteSupplier",
-     *      tags={"supplier"},
+     *      tags={"Supplier"},
      *     security={{"Authorization":{}}},
      *      summary="delete supplier",
      *      description="delete one supplier.",
@@ -1253,12 +1270,12 @@ class SupplierController extends Controller
         try {
             $user = User::where('userable_id', $id)
                 ->where('userable_type', 'App\Models\Supplier')->first();
-            $supplier = Supplier::find($user->userable_id);
-            $products = Product::whereHas('suppliers', function ($q) use ($user) {
-                $q->where('supplier_id', $user->userable_id);
-            })->get();
+            $supplier = Supplier::find($id);
+            $products = Product::whereHas('suppliers', function ($q) use ($id) {
+                $q->where('supplier_id', $id);
+            })
+                ->where('private', 1)->get();
             foreach ($products as $product) {
-                //$product->suppliers()->detach();
                 $product->delete();
             }
             $supplier->delete();
@@ -1266,7 +1283,7 @@ class SupplierController extends Controller
 
             $res->success("Deleted");
         } catch (\Exception $exception) {
-             if(env('APP_DEBUG')){
+            if (env('APP_DEBUG')) {
                 $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');

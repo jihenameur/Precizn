@@ -378,10 +378,18 @@ Route::group(['middleware' => ['jwt.verify']], function () {
  * verify payement
  */
     Route::get('paymentgetway/verify/payment', [\App\Http\Controllers\PaymentController::class, 'verifyPayment']);
-
-    /*
- * login with social media
- */
-
-    Route::post('social/signin', [SocialAuthController::class, 'signInWithSocial']);
 });
+/*
+* adsArea
+*/
+Route::post('adsarea/create', [\App\Http\Controllers\AreaController::class, 'create']);
+Route::get('adsarea/get/{id}', [\App\Http\Controllers\AreaController::class, 'adsareabyid']);
+Route::get('adsarea/all/{per_page}', [\App\Http\Controllers\AreaController::class, 'all']);
+Route::post('adsarea/update/{id}', [\App\Http\Controllers\AreaController::class, 'update']);
+Route::delete('adsarea/delete/{id}', [\App\Http\Controllers\AreaController::class, 'delete']);
+
+/*
+* login with social media
+*/
+
+Route::post('social/signin', [SocialAuthController::class, 'signInWithSocial']);
