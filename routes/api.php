@@ -376,10 +376,10 @@ Route::group(['middleware' => ['jwt.verify']], function () {
  * verify payement
  */
     Route::get('paymentgetway/verify/payment', [\App\Http\Controllers\PaymentController::class, 'verifyPayment']);
-
-    /*
- * login with social media
- */
-
-    Route::post('social/signin', [SocialAuthController::class, 'signInWithSocial']);
 });
+
+/*
+* login with social media
+*/
+
+Route::post('social/signin', [SocialAuthController::class, 'signInWithSocial']);
