@@ -26,7 +26,8 @@
         "predis/predis": "^2.0",
         "pusher/pusher-php-server": "^7.0",
         "symfony/symfony": "5.4.x",
-        "tymon/jwt-auth": "^1.0"
+        "tymon/jwt-auth": "^1.0",
+          "laravel/telescope": "^4.9"
     },
     "require-dev": {
         "facade/ignition": "^2.5",
