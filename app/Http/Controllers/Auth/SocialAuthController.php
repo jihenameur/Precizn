@@ -34,9 +34,9 @@ class SocialAuthController extends Controller
                $payload = $google_client->verifyIdToken($request->token);
                if ($payload) {
                    $userid = $payload['sub'];
-                   $user = User::where('social','like','%'.$payload['sub'].'%')->orWhere('social','like','%'.$payload['sub'].'%')->first();
+                   $user = User::where('social','like','%'.$request->token.'%')->orWhere('social','like','%'.$payload['id'].'%')->first();
                } else {
-                   $res->fail(json_encode($payload));
+                   $res->fail('google token invalid');
                    return new JsonResponse($res, $res->code);
                }
                break;
@@ -46,18 +46,13 @@ class SocialAuthController extends Controller
                    'app_secret' => 'f556cf9c889d554a22c8a41f05eb3270',
                    'default_graph_version' => 'v2.10',
                ]);
-
-               $res->fail($fb->get('/me?fields=id,name,email',$request->token)->getBody());
-               return new JsonResponse($res, $res->code);
-
-
+                $payload = $fb->get('/me?fields=id,name,email',$request->token)->getDecodedBody();
         }
 
             $new_user = new User();
             $client = new Client();
             if($user)
             {
-                // login
                 $token = JWTAuth::fromUser($user);
                 $client = Client::find($user->userable_id);
                 $address = Address::where('user_id', $user->id)
@@ -98,7 +93,7 @@ class SocialAuthController extends Controller
                 $new_user->email = $payload['email'] ? $payload['email'] : ($payload['sub'] ? $payload['id'] : 'unset');
                 $new_user->social = json_encode([
                     $request->provider => [
-                        'id' => $payload['sub'] ?? null,
+                        'id' => $payload['id'] ?? null,
                         'token' => $request->token
                     ]
                 ]);
