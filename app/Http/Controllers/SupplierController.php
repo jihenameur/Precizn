@@ -20,13 +20,21 @@ use Illuminate\Support\Str;
 use App\Http\Controllers\Auth\VerificationApiController;
 use App\Http\Resources\SupplierResource;
 use App\Jobs\Admin\SendCommandClientNotification;
+use App\Jobs\SendCommandClientNotification as JobsSendCommandClientNotification;
+use App\Jobs\SendNewSuuplierNotification as JobsSendNewSuuplierNotification;
 use App\Models\Client;
 use App\Models\Command;
 use App\Models\File;
 use App\Notifications\CommandClientNotification;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-
+/**
+ * @OA\Tag(
+ *     name="Supplier",
+ *     description="Gestion supplier ",
+ *
+ * )
+ */
 class SupplierController extends Controller
 {
     protected $controller;
@@ -47,7 +55,178 @@ class SupplierController extends Controller
         $this->reqHelper = $reqHelper;
         $this->verificationApiController = $verificationApiController;
     }
-
+/**
+     * @OA\Post(
+     *      path="/addSupplier",
+     *      operationId="addSupplier",
+     *      tags={"Supplier"},
+     *     security={{"Authorization":{}}},
+     *      summary="create supplier" ,
+     *      description="create supplier",
+     *     @OA\Parameter (
+     *     in="query",
+     *     name="firstName",
+     *     required=true,
+     *     description="firstName",
+     *     @OA\Schema (type="string")
+     *      ),
+     *     @OA\Parameter (
+     *     in="query",
+     *     name="lastName",
+     *     required=true,
+     *     description="lastName",
+     *     @OA\Schema (type="string")
+     *      ),
+     *  @OA\Parameter (
+     *     in="query",
+     *     name="name",
+     *     required=true,
+     *     description="name",
+     *     @OA\Schema (type="string")
+     *      ),
+     *   @OA\Parameter (
+     *     in="query",
+     *     name="tel",
+     *     required=false,
+     *     description="téléphone",
+     *     @OA\Schema (type="string")
+     *      ),
+     *     @OA\Parameter (
+     *     in="query",
+     *     name="email",
+     *     required=true,
+     *     description="email",
+     *     @OA\Schema (type="string")
+     *      ),
+     *  @OA\Parameter (
+     *     in="query",
+     *     name="password",
+     *     required=true,
+     *     description="password",
+     *     @OA\Schema (type="string")
+     *      ),
+     *     @OA\Parameter (
+     *     in="query",
+     *     name="confirm_password",
+     *     required=true,
+     *     description="confirm_password",
+     *     @OA\Schema (type="string")
+     *      ),
+     *   @OA\Parameter (
+     *     in="query",
+     *     name="starttime",
+     *     required=false,
+     *     description="start time",
+     *     @OA\Schema (type="date-time")
+     *      ),
+     *   @OA\Parameter (
+     *     in="query",
+     *     name="closetime",
+     *     required=false,
+     *     description="close time",
+     *     @OA\Schema (type="date-time")
+     *      ),
+     *    @OA\Parameter (
+     *     in="query",
+     *     name="star",
+     *     required=false,
+     *     description="star",
+     *     @OA\Schema (type="integer")
+     *      ),
+     *    @OA\Parameter (
+     *     in="query",
+     *     name="qantityVente",
+     *     required=false,
+     *     description="qantityVente",
+     *     @OA\Schema (type="string")
+     *      ),
+     *    @OA\Parameter (
+     *     in="query",
+     *     name="delivery",
+     *     required=false,
+     *     description="delivery",
+     *     @OA\Schema (type="integer")
+     *      ),
+     *   @OA\Parameter (
+     *     in="query",
+     *     name="take_away",
+     *     required=false,
+     *     description="take_away",
+     *     @OA\Schema (type="integer")
+     *      ),
+     *   @OA\Parameter (
+     *     in="query",
+     *     name="on_site",
+     *     required=false,
+     *     description="on_site",
+     *     @OA\Schema (type="integer")
+     *      ),
+     *  @OA\Parameter (
+     *     in="query",
+     *     name="category",
+     *     required=false,
+     *     description="category",
+     *     @OA\Items( 
+     *              type="array", 
+     *          )),
+     *   @OA\Parameter (
+     *     in="query",
+     *     name="commission",
+     *     required=false,
+     *     description="commission",
+     *     @OA\Schema (type="integer")
+     *      ),
+     *    
+     *    @OA\Parameter (
+     *     in="query",
+     *     name="street",
+     *     required=true,
+     *     description="street",
+     *     @OA\Schema (type="string")
+     *      ),
+     *   @OA\Parameter (
+     *     in="query",
+     *     name="postcode",
+     *     required=true,
+     *     description="postcode",
+     *     @OA\Schema (type="string")
+     *      ),
+     *   @OA\Parameter (
+     *     in="query",
+     *     name="city",
+     *     required=true,
+     *     description="city",
+     *     @OA\Schema (type="string")
+     *      ),
+     *    @OA\Parameter (
+     *     in="query",
+     *     name="region",
+     *     required=true,
+     *     description="region",
+     *     @OA\Schema (type="string")
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *       ),
+     *     @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=400,
+     *          description="Bad request. User ID must be an integer and bigger than 0",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     *    @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     *   )
+     */
     public function create(Request $request)
     {
         $res = new Result();
@@ -139,7 +318,7 @@ class SupplierController extends Controller
 
             ];
             $res->success($response);
-            SendNewSuuplierNotification::dispatch($supplier);
+            JobsSendNewSuuplierNotification::dispatch($supplier);
         } catch (\Exception $exception) {
              if(env('APP_DEBUG')){
                 $res->fail($exception->getMessage());
@@ -219,6 +398,42 @@ class SupplierController extends Controller
      *
      * @return Collection|Model[]|mixed|void
      */
+     /**
+     * @OA\Get(
+     *      path="/getAllSupplier/{per_page}",
+     *      operationId="getAllSupplier",
+     *      tags={"Supplier"},
+     *     security={{"Authorization":{}}},
+     *      summary="Get List Of supplier",
+     *      description="Returns all supplier and associated provinces.",
+     *    @OA\Parameter(
+     *          name="per_page",
+     *          in="path",
+     *          required=true, 
+     *         
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *      ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     * @OA\Response(
+     *      response=400,
+     *      description="Bad Request"
+     *   ),
+     * @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     *  )
+     */
     public function all($per_page, Request $request)
     {
         if (!Auth::user()->isAuthorized(['admin'])) {
@@ -265,6 +480,41 @@ class SupplierController extends Controller
      * Filter or get By Id
      *
      * @return Collection|Model[]|mixed|void
+     */
+    /**
+     * @OA\Get(
+     *      path="/getSupplierById/{id}",
+     *     tags={"Client"},
+     *     security={{"Authorization":{}}},
+     *      operationId="getSupplierById",
+     *      summary="Get supplier by supplier id",
+     *     @OA\Parameter(
+     *          name="id",
+     *          in="path",
+     *          required=true, 
+     *         
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *      ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     * @OA\Response(
+     *      response=400,
+     *      description="Bad Request"
+     *   ),
+     * @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     * )
      */
     public function getById($id)
     {
@@ -334,6 +584,170 @@ class SupplierController extends Controller
      * @param null $id
      * @param null $params
      * @return Supplier|mixed|void
+     */
+     /**
+     * @OA\Post(
+     *      path="/updateSupplier/{id}",
+     *      operationId="updateSupplier",
+     *      tags={"Supplier"},
+     *     security={{"Authorization":{}}},
+     *      summary="update supplier",
+     *      description="update supplier",
+     *     @OA\Parameter(
+     *          name="id",
+     *          in="path",
+     *          required=true, 
+     *         
+     *      ),
+     *     @OA\Parameter (
+     *     in="query",
+     *     name="firstName",
+     *     required=true,
+     *     description="firstName",
+     *     @OA\Schema (type="string")
+     *      ),
+     *     @OA\Parameter (
+     *     in="query",
+     *     name="lastName",
+     *     required=true,
+     *     description="lastName",
+     *     @OA\Schema (type="string")
+     *      ),
+     *  @OA\Parameter (
+     *     in="query",
+     *     name="name",
+     *     required=true,
+     *     description="name",
+     *     @OA\Schema (type="string")
+     *      ),
+     *   @OA\Parameter (
+     *     in="query",
+     *     name="tel",
+     *     required=false,
+     *     description="téléphone",
+     *     @OA\Schema (type="string")
+     *      ),
+     *     @OA\Parameter (
+     *     in="query",
+     *     name="email",
+     *     required=true,
+     *     description="email",
+     *     @OA\Schema (type="string")
+     *      ),
+     *   @OA\Parameter (
+     *     in="query",
+     *     name="starttime",
+     *     required=false,
+     *     description="start time",
+     *     @OA\Schema (type="date-time")
+     *      ),
+     *   @OA\Parameter (
+     *     in="query",
+     *     name="closetime",
+     *     required=false,
+     *     description="close time",
+     *     @OA\Schema (type="date-time")
+     *      ),
+     *    @OA\Parameter (
+     *     in="query",
+     *     name="star",
+     *     required=false,
+     *     description="star",
+     *     @OA\Schema (type="integer")
+     *      ),
+     *    @OA\Parameter (
+     *     in="query",
+     *     name="qantityVente",
+     *     required=false,
+     *     description="qantityVente",
+     *     @OA\Schema (type="string")
+     *      ),
+     *    @OA\Parameter (
+     *     in="query",
+     *     name="delivery",
+     *     required=false,
+     *     description="delivery",
+     *     @OA\Schema (type="integer")
+     *      ),
+     *   @OA\Parameter (
+     *     in="query",
+     *     name="take_away",
+     *     required=false,
+     *     description="take_away",
+     *     @OA\Schema (type="integer")
+     *      ),
+     *   @OA\Parameter (
+     *     in="query",
+     *     name="on_site",
+     *     required=false,
+     *     description="on_site",
+     *     @OA\Schema (type="integer")
+     *      ),
+     *  @OA\Parameter (
+     *     in="query",
+     *     name="category",
+     *     required=false,
+     *     description="category",
+     *     @OA\Items( 
+     *              type="array", 
+     *          )),
+     *   @OA\Parameter (
+     *     in="query",
+     *     name="commission",
+     *     required=false,
+     *     description="commission",
+     *     @OA\Schema (type="integer")
+     *      ),
+     *    
+     *    @OA\Parameter (
+     *     in="query",
+     *     name="street",
+     *     required=true,
+     *     description="street",
+     *     @OA\Schema (type="string")
+     *      ),
+     *   @OA\Parameter (
+     *     in="query",
+     *     name="postcode",
+     *     required=true,
+     *     description="postcode",
+     *     @OA\Schema (type="string")
+     *      ),
+     *   @OA\Parameter (
+     *     in="query",
+     *     name="city",
+     *     required=true,
+     *     description="city",
+     *     @OA\Schema (type="string")
+     *      ),
+     *    @OA\Parameter (
+     *     in="query",
+     *     name="region",
+     *     required=true,
+     *     description="region",
+     *     @OA\Schema (type="string")
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *       ),
+     *     @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=400,
+     *          description="The email has already been taken",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     *    @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     *     )
      */
     public function update($id, Request $request)
     {
@@ -406,6 +820,63 @@ class SupplierController extends Controller
         }
         return new JsonResponse($res, $res->code);
     }
+       /**
+     * @OA\Post(
+     *      path="/updatesupplierpassword/{id}",
+     *      operationId="updatesupplierpassword",
+     *      tags={"Supplier"},
+     *     security={{"Authorization":{}}},
+     *      summary="update password supplier",
+     *      description="update password supplier",
+     *     @OA\Parameter(
+     *          name="id",
+     *          in="path",
+     *          required=true, 
+     *         
+     *      ),
+     *     @OA\Parameter (
+     *     in="query",
+     *     name="oldpassword",
+     *     required=true,
+     *     description="oldpassword",
+     *     @OA\Schema (type="string")
+     *      ),
+     *     @OA\Parameter (
+     *     in="query",
+     *     name="newpassword",
+     *     required=true,
+     *     description="newpassword",
+     *     @OA\Schema (type="string")
+     *      ),
+     *  @OA\Parameter (
+     *     in="query",
+     *     name="confirm_password",
+     *     required=true,
+     *     description="confirm_password",
+     *     @OA\Schema (type="string")
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *       ),
+     *     @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=400,
+     *          description="The email has already been taken",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     *    @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     *     )
+     */
     public function updateSupplierPW($id, Request $request)
     {
         if (!Auth::user()->isAuthorized(['admin', 'supplier'])) {
@@ -458,6 +929,7 @@ class SupplierController extends Controller
      * @param null $id
      * @return bool|mixed|void
      */
+    
     public function delete($id)
     {
         if (!Auth::user()->isAuthorized(['admin'])) {
@@ -569,6 +1041,49 @@ class SupplierController extends Controller
         //  DB::table('users')->where('id', Auth::id())->update(['phone_verified_at' => date_format($date, 'Y-m-d H:i:s')]);
 
     }
+    /**
+     * @OA\Get(
+     *      path="/statusSupplier",
+     *     tags={"Supplier"},
+     *     security={{"Authorization":{}}},
+     *      operationId="statusSupplier",
+     *      summary="Get supplier by supplier id && status",
+     *     @OA\Parameter (
+     *     in="query",
+     *     name="id",
+     *     required=true,
+     *     description="id",
+     *     @OA\Schema (type="string")
+     *      ),
+     *    @OA\Parameter (
+     *     in="query",
+     *     name="status_id",
+     *     required=true,
+     *     description="status_id",
+     *     @OA\Schema (type="string")
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *      ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     * @OA\Response(
+     *      response=400,
+     *      description="Bad Request"
+     *   ),
+     * @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     * )
+     */
     public function statusSupplier(Request $request)
     {
         if (!Auth::user()->isAuthorized(['admin'])) {
@@ -604,6 +1119,49 @@ class SupplierController extends Controller
         }
         return new JsonResponse($res, $res->code);
     }
+     /**
+     * @OA\Post(
+     *      path="/supplieraccceptrefusecommand",
+     *     tags={"Supplier"},
+     *     security={{"Authorization":{}}},
+     *      operationId="supplieraccceptrefusecommand",
+     *      summary="accept && Or refused order by supplier", 
+     *    @OA\Parameter (
+     *     in="query",
+     *     name="command_id",
+     *     required=true,
+     *     description="command_id",
+     *     @OA\Schema (type="string")
+     *      ),
+     *  @OA\Parameter (
+     *     in="query",
+     *     name="action",
+     *     required=true,
+     *     description="action",
+     *     @OA\Schema (type="string")
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *      ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     * @OA\Response(
+     *      response=400,
+     *      description="Bad Request"
+     *   ),
+     * @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     * )
+     */
     public function supplierAccceptRefuseCommand(Request $request)
     {
         if (!Auth::user()->isAuthorized(['admin', 'supplier'])) {
@@ -633,7 +1191,7 @@ class SupplierController extends Controller
             }
             $command->update();
            // $toUser->notify(new CommandClientNotification($command, $fromUser, $command->status));
-            SendCommandClientNotification::dispatch($command,$fromUser,$toUser,$request->action);
+            JobsSendCommandClientNotification::dispatch($command,$fromUser,$toUser,$request->action);
 
             -$res->success($command);
         } catch (\Exception $exception) {
@@ -646,6 +1204,42 @@ class SupplierController extends Controller
     }
     /**
      * deleted supplier
+     */
+     /**
+     * @OA\Delete(
+     *      path="/deleteSupplier/{id}",
+     *      operationId="deleteSupplier",
+     *      tags={"supplier"},
+     *     security={{"Authorization":{}}},
+     *      summary="delete supplier",
+     *      description="delete one supplier.",
+     *     @OA\Parameter(
+     *          name="id",
+     *          in="path",
+     *          required=true, 
+     *         
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *      ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     * @OA\Response(
+     *      response=400,
+     *      description="Bad Request"
+     *   ),
+     * @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     *  )
      */
     public function deleteSupplier($id)
     {

@@ -24,7 +24,13 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
-
+/**
+ * @OA\Tag(
+ *     name="Product",
+ *     description="Gestion product",
+ *
+ * )
+ */
 class ProductController extends Controller
 {
     protected $controller;
@@ -32,7 +38,118 @@ class ProductController extends Controller
     public function __construct()
     {
     }
-
+/**
+     * @OA\Post(
+     *      path="/createPublicProduct",
+     *      operationId="createPublicProduct",
+     *      tags={"Product"},
+     *     security={{"Authorization":{}}},
+     *      summary="create a public product for the supplier." ,
+     *      description="create a public product for the supplier.",
+     *     @OA\Parameter (
+     *     in="query",
+     *     name="name",
+     *     required=true,
+     *     description="the product name.",
+     *     @OA\Schema (type="string")
+     *      ),
+     *    @OA\Parameter (
+     *     in="query",
+     *     name="description",
+     *     required=true,
+     *     description="description",
+     *     @OA\Schema (type="string")
+     *      ),
+     *     @OA\Parameter (
+     *     in="query",
+     *     name="default_price",
+     *     required=false,
+     *     description="default_price",
+     *     @OA\Schema (type="decimal(8,2)")
+     *      ),
+     *   @OA\Parameter (
+     *     in="query",
+     *     name="min_period_time",
+     *     required=true,
+     *     description="min_period_time",
+     *     @OA\Schema (type="integer")
+     *      ),
+     *   @OA\Parameter (
+     *     in="query",
+     *     name="max_period_time",
+     *     required=true,
+     *     description="max_period_time",
+     *     @OA\Schema (type="integer")
+     *      ),
+     *    @OA\Parameter (
+     *     in="query",
+     *     name="available",
+     *     required=true,
+     *     description="available",
+     *     @OA\Schema (type="integer")
+     *      ),
+     *     @OA\Parameter(
+     *     in="query",
+     *     name="unit_type",
+     *     required=false,
+     *     description="unit_type",
+     *     @OA\Schema(type="string",enum={"Piece", "Kg", "L","M"})
+     *     
+     *      ),
+     *     @OA\Parameter (
+     *     in="query",
+     *     name="unit_limit",
+     *     required=false,
+     *     description="unit_limit",
+     *     @OA\Schema (type="double(8,2)")
+     *      ),
+     *   @OA\Parameter (
+     *     in="query",
+     *     name="weight",
+     *     required=false,
+     *     description="weight",
+     *     @OA\Schema (type="double(8,2)")
+     *      ),
+     *   @OA\Parameter (
+     *     in="query",
+     *     name="dimension",
+     *     required=false,
+     *     description="dimension",
+     *     @OA\Schema (type="string") ),
+     *  @OA\Parameter (
+     *     in="query",
+     *     name="typeproduct",
+     *     required=false,
+     *     description="typeproduct",
+     *     @OA\Items( 
+     *              type="array", 
+     *          )),
+     *  *  @OA\Parameter (
+     *     in="query",
+     *     name="tag",
+     *     required=false,
+     *     description="tag",
+     *     @OA\Items( 
+     *              type="array", 
+     *          )),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *       ),
+     *     @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     *    @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     *  )
+     */
     public function createPublicProduct(Request $request)
     {
 
@@ -117,6 +234,121 @@ class ProductController extends Controller
         }
         return new JsonResponse($res, $res->code);
     }
+    /**
+     * @OA\Post(
+     *      path="/createPrivateProduct",
+     *      operationId="createPrivateProduct",
+     *      tags={"Product"},
+     *     security={{"Authorization":{}}},
+     *      summary="create a private product for the supplier." ,
+     *      description="create a private product for the supplier.",
+     *     @OA\Parameter (
+     *     in="query",
+     *     name="name",
+     *     required=true,
+     *     description="the product name.",
+     *     @OA\Schema (type="string")
+     *      ),
+     *    @OA\Parameter (
+     *     in="query",
+     *     name="description",
+     *     required=true,
+     *     description="description",
+     *     @OA\Schema (type="string")
+     *      ),
+     *     @OA\Parameter (
+     *     in="query",
+     *     name="price",
+     *     required=false,
+     *     description="price",
+     *     @OA\Schema (type="decimal(8,2)")
+     *      ),
+     *   @OA\Parameter (
+     *     in="query",
+     *     name="min_period_time",
+     *     required=true,
+     *     description="min_period_time",
+     *     @OA\Schema (type="integer")
+     *      ),
+     *   @OA\Parameter (
+     *     in="query",
+     *     name="max_period_time",
+     *     required=true,
+     *     description="max_period_time",
+     *     @OA\Schema (type="integer")
+     *      ),
+     *    @OA\Parameter (
+     *     in="query",
+     *     name="available",
+     *     required=true,
+     *     description="available",
+     *     @OA\Schema (type="integer")
+     *      ),
+     *     @OA\Parameter(
+     *     in="query",
+     *     name="unit_type",
+     *     required=false,
+     *     description="unit_type",
+     *     @OA\Schema(type="string",enum={"Piece", "Kg", "L","M"})  
+     *      ),
+     *     @OA\Parameter (
+     *     in="query",
+     *     name="unit_limit",
+     *     required=false,
+     *     description="unit_limit",
+     *     @OA\Schema (type="double(8,2)")
+     *      ),
+     *   @OA\Parameter (
+     *     in="query",
+     *     name="weight",
+     *     required=false,
+     *     description="weight",
+     *     @OA\Schema (type="double(8,2)")
+     *      ),
+     *   @OA\Parameter (
+     *     in="query",
+     *     name="dimension",
+     *     required=false,
+     *     description="dimension",
+     *     @OA\Schema (type="string") ),
+     *  @OA\Parameter (
+     *     in="query",
+     *     name="typeproduct",
+     *     required=false,
+     *     description="typeproduct",
+     *     @OA\Items( 
+     *              type="array", 
+     *          )),
+     *  *  @OA\Parameter (
+     *     in="query",
+     *     name="tag",
+     *     required=false,
+     *     description="tag",
+     *     @OA\Items( 
+     *              type="array", 
+     *          )),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *       ),
+     *     @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     *    @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     * @OA\Response(
+     *      response=500,
+     *      description="erreur serveur 500"
+     *   ),
+     *  )
+     */
     public function createPrivateProduct(Request $request)
     {
         if (!Auth::user()->isAuthorized(['admin', 'supplier'])) {
@@ -225,6 +457,57 @@ class ProductController extends Controller
         }
         return new JsonResponse($res, $res->code);
     }
+     /**
+     * @OA\Post(
+     *      path="/productToSupplier",
+     *      operationId="productToSupplier",
+     *      tags={"Product"},
+     *     security={{"Authorization":{}}},
+     *      summary="Add the product of the supplier." ,
+     *      description="Add the product of the supplier.",
+     *     @OA\Parameter (
+     *     in="query",
+     *     name="product_id",
+     *     required=true,
+     *     description="the product id.",
+     *     @OA\Schema (type="string")
+     *      ),
+     *    @OA\Parameter (
+     *     in="query",
+     *     name="supplier_id",
+     *     required=true,
+     *     description="the supplier id",
+     *     @OA\Schema (type="string")
+     *      ),
+     *     @OA\Parameter (
+     *     in="query",
+     *     name="price",
+     *     required=false,
+     *     description="price",
+     *     @OA\Schema (type="decimal(8,2)")
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *       ),
+     *     @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     *    @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     * @OA\Response(
+     *      response=500,
+     *      description="erreur serveur 500"
+     *   ),
+     *  )
+     */
     public function productToSupplier(Request $request)
     {
         if (!Auth::user()->isAuthorized(['admin', 'supplier'])) {
@@ -269,6 +552,47 @@ class ProductController extends Controller
      * Filter or get all
      *
      * @return Collection|Model[]|mixed|void
+     */
+    
+      /**
+     * @OA\Get(
+     *      path="/getAllProduct/{per_page}",
+     *      operationId="getAllProduct",
+     *      tags={"Product"},
+     *     security={{"Authorization":{}}},
+     *      summary="Get List Of products",
+     *      description="Returns all products and associated provinces.",
+     *    @OA\Parameter(
+     *          name="per_page",
+     *          in="path",
+     *          required=true, 
+     *         
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *      ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     * @OA\Response(
+     *      response=400,
+     *      description="Bad Request"
+     *   ),
+     * @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     * @OA\Response(
+     *      response=500,
+     *      description="erreur serveur 500"
+     *   ),
+     *  )
      */
     public function all($per_page, Request $request)
     {
@@ -319,6 +643,41 @@ class ProductController extends Controller
         }
         return new JsonResponse($res, $res->code);
     }
+      /**
+     * @OA\Get(
+     *      path="/getProduct/{id}",
+     *     tags={"Product"},
+     *     security={{"Authorization":{}}},
+     *      operationId="getProduct",
+     *      summary="Get product by product id",
+     *     @OA\Parameter(
+     *          name="id",
+     *          in="path",
+     *          required=true, 
+     *         
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *      ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     * @OA\Response(
+     *      response=400,
+     *      description="Bad Request"
+     *   ),
+     * @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     * )
+     */
     public function getProduct($id)
     {
         if (!Auth::user()->isAuthorized(['admin', 'supplier', 'client'])) {
@@ -345,6 +704,46 @@ class ProductController extends Controller
         }
         return new JsonResponse($res, $res->code);
     }
+/**
+     * @OA\Get(
+     *      path="/getAllPublicProduct/{per_page}",
+     *      operationId="getAllPublicProduct",
+     *      tags={"Product"},
+     *     security={{"Authorization":{}}},
+     *      summary="Get List Of public products",
+     *      description="Returns all public products and associated provinces.",
+     *    @OA\Parameter(
+     *          name="per_page",
+     *          in="path",
+     *          required=true, 
+     *         
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *      ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     * @OA\Response(
+     *      response=400,
+     *      description="Bad Request"
+     *   ),
+     * @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     * @OA\Response(
+     *      response=500,
+     *      description="erreur serveur 500"
+     *   ),
+     *  )
+ */
     public function getAllPublicProduct($per_page)
     {
         if (!Auth::user()->isAuthorized(['admin', 'supplier'])) {
@@ -410,6 +809,46 @@ class ProductController extends Controller
         }
         return new JsonResponse($res, $res->code);
     }
+    /**
+     * @OA\Get(
+     *      path="/getSupplierProducts/{per_page}",
+     *      operationId="getSupplierProducts",
+     *      tags={"Product"},
+     *     security={{"Authorization":{}}},
+     *      summary="Get List Of private  products where supplier id.",
+     *      description="Returns all public products where supplier id.",
+     *    @OA\Parameter(
+     *          name="per_page",
+     *          in="path",
+     *          required=true, 
+     *         
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *      ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     * @OA\Response(
+     *      response=400,
+     *      description="Bad Request"
+     *   ),
+     * @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     * @OA\Response(
+     *      response=500,
+     *      description="erreur serveur 500"
+     *   ),
+     *  )
+     */
     public function getSupplierProduct($per_page)
     {
         if (!Auth::user()->isAuthorized(['supplier'])) {
@@ -481,7 +920,40 @@ class ProductController extends Controller
         }
         return new JsonResponse($res, $res->code);
     }
-
+ /**
+     * @OA\Get(
+     *      path="/getdispoHourProductsSupplierByTag",
+     *      operationId="getdispoHourProductsSupplierByTag",
+     *      tags={"Product"},
+     *     security={{"Authorization":{}}},
+     *      summary="Get the list of products diponibles in the current time.",
+     *      description="Returns all diponible products in the current time.",
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *      ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     * @OA\Response(
+     *      response=400,
+     *      description="Bad Request"
+     *   ),
+     * @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     * @OA\Response(
+     *      response=500,
+     *      description="erreur serveur 500"
+     *   ),
+     *  )
+     */
     public function getdispoHourProductsSupplierByTag($per_page, Request $request)
     {
         if (!Auth::user()->isAuthorized(['admin', 'supplier', 'client'])) {
@@ -557,6 +1029,48 @@ class ProductController extends Controller
         }
         return new JsonResponse($res, $res->code);
     }
+     /**
+     * @OA\Put(
+     *      path="/ProductsSupplierNotAvailable/{id}",
+     *      operationId="ProductsSupplierNotAvailable",
+     *      tags={"Product"},
+     *     security={{"Authorization":{}}},
+     *      summary="update availability product",
+     *      description="update availability product",
+     *     @OA\Parameter(
+     *          name="id",
+     *          in="path",
+     *          required=true,      
+     *      ),
+     *    @OA\Parameter(
+     *     in="query",
+     *     name="available",
+     *     required=true,
+     *     description="available of product",
+     *     @OA\Schema(type="string")
+     *      ),
+     *     @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *       ),
+     *     @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=400,
+     *          description="bad request",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     *    @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     *  )
+     */
     public function ProductsSupplierNotAvailable($id, Request $request)
     {
         if (!Auth::user()->isAuthorized(['admin', 'supplier'])) {
@@ -594,6 +1108,123 @@ class ProductController extends Controller
      * @param null $id
      * @param null $params
      * @return Product|mixed|void
+     */
+    /**
+     * @OA\Post(
+     *      path="/updateProduct/{id}",
+     *      operationId="updateProduct",
+     *      tags={"Product"},
+     *     security={{"Authorization":{}}},
+     *      summary="create a public product for the supplier." ,
+     *      description="create a public product for the supplier.",
+     *    @OA\Parameter(
+     *          name="id",
+     *          in="path",
+     *          required=true,      
+     *      ),
+     *     @OA\Parameter (
+     *     in="query",
+     *     name="name",
+     *     required=true,
+     *     description="the product name.",
+     *     @OA\Schema (type="string")
+     *      ),
+     *    @OA\Parameter (
+     *     in="query",
+     *     name="description",
+     *     required=true,
+     *     description="description",
+     *     @OA\Schema (type="string")
+     *      ),
+     *     @OA\Parameter (
+     *     in="query",
+     *     name="default_price",
+     *     required=false,
+     *     description="default_price",
+     *     @OA\Schema (type="decimal(8,2)")
+     *      ),
+     *   @OA\Parameter (
+     *     in="query",
+     *     name="min_period_time",
+     *     required=true,
+     *     description="min_period_time",
+     *     @OA\Schema (type="integer")
+     *      ),
+     *   @OA\Parameter (
+     *     in="query",
+     *     name="max_period_time",
+     *     required=true,
+     *     description="max_period_time",
+     *     @OA\Schema (type="integer")
+     *      ),
+     *    @OA\Parameter (
+     *     in="query",
+     *     name="available",
+     *     required=true,
+     *     description="available",
+     *     @OA\Schema (type="integer")
+     *      ),
+     *     @OA\Parameter(
+     *     in="query",
+     *     name="unit_type",
+     *     required=false,
+     *     description="unit_type",
+     *     @OA\Schema(type="string",enum={"Piece", "Kg", "L","M"})
+     *     
+     *      ),
+     *     @OA\Parameter (
+     *     in="query",
+     *     name="unit_limit",
+     *     required=false,
+     *     description="unit_limit",
+     *     @OA\Schema (type="double(8,2)")
+     *      ),
+     *   @OA\Parameter (
+     *     in="query",
+     *     name="weight",
+     *     required=false,
+     *     description="weight",
+     *     @OA\Schema (type="double(8,2)")
+     *      ),
+     *   @OA\Parameter (
+     *     in="query",
+     *     name="dimension",
+     *     required=false,
+     *     description="dimension",
+     *     @OA\Schema (type="string") ),
+     *  @OA\Parameter (
+     *     in="query",
+     *     name="typeproduct",
+     *     required=false,
+     *     description="typeproduct",
+     *     @OA\Items( 
+     *              type="array", 
+     *          )),
+     *  *  @OA\Parameter (
+     *     in="query",
+     *     name="tag",
+     *     required=false,
+     *     description="tag",
+     *     @OA\Items( 
+     *              type="array", 
+     *          )),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *       ),
+     *     @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     *    @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     *  )
      */
     public function update($id, Request $request)
     {
@@ -690,6 +1321,42 @@ class ProductController extends Controller
      *
      * @param null $id
      * @return bool|mixed|void
+     */
+    /**
+     * @OA\Delete(
+     *      path="/destroyProduct/{id}",
+     *      operationId="destroyProduct",
+     *      tags={"Category"},
+     *     security={{"Authorization":{}}},
+     *      summary="delete product",
+     *      description="delete one product.",
+     *     @OA\Parameter(
+     *          name="id",
+     *          in="path",
+     *          required=true, 
+     *         
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *      ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     * @OA\Response(
+     *      response=400,
+     *      description="Bad Request"
+     *   ),
+     * @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     *  )
      */
     public function delete($id)
     {
