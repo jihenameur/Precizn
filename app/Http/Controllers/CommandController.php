@@ -153,22 +153,22 @@ class CommandController extends Controller
         //      'to' => 'date'
         //  ]);
         $res = new Result();
-
+        $orderBy = 'date';
+        $orderByType = "DESC";
+        if($request->has('orderBy') && $request->orderBy != null){
+            $this->validate($request,[
+                'orderBy' => 'required|in:date,id' // complete the akak list
+            ]);
+            $orderBy = $request->orderBy;
+        }
+        if($request->has('orderByType') && $request->orderByType != null){
+            $this->validate($request,[
+                'orderByType' => 'required|in:ASC,DESC' // complete the akak list
+            ]);
+            $orderByType = $request->orderByType;
+        }
         try {
-            $orderBy = 'date';
-            $orderByType = "ASC";
-            if($request->has('orderBy') && $request->orderBy != null){
-                $this->validate($request,[
-                    'orderBy' => 'required|in:date,id' // complete the akak list
-                ]);
-                $orderBy = $request->orderBy;
-            }
-            if($request->has('orderByType') && $request->orderByType != null){
-                $this->validate($request,[
-                    'orderByType' => 'required|in:ASC,DESC' // complete the akak list
-                ]);
-                $orderByType = $request->orderByType;
-            }
+
             $keyword = $request->has('keyword') ? $request->get('keyword') : null;
 
             $status = $request->status ?? 'null';

@@ -228,8 +228,8 @@ class CategoryController extends Controller
      *     @OA\Parameter(
      *          name="id",
      *          in="path",
-     *          required=true, 
-     *         
+     *          required=true,
+     *
      *      ),
      *      @OA\Response(
      *          response=200,
@@ -283,8 +283,8 @@ class CategoryController extends Controller
      *    @OA\Parameter(
      *          name="per_page",
      *          in="path",
-     *          required=true, 
-     *         
+     *          required=true,
+     *
      *      ),
      *      @OA\Response(
      *          response=200,
@@ -387,8 +387,8 @@ class CategoryController extends Controller
      *     @OA\Parameter(
      *          name="id",
      *          in="path",
-     *          required=true, 
-     *         
+     *          required=true,
+     *
      *      ),
      *         @OA\Parameter (
      *     in="query",
@@ -503,8 +503,8 @@ class CategoryController extends Controller
      *     @OA\Parameter(
      *          name="id",
      *          in="path",
-     *          required=true, 
-     *         
+     *          required=true,
+     *
      *      ),
      *      @OA\Response(
      *          response=200,
@@ -541,7 +541,7 @@ class CategoryController extends Controller
         $category = Category::find($id);
         try {
             $category->delete();
-            $res->success($category);
+            $res->success('Deleted');
         } catch (\Exception $exception) {
              if(env('APP_DEBUG')){
                 $res->fail($exception->getMessage());
