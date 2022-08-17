@@ -12,10 +12,9 @@ use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Laravel\Socialite\Facades\Socialite;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Google_Client;
-
+use Facebook;
 class SocialAuthController extends Controller
 {
     public function signInWithSocial(Request $request)
@@ -42,8 +41,15 @@ class SocialAuthController extends Controller
                }
                break;
            default:
-               $payload = Socialite::driver($request->provider)->stateless()->userFromToken($request->token);
-               $user = User::where('social','like','%'.$payload->id.'%')->orWhere('social','like','%'.$payload->token.'%')->first();
+               $fb = new Facebook\Facebook([
+                   'app_id' => '615083823624561',
+                   'app_secret' => 'f556cf9c889d554a22c8a41f05eb3270',
+                   'default_graph_version' => 'v2.10',
+               ]);
+
+               $res->fail($fb->get('/me?fields=id,name,email',$request->token)->getBody());
+               return new JsonResponse($res, $res->code);
+
 
         }
 
@@ -144,7 +150,7 @@ class SocialAuthController extends Controller
             $res->fail(json_encode($payload));
             return new JsonResponse($res, $res->code);
         }catch (\Exception $exception) {
-            $res->fail(Socialite::driver($request->provider)->stateless()->user());
+            $res->fail($exception);
             return new JsonResponse($res, $res->code);
         }
     }
