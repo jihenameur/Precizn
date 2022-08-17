@@ -38,9 +38,8 @@ class CouponController extends Controller
             ]); // create the validations
             if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
             {
-                throw new Exception($validator->errors());
+                return $validator->errors();
             }
-
             $coupon = new Coupon();
             $coupon->code_coupon = $request->code_coupon;
             $coupon->type = $request->type;
@@ -62,7 +61,10 @@ class CouponController extends Controller
             $coupon->save();
             $res->success($coupon);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->getMessage());
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -80,7 +82,10 @@ class CouponController extends Controller
             $coupon = Coupon::find($id);
             $res->success($coupon);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->getMessage());
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -98,13 +103,13 @@ class CouponController extends Controller
             $orderByType = "ASC";
             if($request->has('orderBy') && $request->orderBy != null){
                 $this->validate($request,[
-                    'orderBy' => 'required|in:title,id' // complete the akak list
+                    'orderBy' => 'required|in:title,id,created_at' // complete the  list
                 ]);
                 $orderBy = $request->orderBy;
             }
             if($request->has('orderByType') && $request->orderByType != null){
                 $this->validate($request,[
-                    'orderByType' => 'required|in:ASC,DESC' // complete the akak list
+                    'orderByType' => 'required|in:ASC,DESC' // complete the  list
                 ]);
                 $orderByType = $request->orderByType;
             }
@@ -118,7 +123,10 @@ class CouponController extends Controller
 
             $res->success($coupons);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->getMessage());
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -133,7 +141,10 @@ class CouponController extends Controller
             $res->success($coupons);
 
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->getMessage());
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -152,7 +163,7 @@ class CouponController extends Controller
         ]); // create the validations
         if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
         {
-            throw new Exception($validator->errors());
+            return $validator->errors();
         }
         $res = new Result();
         try {
@@ -179,7 +190,10 @@ class CouponController extends Controller
 
             $res->success($coupon);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->getMessage());
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -198,7 +212,10 @@ class CouponController extends Controller
 
             $res->success($coupon);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->getMessage());
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }

@@ -113,7 +113,7 @@ class VerificationApiController extends Controller
             if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
             {
                 // return $validator->errors();
-                throw new Exception($validator->errors());
+                return ($validator->errors());
 
                 //return back()->withInput()->withErrors($validator);
                 // validation failed redirect back to form
@@ -161,7 +161,10 @@ class VerificationApiController extends Controller
                 $res->fail('Code not verified');
             }
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+            if (env('APP_DEBUG')) {
+                $res->fail($exception->message);
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
 

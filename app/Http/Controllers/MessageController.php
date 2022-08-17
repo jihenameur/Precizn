@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\BaseModel\Result;
-use App\Events\MessageSent;
+use App\Events\Admin\MessageSent;
 use App\Http\Resources\DeliverySocketResource;
 use App\Models\Admin;
 use App\Models\Client;
@@ -46,7 +46,7 @@ class MessageController extends Controller
 
             ]);
 
-            event(new \App\Events\MessageSent($client->firstname, $message->message));
+            event(new \App\Events\Admin\MessageSent($client->firstname, $message->message));
             return ['status' => 'Message Sent!'];
         }
     }
@@ -75,7 +75,7 @@ class MessageController extends Controller
 
         $message->save();
 
-        event(new \App\Events\MessageSent(new DeliverySocketResource(auth()->user()->userable), $message));
+        event(new \App\Events\Admin\MessageSent(new DeliverySocketResource(auth()->user()->userable), $message));
         $fromUser = Client::where('id', auth()->user()->userable_id)->first();
         $toUser  = Admin::find(1);
         $toUser->notify(new MessageNotification($message, $fromUser));
@@ -102,7 +102,7 @@ class MessageController extends Controller
 
         $message->save();
 
-        event(new \App\Events\MessageSent(new DeliverySocketResource(Client::find($request->client_id)), $message));
+        event(new \App\Events\Admin\MessageSent(new DeliverySocketResource(Client::find($request->client_id)), $message));
         $fromUser = Admin::find(auth()->user()->userable_id);
         $toUser = Client::find($request->client_id);
 

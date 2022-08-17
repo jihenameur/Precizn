@@ -11,7 +11,13 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
-
+/**
+ * @OA\Tag(
+ *     name="Category",
+ *     description="Gestion category",
+ *
+ * )
+ */
 class CategoryController extends Controller
 {
     protected $controller;
@@ -20,14 +26,67 @@ class CategoryController extends Controller
     {
         $this->model = $model;
     }
-
+/**
+     * @OA\Post(
+     *      path="/addCategory",
+     *      operationId="addCategory",
+     *      tags={"Category"},
+     *     security={{"Authorization":{}}},
+     *      summary="create category" ,
+     *      description="create category",
+     *     @OA\Parameter (
+     *     in="query",
+     *     name="name",
+     *     required=true,
+     *     description="name",
+     *     @OA\Schema (type="string")
+     *      ),
+     *     @OA\Parameter (
+     *     in="query",
+     *     name="parent_id",
+     *     required=true,
+     *     description="parent_id",
+     *     @OA\Schema (type="string")
+     *      ),
+     *  @OA\Parameter (
+     *     in="query",
+     *     name="order_id",
+     *     required=true,
+     *     description="order_id",
+     *     @OA\Schema (type="string")
+     *      ),
+     * *     @OA\Parameter (
+     *     in="query",
+     *     name="description",
+     *     required=true,
+     *     description="description",
+     *     @OA\Schema (type="string")
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *       ),
+     *     @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     *    @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     *  )
+     */
     public function create(Request $request)
     {
-        if(!Auth::user()->isAuthorized(['admin'])){
+        if (!Auth::user()->isAuthorized(['admin'])) {
             return response()->json([
                 'success' => false,
                 'massage' => 'unauthorized'
-            ],403);
+            ], 403);
         }
         $res = new Result();
         try {
@@ -39,30 +98,28 @@ class CategoryController extends Controller
             ]); // create the validations
             if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
             {
-                throw new Exception($validator->errors());
-
-
-            } else {
-
-                $category = new Category();
-                $category->name = $request->name;
-                $category->parent_id = $request->parent_id;
-                $category->order_id = $request->order_id;
-                $category->description = $request->description;
-                $category->save();
-
-                $response['category'] = [
-                    "id"         =>  $category->id,
-                    "name"     =>  $category->name,
-                    "parent_id"     =>  $category->parent_id,
-                    "order_id"     =>  $category->order_id,
-                    "description"     =>  $category->description,
-                ];
+                return $validator->errors();
             }
+
+            $category = new Category();
+            $category->name = $request->name;
+            $category->parent_id = $request->parent_id;
+            $category->order_id = $request->order_id;
+            $category->description = $request->description;
+            $category->save();
+
+            $response['category'] = [
+                "id"         =>  $category->id,
+                "name"     =>  $category->name,
+                "parent_id"     =>  $category->parent_id,
+                "order_id"     =>  $category->order_id,
+                "description"     =>  $category->description,
+            ];
+
 
             $res->success($response);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+            $res->fail('erreur serveur');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -80,7 +137,10 @@ class CategoryController extends Controller
 
             $res->success($children);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->getMessage());
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -93,11 +153,14 @@ class CategoryController extends Controller
     {
         $res = new Result();
         try {
-            $category = Category::findOrFail($id);
+            $category = Category::find($id);
             $parent = $category->parent;
             $res->success($parent);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->getMessage());
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -111,7 +174,10 @@ class CategoryController extends Controller
 
             $res->success($suppliers);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->getMessage());
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -127,7 +193,10 @@ class CategoryController extends Controller
                 ->paginate($per_page);
             $res->success($suppliers);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->getMessage());
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -142,18 +211,59 @@ class CategoryController extends Controller
                 ->paginate($per_page);
             $res->success($suppliers);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->getMessage());
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
+       /**
+     * @OA\Get(
+     *      path="/getcategorybyid/{id}",
+     *     tags={"Category"},
+     *     security={{"Authorization":{}}},
+     *      operationId="getcategorybyid",
+     *      summary="Get category by category id",
+     *     @OA\Parameter(
+     *          name="id",
+     *          in="path",
+     *          required=true, 
+     *         
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *      ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     * @OA\Response(
+     *      response=400,
+     *      description="Bad Request"
+     *   ),
+     * @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     * )
+     */
     public function categorybyid($id)
     {
         $res = new Result();
         try {
-          $category=Category::find($id);
+            $category = Category::find($id);
             $res->success($category);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->getMessage());
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -161,6 +271,42 @@ class CategoryController extends Controller
      * Filter or get all
      *
      * @return Collection|Model[]|mixed|void
+     */
+    /**
+     * @OA\Get(
+     *      path="/getCategory/{per_page}",
+     *      operationId="getCategory",
+     *      tags={"Category"},
+     *     security={{"Authorization":{}}},
+     *      summary="Get List Of categories",
+     *      description="Returns all categories and associated provinces.",
+     *    @OA\Parameter(
+     *          name="per_page",
+     *          in="path",
+     *          required=true, 
+     *         
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *      ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     * @OA\Response(
+     *      response=400,
+     *      description="Bad Request"
+     *   ),
+     * @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     *  )
      */
     public function all($per_page = 10, Request $request)
     {
@@ -176,7 +322,10 @@ class CategoryController extends Controller
             }
             $res->success($categorys);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->getMessage());
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -188,7 +337,10 @@ class CategoryController extends Controller
                 ->get();
             $res->success($categorys);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->getMessage());
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -224,13 +376,77 @@ class CategoryController extends Controller
      * @param null $params
      * @return Category|mixed|void
      */
+     /**
+     * @OA\Post(
+     *      path="/updateCategory/{id}",
+     *      operationId="updateCategory",
+     *      tags={"Category"},
+     *     security={{"Authorization":{}}},
+     *      summary="update category ",
+     *      description="update category",
+     *     @OA\Parameter(
+     *          name="id",
+     *          in="path",
+     *          required=true, 
+     *         
+     *      ),
+     *         @OA\Parameter (
+     *     in="query",
+     *     name="name",
+     *     required=true,
+     *     description="name",
+     *     @OA\Schema (type="string")
+     *      ),
+     *     @OA\Parameter (
+     *     in="query",
+     *     name="parent_id",
+     *     required=true,
+     *     description="parent_id",
+     *     @OA\Schema (type="string")
+     *      ),
+     *  @OA\Parameter (
+     *     in="query",
+     *     name="order_id",
+     *     required=true,
+     *     description="order_id",
+     *     @OA\Schema (type="string")
+     *      ),
+     * *     @OA\Parameter (
+     *     in="query",
+     *     name="description",
+     *     required=false,
+     *     description="description",
+     *     @OA\Schema (type="string")
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *       ),
+     *     @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=400,
+     *          description="The email has already been taken",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     *    @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     *     )
+     */
     public function update($id, Request $request)
     {
-        if(!Auth::user()->isAuthorized(['admin'])){
+        if (!Auth::user()->isAuthorized(['admin'])) {
             return response()->json([
                 'success' => false,
                 'massage' => 'unauthorized'
-            ],403);
+            ], 403);
         }
         $res = new Result();
         $category = Category::find($id);
@@ -244,13 +460,8 @@ class CategoryController extends Controller
             ]); // create the validations
             if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
             {
-                throw new Exception($validator->errors());
-
-                //return back()->withInput()->withErrors($validator);
-                // validation failed redirect back to form
-
+                return $validator->errors();
             } else {
-
                 $category->name = $request->name;
                 $category->parent_id = $request->parent_id;
                 $category->order_id = $request->order_id;
@@ -268,7 +479,10 @@ class CategoryController extends Controller
 
             $res->success($response);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->getMessage());
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -278,23 +492,61 @@ class CategoryController extends Controller
      * @param null $id
      * @return bool|mixed|void
      */
+     /**
+     * @OA\Delete(
+     *      path="/deleteCategory/{id}",
+     *      operationId="deleteCategory",
+     *      tags={"Category"},
+     *     security={{"Authorization":{}}},
+     *      summary="delete category",
+     *      description="delete one category.",
+     *     @OA\Parameter(
+     *          name="id",
+     *          in="path",
+     *          required=true, 
+     *         
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *      ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     * @OA\Response(
+     *      response=400,
+     *      description="Bad Request"
+     *   ),
+     * @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     *  )
+     */
     public function delete($id)
     {
-        if(!Auth::user()->isAuthorized(['admin'])){
+        if (!Auth::user()->isAuthorized(['admin'])) {
             return response()->json([
                 'success' => false,
                 'massage' => 'unauthorized'
-            ],403);
+            ], 403);
         }
         /** @var Category $category */
         $res = new Result();
         $category = Category::find($id);
-
         try {
             $category->delete();
             $res->success($category);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->getMessage());
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }

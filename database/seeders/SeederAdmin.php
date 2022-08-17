@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Hash;
 
 class SeederAdmin extends Seeder
 {
-    protected $password = '12345678';
+    protected $password = 'password';
     /**
      * Run the database seeds.
      *
@@ -23,8 +23,6 @@ class SeederAdmin extends Seeder
      */
     public function run()
     {
-        $role = Role::where('name',config('roles.backadmin.admin'))->first();
-
         $admins = $this->getAdminList();
         $this->createAdmin($admins);
     }
@@ -41,9 +39,10 @@ class SeederAdmin extends Seeder
             [
                 'gender' => '1',
                 'password' => Hash::make($this->password),
-                'email' => 'dahman@gmail.com',
-                'firstName'=>'mohammed',
-                'lastName'=>'salah'
+                'email' => 'admin@thunder-express.com',
+                'firstName'=>'admin',
+                'lastName'=>'admin',
+                'tel' => '+21626333445'
             ]
         ];
         return $admins;
@@ -62,11 +61,12 @@ class SeederAdmin extends Seeder
            'firstName',
            'gender',
            'lastName']));
+           $user->status_id = 1;
             /** @var supplier $cli */
-            $adm =  Admin::create(Arr::except($admin, ['email', 'password']));
+            $adm =  Admin::create(Arr::except($admin, ['email', 'password','tel']));
             $adm->user()->save($user);
             $adm->save();
-            $role= Role::find(1);
+            $role= Role::find(2);
             $user->roles()->attach($role);
 
         }

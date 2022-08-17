@@ -36,7 +36,10 @@ class PaymentController extends Controller
                 return new JsonResponse($res, $res->code);
 
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->getMessage());
+            }
+            $res->fail('erreur serveur 500');
         }
     }
 
@@ -66,7 +69,10 @@ class PaymentController extends Controller
                             $payment->status = 1;
                             $payment->save();
                         }catch (\Exception $exception) {
-                            $res->fail($exception->getMessage());
+                             if(env('APP_DEBUG')){
+                $res->fail($exception->getMessage());
+            }
+            $res->fail('erreur serveur 500');
                         }
                     }
                     if($payment->target == 'command'){
@@ -76,7 +82,10 @@ class PaymentController extends Controller
                             $payment->status = 1;
                             $payment->save();
                         }catch (\Exception $exception) {
-                            $res->fail($exception->getMessage());
+                             if(env('APP_DEBUG')){
+                $res->fail($exception->getMessage());
+            }
+            $res->fail('erreur serveur 500');
                         }
                     }
                 }
@@ -110,7 +119,10 @@ class PaymentController extends Controller
 
 
         }catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->getMessage());
+            }
+            $res->fail('erreur serveur 500');
         }
     }
 }

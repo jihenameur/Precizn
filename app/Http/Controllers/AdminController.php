@@ -15,6 +15,13 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redis;
 
 use Tymon\JWTAuth\Facades\JWTAuth;
+/**
+ * @OA\Tag(
+ *     name="Administrateur",
+ *     description="Gestion administrateur ",
+ *
+ * )
+ */
 
 class AdminController extends Controller
 {
@@ -30,6 +37,87 @@ class AdminController extends Controller
         $this->model = $model;
         $this->res = $res;
     }
+ 
+    /**
+     * @OA\Post(
+     *      path="/addSuperAdmin",
+     *      operationId="addSuperAdmin",
+     *      tags={"Administrateur"},
+     *     security={{"Authorization":{}}},
+     *      summary="create Admin / SuperAdmin",
+     *      description="create admin",
+     *     @OA\Parameter (
+     *     in="query",
+     *     name="firstname",
+     *     required=true,
+     *     description="firstname",
+     *     @OA\Schema (type="string")
+     *      ),
+     *     @OA\Parameter (
+     *     in="query",
+     *     name="lastname",
+     *     required=true,
+     *     description="lastname",
+     *     @OA\Schema (type="string")
+     *      ),
+     *  @OA\Parameter (
+     *     in="query",
+     *     name="gender",
+     *     required=true,
+     *     description="gender",
+     *     @OA\Schema (type="string")
+     *      ),
+     * *     @OA\Parameter (
+     *     in="query",
+     *     name="tel",
+     *     required=false,
+     *     description="téléphone",
+     *     @OA\Schema (type="string")
+     *      ),
+     *     @OA\Parameter (
+     *     in="query",
+     *     name="email",
+     *     required=true,
+     *     description="email",
+     *     @OA\Schema (type="string")
+     *      ),
+     *     @OA\Parameter (
+     *     in="query",
+     *     name="password",
+     *     required=true,
+     *     description="password",
+     *     @OA\Schema (type="string")
+     *      ),
+     * *     @OA\Parameter (
+     *     in="query",
+     *     name="confirm_password",
+     *     required=true,
+     *     description="confirm_password",
+     *     @OA\Schema (type="string")
+     *      ),
+     * 
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *       ),
+     *     @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=400,
+     *          description="The email has already been taken",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     *    @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     *     )
+     */
     public function create(Request $request)
     {
         $res = new Result();
@@ -44,14 +132,8 @@ class AdminController extends Controller
             ]); // create the validations
             if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
             {
-                // return $validator->errors();
-                throw new Exception($validator->errors());
-
-                //return back()->withInput()->withErrors($validator);
-                // validation failed redirect back to form
+               return ($validator->errors());
             }
-            //else {
-
             $allRequestAttributes = $request->all();
             $role_id = Role::where('short_name', config('roles.backadmin.superadmin'))->first()->id;
             $user = new User($allRequestAttributes);
@@ -88,7 +170,10 @@ class AdminController extends Controller
 
             $res->success($response);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->getMessage());
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -108,18 +193,15 @@ class AdminController extends Controller
                 'email' => 'required|email|unique:users,email',   // required and email format validation
                 'password' => 'required|min:8', // required and number field validation
                 'confirm_password' => 'required|same:password',
+                'tel' => 'required',
 
             ]); // create the validations
             if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
             {
                 // return $validator->errors();
-                throw new Exception($validator->errors());
+                return ($validator->errors());
 
-                //return back()->withInput()->withErrors($validator);
-                // validation failed redirect back to form
             }
-            //else {
-
             $allRequestAttributes = $request->all();
             $role_id = Role::where('short_name', config('roles.backadmin.admin'))->first()->id;
             $user = new User($allRequestAttributes);
@@ -156,15 +238,49 @@ class AdminController extends Controller
 
             $res->success($response);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->getMessage());
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
 
-    /**
-     * Filter or get all
-     *
-     * @return Collection|Model[]|mixed|void
+   /**
+     * @OA\Get(
+     *      path="/get_admins/{per_page}",
+     *      operationId="get_admins",
+     *      tags={"Administrateur"},
+     *     security={{"Authorization":{}}},
+     *      summary="Get List Of admins",
+     *      description="Returns all admins and associated provinces.",
+     *    @OA\Parameter(
+     *          name="per_page",
+     *          in="path",
+     *          required=true, 
+     *         
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *      ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     * @OA\Response(
+     *      response=400,
+     *      description="Bad Request"
+     *   ),
+     * @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     *  )
      */
     public function all($per_page, Request $request)
     {
@@ -175,14 +291,52 @@ class AdminController extends Controller
             if ($keyword !== null) {
                 $keyword = $this->cleanKeywordSpaces($keyword);
 
-                return ($this->getFilterByKeywordClosure($keyword));
+                $admins=$this->getFilterByKeywordClosure($keyword);
             }
             $res->success($admins);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->getMessage());
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
+        /**
+     * @OA\Get(
+     *      path="/getByid/{id}",
+     *     tags={"Administrateur"},
+     *     security={{"Authorization":{}}},
+     *      operationId="getByid",
+     *      summary="Get admin by admin id",
+     *     @OA\Parameter(
+     *          name="id",
+     *          in="path",
+     *          required=true, 
+     *         
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *      ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     * @OA\Response(
+     *      response=400,
+     *      description="Bad Request"
+     *   ),
+     * @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     * )
+     */
     public function getByid($id)
     {
         $res = new Result();
@@ -190,9 +344,15 @@ class AdminController extends Controller
             $admin = Admin::where('id', '=', $id)->first();
             $res->success($admin);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+            $res->fail('erreur serveur');
         }
         return new JsonResponse($res, $res->code);
+    }
+    private function cleanKeywordSpaces($keyword)
+    {
+        $keyword = trim($keyword);
+        $keyword = preg_replace('/\s+/', ' ', $keyword);
+        return $keyword;
     }
     /**
      * Get filter by keyword
@@ -208,6 +368,42 @@ class AdminController extends Controller
 
         return $admins;
     }
+     /**
+     * @OA\Delete(
+     *      path="/deleteAdmin/{id}",
+     *      operationId="deleteAdmin",
+     *      tags={"Administrateur"},
+     *     security={{"Authorization":{}}},
+     *      summary="delete admin",
+     *      description="delete one admin.",
+     *     @OA\Parameter(
+     *          name="id",
+     *          in="path",
+     *          required=true, 
+     *         
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *      ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     * @OA\Response(
+     *      response=400,
+     *      description="Bad Request"
+     *   ),
+     * @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     *  )
+     */
     public function deleteAdmin($id)
     {
         if (!Auth::user()->isAuthorized(['superadmin'])) {
@@ -227,16 +423,83 @@ class AdminController extends Controller
 
             $res->success($user);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->getMessage());
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
     /**
-     * @inheritDoc
-     *
-     * @param null $id
-     * @param null $params
-     * @return Supplier|mixed|void
+     * @OA\Put(
+     *      path="/updateAdmin/{id}",
+     *      operationId="updateAdmin",
+     *      tags={"Administrateur"},
+     *     security={{"Authorization":{}}},
+     *      summary="update Admin / SuperAdmin",
+     *      description="update admin",
+     *     @OA\Parameter(
+     *          name="id",
+     *          in="path",
+     *          required=true, 
+     *         
+     *      ),
+     *     @OA\Parameter (
+     *     in="query",
+     *     name="firstname",
+     *     required=true,
+     *     description="firstname",
+     *     @OA\Schema (type="string")
+     *      ),
+     *     @OA\Parameter (
+     *     in="query",
+     *     name="lastname",
+     *     required=true,
+     *     description="lastname",
+     *     @OA\Schema (type="string")
+     *      ),
+     *  @OA\Parameter (
+     *     in="query",
+     *     name="gender",
+     *     required=true,
+     *     description="gender",
+     *     @OA\Schema (type="string")
+     *      ),
+     * *     @OA\Parameter (
+     *     in="query",
+     *     name="tel",
+     *     required=false,
+     *     description="téléphone",
+     *     @OA\Schema (type="string")
+     *      ),
+     *     @OA\Parameter (
+     *     in="query",
+     *     name="email",
+     *     required=true,
+     *     description="email",
+     *     @OA\Schema (type="string")
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *       ),
+     *     @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=400,
+     *          description="The email has already been taken",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     *    @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     *     )
      */
     public function updateAdmin($id, Request $request)
     {
@@ -254,7 +517,7 @@ class AdminController extends Controller
             ]); // create the validations
             if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
             {
-                throw new Exception($validator->errors());
+                return $validator->errors();
 
                 //return back()->withInput()->withErrors($validator);
                 // validation failed redirect back to form
@@ -268,10 +531,50 @@ class AdminController extends Controller
 
             $res->success($admin);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->getMessage());
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
+     /**
+     * @OA\Post(
+     *      path="/getlastpostiondelivery/{id}",
+     *      operationId="getLastPostionDelivery",
+     *      tags={"Administrateur"},
+     *     security={{"Authorization":{}}},
+     *      summary="get last postion of Delivery ",
+     *      description="last position of delivery",
+     *     @OA\Parameter(
+     *          name="id",
+     *          in="path",
+     *          required=true, 
+     *         
+     *      ),
+     *   @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *       ),
+     *     @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=400,
+     *          description="The email has already been taken",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     *    @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     *    
+     *     )
+     */
     public function getLastPostionDelivery($id)
     {
         $res = new Result();
@@ -279,9 +582,11 @@ class AdminController extends Controller
             $delivery = json_decode(Redis::get('deliveryPostion' . $id));
             $res->success($delivery);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->getMessage());
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
-
 }

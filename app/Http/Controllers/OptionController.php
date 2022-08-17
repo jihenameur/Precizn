@@ -33,12 +33,13 @@ class OptionController extends Controller
         try {
             $validator = Validator::make($request->all(), [
                 'name' => 'required',
-                // 'price' => 'required',
+                'price' => 'required',
+                'default' => 'required',
 
             ]); // create the validations
             if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
             {
-                throw new Exception($validator->errors());
+                return ($validator->errors());
 
             }
 
@@ -52,7 +53,10 @@ class OptionController extends Controller
 
             $res->success($option);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->getMessage());
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -71,7 +75,10 @@ class OptionController extends Controller
             })->paginate($per_page);
             $res->success($option);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->getMessage());
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -88,7 +95,10 @@ class OptionController extends Controller
             $option = Option::find($id);
             $res->success($option);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->getMessage());
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -108,29 +118,29 @@ class OptionController extends Controller
                 'massage' => 'unauthorized'
             ],403);
         }
+        $validator = Validator::make($request->all(), [
+            'name' => 'required',
+            'price' => 'required',
+            'default' => 'required',
+
+        ]); // create the validations
+        if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
+        {
+            return ($validator->errors());
+
+        }
         $res = new Result();
         try {
             /** @var Option $option */
             $option = Option::find($id);
-
-            $validator = Validator::make($request->all(), [
-                'name' => 'required',
-
-            ]); // create the validations
-            if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
-            {
-                return back()->withInput()->withErrors($validator);
-                // validation failed redirect back to form
-
-            }
-
             $option->fill($request->all());
             $option->update();
-
-           // return $option;
             $res->success($option);
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->getMessage());
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
@@ -155,7 +165,10 @@ class OptionController extends Controller
             $option->delete();
             $res->success("Deleted");
         } catch (\Exception $exception) {
-            $res->fail($exception->getMessage());
+             if(env('APP_DEBUG')){
+                $res->fail($exception->getMessage());
+            }
+            $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
