@@ -23,8 +23,7 @@ Route::get('/', function () {
     $delivery = \App\Models\Delivery::first();
     $command = \App\Models\Command::first();
     $client = \App\Models\Client::first();
-    dispatch(new \App\Jobs\Admin\ChangeDeliveryStatusJob($admin, $delivery, 'dispo'));
-    dispatch(new \App\Jobs\Admin\SendCommandAdminNotification($command,$client));
+
     return view('welcome');
 });
 
