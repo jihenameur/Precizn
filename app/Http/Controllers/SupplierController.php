@@ -140,7 +140,6 @@ class SupplierController extends Controller
 
             ];
             $res->success($response);
-            SendNewSuuplierNotification::dispatch($supplier);
         } catch (\Exception $exception) {
             if (env('APP_DEBUG')) {
                 $res->fail($exception->getMessage());
