@@ -85,7 +85,7 @@ class DiscountController extends Controller
         }
         return new JsonResponse($res, $res->code);
     }
-    public function getAll($per_page)
+    public function getAll($per_page,Request $request)
     {
         if(!Auth::user()->isAuthorized(['admin'])){
             return response()->json([
@@ -93,9 +93,23 @@ class DiscountController extends Controller
                 'massage' => 'unauthorized'
             ],403);
         }
+        $orderBy = 'created_at';
+        $orderByType = "DESC";
+        if ($request->has('orderBy') && $request->orderBy != null) {
+            $this->validate($request, [
+                'orderBy' => 'required|in:firstName,lastName,region,created_at' // complete the akak list
+            ]);
+            $orderBy = $request->orderBy;
+        }
+        if ($request->has('orderByType') && $request->orderByType != null) {
+            $this->validate($request, [
+                'orderByType' => 'required|in:ASC,DESC' // complete the akak list
+            ]);
+            $orderByType = $request->orderByType;
+        }
         $res = new Result();
         try {
-            $discounts = Discount::paginate($per_page);
+            $discounts = Discount::orderBy($orderBy, $orderByType)->paginate($per_page);
             $res->success($discounts);
         } catch (\Exception $exception) {
              if(env('APP_DEBUG')){

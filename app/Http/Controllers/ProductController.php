@@ -94,7 +94,7 @@ class ProductController extends Controller
      *     required=false,
      *     description="unit_type",
      *     @OA\Schema(type="string",enum={"Piece", "Kg", "L","M"})
-     *     
+     *
      *      ),
      *     @OA\Parameter (
      *     in="query",
@@ -121,16 +121,16 @@ class ProductController extends Controller
      *     name="typeproduct",
      *     required=false,
      *     description="typeproduct",
-     *     @OA\Items( 
-     *              type="array", 
+     *     @OA\Items(
+     *              type="array",
      *          )),
      *  *  @OA\Parameter (
      *     in="query",
      *     name="tag",
      *     required=false,
      *     description="tag",
-     *     @OA\Items( 
-     *              type="array", 
+     *     @OA\Items(
+     *              type="array",
      *          )),
      *      @OA\Response(
      *          response=200,
@@ -181,8 +181,6 @@ class ProductController extends Controller
                         $images = $request->file('image');
                     }
                 }
-
-
                 $product = new Product();
                 $product->name = $request->name;
 
@@ -288,7 +286,7 @@ class ProductController extends Controller
      *     name="unit_type",
      *     required=false,
      *     description="unit_type",
-     *     @OA\Schema(type="string",enum={"Piece", "Kg", "L","M"})  
+     *     @OA\Schema(type="string",enum={"Piece", "Kg", "L","M"})
      *      ),
      *     @OA\Parameter (
      *     in="query",
@@ -315,16 +313,16 @@ class ProductController extends Controller
      *     name="typeproduct",
      *     required=false,
      *     description="typeproduct",
-     *     @OA\Items( 
-     *              type="array", 
+     *     @OA\Items(
+     *              type="array",
      *          )),
      *  *  @OA\Parameter (
      *     in="query",
      *     name="tag",
      *     required=false,
      *     description="tag",
-     *     @OA\Items( 
-     *              type="array", 
+     *     @OA\Items(
+     *              type="array",
      *          )),
      *      @OA\Response(
      *          response=200,
@@ -396,7 +394,6 @@ class ProductController extends Controller
                         $images = $request->file('image');
                     }
                 }
-
                 $product = new Product();
                 $product->name = $request->name;
                 $product->description = $request->description;
@@ -556,7 +553,7 @@ class ProductController extends Controller
      *
      * @return Collection|Model[]|mixed|void
      */
-    
+
       /**
      * @OA\Get(
      *      path="/getAllProduct/{per_page}",
@@ -568,8 +565,8 @@ class ProductController extends Controller
      *    @OA\Parameter(
      *          name="per_page",
      *          in="path",
-     *          required=true, 
-     *         
+     *          required=true,
+     *
      *      ),
      *      @OA\Response(
      *          response=200,
@@ -658,8 +655,8 @@ class ProductController extends Controller
      *     @OA\Parameter(
      *          name="id",
      *          in="path",
-     *          required=true, 
-     *         
+     *          required=true,
+     *
      *      ),
      *      @OA\Response(
      *          response=200,
@@ -711,6 +708,7 @@ class ProductController extends Controller
         return new JsonResponse($res, $res->code);
     }
 
+
 /**
      * @OA\Get(
      *      path="/getAllPublicProduct/{per_page}",
@@ -722,8 +720,8 @@ class ProductController extends Controller
      *    @OA\Parameter(
      *          name="per_page",
      *          in="path",
-     *          required=true, 
-     *         
+     *          required=true,
+     *
      *      ),
      *      @OA\Response(
      *          response=200,
@@ -751,8 +749,7 @@ class ProductController extends Controller
      *   ),
      *  )
  */
-
-    public function getAllPublicProduct($per_page)
+    public function getAllPublicProduct($per_page,Request $request)
     {
         if (!Auth::user()->isAuthorized(['admin', 'supplier'])) {
             return response()->json([
@@ -760,10 +757,34 @@ class ProductController extends Controller
                 'massage' => 'unauthorized'
             ], 403);
         }
+        $orderBy = 'created_at';
+        $orderByType = "DESC";
+        if ($request->has('orderBy') && $request->orderBy != null) {
+            $this->validate($request, [
+                'orderBy' => 'required|in:name,default_price,available,private' // complete the akak list
+            ]);
+            $orderBy = $request->orderBy;
+
+        }
+        if ($request->has('orderByType') && $request->orderByType != null) {
+            $this->validate($request, [
+                'orderByType' => 'required|in:ASC,DESC' // complete the akak list
+            ]);
+            $orderByType = $request->orderByType;
+        }
         $res = new Result();
         try {
-            $products = Product::where('private', 0)->paginate($per_page);
+            $keyword = $request->has('keyword') ? $request->get('keyword') : null;
 
+            $products = Product::where('private', 0)->orderBy($orderBy, $orderByType)->paginate($per_page);
+            if ($keyword !== null) {
+                $keyword = $this->cleanKeywordSpaces($keyword);
+
+                $products = Product::where('name', 'like', "%$keyword%")
+                    ->orderBy($orderBy, $orderByType)
+                    ->get();
+
+            }
             $res->success([
                 'par_page' => $products->count(),
                 'current_page' => $products->currentPage(),
@@ -830,8 +851,8 @@ class ProductController extends Controller
      *    @OA\Parameter(
      *          name="per_page",
      *          in="path",
-     *          required=true, 
-     *         
+     *          required=true,
+     *
      *      ),
      *      @OA\Response(
      *          response=200,
@@ -1051,7 +1072,7 @@ class ProductController extends Controller
      *     @OA\Parameter(
      *          name="id",
      *          in="path",
-     *          required=true,      
+     *          required=true,
      *      ),
      *    @OA\Parameter(
      *     in="query",
@@ -1133,7 +1154,7 @@ class ProductController extends Controller
      *    @OA\Parameter(
      *          name="id",
      *          in="path",
-     *          required=true,      
+     *          required=true,
      *      ),
      *     @OA\Parameter (
      *     in="query",
@@ -1183,7 +1204,7 @@ class ProductController extends Controller
      *     required=false,
      *     description="unit_type",
      *     @OA\Schema(type="string",enum={"Piece", "Kg", "L","M"})
-     *     
+     *
      *      ),
      *     @OA\Parameter (
      *     in="query",
@@ -1210,16 +1231,16 @@ class ProductController extends Controller
      *     name="typeproduct",
      *     required=false,
      *     description="typeproduct",
-     *     @OA\Items( 
-     *              type="array", 
+     *     @OA\Items(
+     *              type="array",
      *          )),
      *  *  @OA\Parameter (
      *     in="query",
      *     name="tag",
      *     required=false,
      *     description="tag",
-     *     @OA\Items( 
-     *              type="array", 
+     *     @OA\Items(
+     *              type="array",
      *          )),
      *      @OA\Response(
      *          response=200,
@@ -1355,8 +1376,8 @@ class ProductController extends Controller
      *     @OA\Parameter(
      *          name="id",
      *          in="path",
-     *          required=true, 
-     *         
+     *          required=true,
+     *
      *      ),
      *      @OA\Response(
      *          response=200,

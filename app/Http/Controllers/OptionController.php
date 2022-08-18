@@ -82,6 +82,35 @@ class OptionController extends Controller
         }
         return new JsonResponse($res, $res->code);
     }
+    public function getsupplierOptions(Request $request)
+    {
+        if(!Auth::user()->isAuthorized(['admin','supplier'])){
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ],403);
+        }
+        $validator = Validator::make($request->all(), [
+            'supplier_id' => 'required'
+        ]); // create the validations
+        if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
+        {
+            return $validator->errors();
+        }
+        $res = new Result();
+        try {
+            $option = Option::whereHas('products', function ($q) use ($request) {
+                $q->where('supplier_id', $request->supplier_id);
+            })->get();
+            $res->success($option);
+        } catch (\Exception $exception) {
+            if(env('APP_DEBUG')){
+                $res->fail($exception->getMessage());
+            }
+            $res->fail('erreur serveur 500');
+        }
+        return new JsonResponse($res, $res->code);
+    }
     public function getOptionByid($id)
     {
         if(!Auth::user()->isAuthorized(['admin','supplier'])){

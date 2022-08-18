@@ -483,6 +483,7 @@ class CategoryController extends Controller
      */
     public function all($per_page = 10, Request $request)
     {
+
         $res = new Result();
         try {
             $keyword = $request->has('keyword') ? $request->get('keyword') : null;
