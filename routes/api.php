@@ -128,7 +128,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
     Route::get('getAllTags/{per_page}', [TagController::class, 'getAllTags']);
     Route::get('getTagByid/{id}', [TagController::class, 'getTagByid']);
     Route::get('getSupplierTags/{id}', [TagController::class, 'getSupplierTags']);
-
+    Route::get('getlisttags', [TagController::class, 'getAll']);
     Route::put('updateTag/{id}', [TagController::class, 'update']);
     Route::delete('deleteTag/{id}', [TagController::class, 'delete']);
 
@@ -140,6 +140,8 @@ Route::group(['middleware' => ['jwt.verify']], function () {
     Route::get('getOptionByid/{id}', [OptionController::class, 'getOptionByid']);
     Route::get('getProductOptions/{id}/{per_page}', [OptionController::class, 'getProductOptions']);
     Route::put('updateOption/{id}', [OptionController::class, 'update']);
+    Route::post('getsupplieroptions', [OptionController::class, 'getsupplierOptions']);
+
     Route::delete('deleteOption/{id}', [OptionController::class, 'delete']);
 
     /**
@@ -150,6 +152,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
     Route::get('getMenuById/{id}', [MenuController::class, 'getMenuByid']);
     Route::post('updateMenu/{id}', [MenuController::class, 'update']);
     Route::delete('deleteMenu/{id}', [MenuController::class, 'delete']);
+    Route::post('getmenuBysupplierid', [MenuController::class, 'getMenuBySupplierId']);
 
     /**
      * public Client
@@ -387,6 +390,14 @@ Route::get('adsarea/get/{id}', [\App\Http\Controllers\AreaController::class, 'ad
 Route::get('adsarea/all/{per_page}', [\App\Http\Controllers\AreaController::class, 'all']);
 Route::post('adsarea/update/{id}', [\App\Http\Controllers\AreaController::class, 'update']);
 Route::delete('adsarea/delete/{id}', [\App\Http\Controllers\AreaController::class, 'delete']);
+
+/*
+* ads
+*/
+Route::post('ads/create', [\App\Http\Controllers\AdsController::class, 'create']);
+Route::get('ads/get/{id}', [\App\Http\Controllers\AdsController::class, 'adsbyid']);
+Route::get('/ads/all/{per_page}', [\App\Http\Controllers\AdsController::class, 'all']);
+Route::post('/ads/update/{id}', [\App\Http\Controllers\AdsController::class, 'update']);
 
 /*
 * login with social media

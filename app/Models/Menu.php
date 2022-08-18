@@ -26,5 +26,8 @@ class Menu extends Model
                                   'product_id'
                                   );
    }
-
+    public function supplier()
+    {
+        return $this->belongsTo(Supplier::class);
+    }
 }

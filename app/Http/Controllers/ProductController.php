@@ -64,8 +64,6 @@ class ProductController extends Controller
                         $images = $request->file('image');
                     }
                 }
-
-
                 $product = new Product();
                 $product->name = $request->name;
 
@@ -164,7 +162,6 @@ class ProductController extends Controller
                         $images = $request->file('image');
                     }
                 }
-
                 $product = new Product();
                 $product->name = $request->name;
                 $product->description = $request->description;
@@ -350,7 +347,7 @@ class ProductController extends Controller
         return new JsonResponse($res, $res->code);
     }
 
-    public function getAllPublicProduct($per_page)
+    public function getAllPublicProduct($per_page,Request $request)
     {
         if (!Auth::user()->isAuthorized(['admin', 'supplier'])) {
             return response()->json([
@@ -358,10 +355,34 @@ class ProductController extends Controller
                 'massage' => 'unauthorized'
             ], 403);
         }
+        $orderBy = 'created_at';
+        $orderByType = "DESC";
+        if ($request->has('orderBy') && $request->orderBy != null) {
+            $this->validate($request, [
+                'orderBy' => 'required|in:name,default_price,available,private' // complete the akak list
+            ]);
+            $orderBy = $request->orderBy;
+
+        }
+        if ($request->has('orderByType') && $request->orderByType != null) {
+            $this->validate($request, [
+                'orderByType' => 'required|in:ASC,DESC' // complete the akak list
+            ]);
+            $orderByType = $request->orderByType;
+        }
         $res = new Result();
         try {
-            $products = Product::where('private', 0)->paginate($per_page);
+            $keyword = $request->has('keyword') ? $request->get('keyword') : null;
 
+            $products = Product::where('private', 0)->orderBy($orderBy, $orderByType)->paginate($per_page);
+            if ($keyword !== null) {
+                $keyword = $this->cleanKeywordSpaces($keyword);
+
+                $products = Product::where('name', 'like', "%$keyword%")
+                    ->orderBy($orderBy, $orderByType)
+                    ->get();
+
+            }
             $res->success([
                 'par_page' => $products->count(),
                 'current_page' => $products->currentPage(),

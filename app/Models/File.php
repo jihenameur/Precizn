@@ -23,4 +23,5 @@ class File extends Model
     {
         return $this->belongsToMany(Supplier::class)->withPivot('type');
     }
+
 }
