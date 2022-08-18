@@ -14,6 +14,7 @@
         "fruitcake/laravel-cors": "^2.0",
         "google/apiclient": "^2.12",
         "guzzlehttp/guzzle": "^7.4",
+        "joelbutcher/facebook-graph-sdk": "^6.0",
         "laravel/framework": "^8.75",
         "laravel/passport": "v10.4.1",
         "laravel/sanctum": "^2.11",
@@ -25,7 +26,8 @@
         "predis/predis": "^2.0",
         "pusher/pusher-php-server": "^7.0",
         "symfony/symfony": "5.4.x",
-        "tymon/jwt-auth": "^1.0"
+        "tymon/jwt-auth": "^1.0",
+        "laravel/telescope": "^4.9"
     },
     "require-dev": {
         "facade/ignition": "^2.5",

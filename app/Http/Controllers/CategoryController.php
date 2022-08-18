@@ -128,6 +128,45 @@ class CategoryController extends Controller
      *
      * @return Collection|Model[]|mixed|void
      */
+     /**
+     * @OA\Get(
+     *      path="/getCategoryChildren/{id}",
+     *     tags={"Category"},
+     *     security={{"Authorization":{}}},
+     *      operationId="getCategoryChildren",
+     *      summary="Get category per id with children here. ",
+     *     @OA\Parameter(
+     *          name="id",
+     *          in="path",
+     *          required=true, 
+     *         
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *      ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     *     @OA\Response(
+     *      response=400,
+     *      description="Bad Request"
+     *   ),
+     *     @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     *     @OA\Response(
+     *      response=500,
+     *      description="erreur serveur 500"
+     *   ),
+     * )
+     */
     public function getCategoryChildren(Request $request, $id)
     {
         $res = new Result();
@@ -148,6 +187,45 @@ class CategoryController extends Controller
      * Filter or get all
      *
      * @return Collection|Model[]|mixed|void
+     */
+     /**
+     * @OA\Get(
+     *      path="/getCategoryParent/{id}",
+     *     tags={"Category"},
+     *     security={{"Authorization":{}}},
+     *      operationId="getCategoryParent",
+     *      summary="Get category per id with parent here. ",
+     *     @OA\Parameter(
+     *          name="id",
+     *          in="path",
+     *          required=true, 
+     *         
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *      ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     *     @OA\Response(
+     *      response=400,
+     *      description="Bad Request"
+     *   ),
+     *     @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     *     @OA\Response(
+     *      response=500,
+     *      description="erreur serveur 500"
+     *   ),
+     * )
      */
     public function getCategoryParent(Request $request, $id)
     {
@@ -181,7 +259,52 @@ class CategoryController extends Controller
         }
         return new JsonResponse($res, $res->code);
     }
-
+/**
+     * @OA\Get(
+     *      path="/getCategorysupplierDelivery/{id}/{per_page}",
+     *      operationId="getCategorysupplierDelivery",
+     *      tags={"Category"},
+     *     security={{"Authorization":{}}},
+     *      summary="Get the supplier with the Category ID && delivered.",
+     *      description="Returns all  supplier with the Category ID && delivered.",
+     *    @OA\Parameter(
+     *          name="id",
+     *          in="path",
+     *          required=true, 
+     *         
+     *      ),
+     *    @OA\Parameter(
+     *          name="per_page",
+     *          in="path",
+     *          required=true, 
+     *         
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *      ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     * @OA\Response(
+     *      response=400,
+     *      description="Bad Request"
+     *   ),
+     * @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     *  @OA\Response(
+     *      response=500,
+     *      description="erreur serveur 500"
+     *   ),
+     *  )
+     */
     public function getCategorysupplierDelivery($id, $per_page)
     {
         $res = new Result();
@@ -200,6 +323,52 @@ class CategoryController extends Controller
         }
         return new JsonResponse($res, $res->code);
     }
+    /**
+     * @OA\Get(
+     *      path="/getCategorysupplierTakeaway/{id}/{per_page}",
+     *      operationId="getCategorysupplierTakeaway",
+     *      tags={"Category"},
+     *     security={{"Authorization":{}}},
+     *      summary="Get the supplier with the Category ID && OR delivered && OR to Take away.",
+     *      description="Returns all  supplier with the Category ID && OR delivered && OR to Take away.",
+     *    @OA\Parameter(
+     *          name="id",
+     *          in="path",
+     *          required=true, 
+     *         
+     *      ),
+     *    @OA\Parameter(
+     *          name="per_page",
+     *          in="path",
+     *          required=true, 
+     *         
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *      ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     * @OA\Response(
+     *      response=400,
+     *      description="Bad Request"
+     *   ),
+     * @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     *  @OA\Response(
+     *      response=500,
+     *      description="erreur serveur 500"
+     *   ),
+     *  )
+     */
     public function getCategorysupplierTakeaway($id, $per_page)
     {
         $res = new Result();
@@ -218,7 +387,7 @@ class CategoryController extends Controller
         }
         return new JsonResponse($res, $res->code);
     }
-       /**
+    /**
      * @OA\Get(
      *      path="/getcategorybyid/{id}",
      *     tags={"Category"},
@@ -306,6 +475,10 @@ class CategoryController extends Controller
      *      response=404,
      *      description="not found"
      *   ),
+     * @OA\Response(
+     *      response=500,
+     *      description="erreur serveur 500"
+     *   ),
      *  )
      */
     public function all($per_page = 10, Request $request)
@@ -330,6 +503,36 @@ class CategoryController extends Controller
         }
         return new JsonResponse($res, $res->code);
     }
+/**
+     * @OA\Get(
+     *      path="/allCategoryParent",
+     *      operationId="allCategoryParent",
+     *      tags={"Category"},
+     *     security={{"Authorization":{}}},
+     *      summary="Get the list of categories in which the parent ID exists. ",
+     *      description="Returns all categories in which the parent ID exists.",
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *      ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     * @OA\Response(
+     *      response=400,
+     *      description="Bad Request"
+     *   ),
+     * @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     *  )
+     */
     public function allCategoryParent(Request $request)
     {
         $res = new Result();
@@ -429,7 +632,7 @@ class CategoryController extends Controller
      *      ),
      *      @OA\Response(
      *          response=400,
-     *          description="The email has already been taken",
+     *          description="bad request",
      *      ),
      *      @OA\Response(
      *          response=403,
