@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\BaseModel\Result;
 use App\Jobs\Admin\SendCommandAdminNotification;
 use App\Jobs\Admin\SendCommandSupplierNotification;
+use App\Jobs\SendCommandSupplierNotification as JobsSendCommandSupplierNotification;
 use App\Models\Address;
 use App\Models\Admin;
 use App\Models\Client;
@@ -21,7 +22,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Validator;
-
+/**
+ * @OA\Tag(
+ *     name="Commande",
+ *     description="Gestion Commande ",
+ *
+ * )
+ */
 class CommandController extends Controller
 {
     protected $controller;
@@ -37,6 +44,82 @@ class CommandController extends Controller
         $this->locationController = $locationController;
         $this->panierController = $panierController;
     }
+    /**
+     * @OA\Post(
+     *      path="/addCommand",
+     *      operationId="addCommand",
+     *      tags={"Commande"},
+     *     security={{"Authorization":{}}},
+     *      summary="create commande" ,
+     *      description="create command",
+     *     @OA\Parameter (
+     *     in="query",
+     *     name="date",
+     *     required=true,
+     *     description="date",
+     *    @OA\Schema(
+     *           type="string",
+     *           format="date-time"
+     *        ),
+     *     
+     *   
+     *      ),
+     *   @OA\Parameter (
+     *     in="query",
+     *     name="client_id",
+     *     required=true,
+     *     description="client id",
+     *     @OA\Schema (type="integer")
+     *      ),
+     *  @OA\Parameter (
+     *     in="query",
+     *     name="supplier_id ",
+     *     required=true,
+     *     description="supplier id ",
+     *     @OA\Schema (type="integer")
+     *      ),
+     *  @OA\Parameter (
+     *     in="query",
+     *     name="addresse_id ",
+     *     required=true,
+     *     description="addresse id ",
+     *     @OA\Schema (type="integer")
+     *      ),
+     *     @OA\Parameter (
+     *     in="query",
+     *     name="tip",
+     *     required=false,
+     *     description="tip",
+     *     @OA\Schema (type="decimal(8,2)")
+     *      ),
+     *   @OA\Parameter (
+     *     in="query",
+     *     name="mode_pay",
+     *     required=true,
+     *     description="mode de paiment",
+     *     @OA\Schema (type="integer")
+     *      ),
+     *     @OA\Parameter (
+     *     in="query",
+     *     name="codepromo",
+     *     required=true,
+     *     description="codepromo",
+     *     @OA\Schema (type="integer")
+     *      ),
+     *      @OA\Response(
+     *          response=400,
+     *          description="Bad request. User ID must be an integer and bigger than 0",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     *    @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     *   )
+     */
     public function create(Request $request)
     {
         $res = new Result();
@@ -129,7 +212,7 @@ class CommandController extends Controller
             $fromUser = Client::find(auth()->user()->userable_id);
             $toUser  = Supplier::find($command->supplier_id);
             SendCommandAdminNotification::dispatch($command,$fromUser);
-            SendCommandSupplierNotification::dispatch($command,$fromUser,$toUser);
+            JobsSendCommandSupplierNotification::dispatch($command,$fromUser,$toUser);
 
             $res->success($command);
         } catch (\Exception $exception) {
@@ -144,6 +227,46 @@ class CommandController extends Controller
      * Filter or get all
      *
      * @return Collection|Model[]|mixed|void
+     */
+    /**
+     * @OA\Get(
+     *      path="/getAllCommand/{per_page}",
+     *      operationId="getAllCommand",
+     *      tags={"Commande"},
+     *     security={{"Authorization":{}}},
+     *      summary="Get List Of commandes",
+     *      description="Returns all commades and associated provinces.",
+     *    @OA\Parameter(
+     *          name="per_page",
+     *          in="path",
+     *          required=true,
+     *
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *      ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     * @OA\Response(
+     *      response=400,
+     *      description="Bad Request"
+     *   ),
+     * @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     * @OA\Response(
+     *      response=500,
+     *      description="erreur serveur 500"
+     *   ),
+     *  )
      */
     public function all(Request $request, $per_page)
     {
@@ -223,6 +346,46 @@ class CommandController extends Controller
         }
         return new JsonResponse($res, $res->code);
     }
+     /**
+     * @OA\Get(
+     *      path="/getCommandPanier/{id}",
+     *      operationId="getCommandPanier",
+     *      tags={"Commande"},
+     *     security={{"Authorization":{}}},
+     *      summary="Get commande in panier by commande id.",
+     *      description="Returns  commande in panier by commande id.",
+     *    @OA\Parameter(
+     *          name="id",
+     *          in="path",
+     *          required=true,
+     *
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *      ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     * @OA\Response(
+     *      response=400,
+     *      description="Bad Request"
+     *   ),
+     * @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     * @OA\Response(
+     *      response=500,
+     *      description="erreur serveur 500"
+     *   ),
+     *  )
+     */
     public function getCommandPanier($id)
     {
         $res = new Result();
@@ -240,6 +403,46 @@ class CommandController extends Controller
         }
         return new JsonResponse($res, $res->code);
     }
+     /**
+     * @OA\Get(
+     *      path="/getCommand/{id}",
+     *      operationId="getCommand",
+     *      tags={"Commande"},
+     *     security={{"Authorization":{}}},
+     *      summary="Get commande  by commande id.",
+     *      description="Returns  commande  by commande id.",
+     *    @OA\Parameter(
+     *          name="id",
+     *          in="path",
+     *          required=true,
+     *
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *      ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     * @OA\Response(
+     *      response=400,
+     *      description="Bad Request"
+     *   ),
+     * @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     * @OA\Response(
+     *      response=500,
+     *      description="erreur serveur 500"
+     *   ),
+     *  )
+     */
     public function getCommand($id)
     {
         $res = new Result();
@@ -273,6 +476,47 @@ class CommandController extends Controller
      * @param $keyword
      * @return \Closure
      */
+     /**
+     * @OA\Get(
+     *      path="/getCommandsByKeyClientDelivery",
+     *      operationId="getCommandsByKeyClientDelivery",
+     *      tags={"Commande"},
+     *     security={{"Authorization":{}}},
+     *      summary="Get commande  where key client.",
+     *      description="Returns  commande  by key client.",
+     *     @OA\Parameter (
+     *     in="query",
+     *     name="id",
+     *     required=true,
+     *     description="Identifiant client",
+     *     @OA\Schema (type="integer")
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *      ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     * @OA\Response(
+     *      response=400,
+     *      description="Bad Request"
+     *   ),
+     * @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     * @OA\Response(
+     *      response=500,
+     *      description="erreur serveur 500"
+     *   ),
+     *  )
+     */
     public function getCommandsByKeyClientDelivery(Request $request)
     {
         $id = $this->cleanKeywordSpaces($request->id);
@@ -295,6 +539,88 @@ class CommandController extends Controller
      * @param null $id
      * @param null $params
      * @return Command|mixed|void
+     */
+    /**
+     * @OA\Put(
+     *      path="/updateCommand/{id}",
+     *      operationId="updateCommand",
+     *      tags={"Commande"},
+     *     security={{"Authorization":{}}},
+     *      summary="update commande" ,
+     *      description="update command",
+     *  @OA\Parameter(
+     *          name="id",
+     *          in="path",
+     *          required=true,
+     *
+     *      ),
+     *     @OA\Parameter (
+     *     in="query",
+     *     name="date",
+     *     required=true,
+     *     description="date",
+     *    @OA\Schema(
+     *           type="string",
+     *           format="date-time"
+     *        ),
+     *     
+     *   
+     *      ),
+     *   @OA\Parameter (
+     *     in="query",
+     *     name="client_id",
+     *     required=true,
+     *     description="client id",
+     *     @OA\Schema (type="integer")
+     *      ),
+     *  @OA\Parameter (
+     *     in="query",
+     *     name="supplier_id ",
+     *     required=true,
+     *     description="supplier id ",
+     *     @OA\Schema (type="integer")
+     *      ),
+     *  @OA\Parameter (
+     *     in="query",
+     *     name="addresse_id ",
+     *     required=true,
+     *     description="addresse id ",
+     *     @OA\Schema (type="integer")
+     *      ),
+     *     @OA\Parameter (
+     *     in="query",
+     *     name="tip",
+     *     required=false,
+     *     description="tip",
+     *     @OA\Schema ( type="integer",format="decimal(8,2)")
+     *      ),
+     *   @OA\Parameter (
+     *     in="query",
+     *     name="mode_pay",
+     *     required=true,
+     *     description="mode de paiment",
+     *     @OA\Schema (type="integer")
+     *      ),
+     *     @OA\Parameter (
+     *     in="query",
+     *     name="codepromo",
+     *     required=true,
+     *     description="codepromo",
+     *     @OA\Schema (type="integer")
+     *      ),
+     *      @OA\Response(
+     *          response=400,
+     *          description="Bad request. User ID must be an integer and bigger than 0",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     *    @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     *   )
      */
     public function update($id, Request $request)
     {
@@ -353,6 +679,42 @@ class CommandController extends Controller
         }
         return new JsonResponse($res, $res->code);
     }
+     /**
+     * @OA\Get(
+     *      path="/commandStatus",
+     *      operationId="commandStatus",
+     *      tags={"Commande"},
+     *     security={{"Authorization":{}}},
+     *      summary="Get commande by status.",  
+     *    @OA\Parameter (
+     *     in="query",
+     *     name="status",
+     *     required=true,
+     *     description="status",
+     *     @OA\Schema (type="string")
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *       ),
+     *     @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=400,
+     *          description="bad request",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     *    @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     *     )
+     */
     public function commandStatus($id, Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -410,6 +772,41 @@ class CommandController extends Controller
      * @param null $id
      * @return bool|mixed|void
      */
+    /** @OA\Delete(
+        *      path="/deleteCommand/{id}",
+        *      operationId="deleteCommand",
+        *      tags={"Commande"},
+        *     security={{"Authorization":{}}},
+        *      summary="delete commande",
+        *      description="delete one commande.",
+        *     @OA\Parameter(
+        *          name="id",
+        *          in="path",
+        *          required=true, 
+        *         
+        *      ),
+        *      @OA\Response(
+        *          response=200,
+        *          description="Successful operation",
+        *      ),
+        *      @OA\Response(
+        *          response=401,
+        *          description="Unauthenticated",
+        *      ),
+        *      @OA\Response(
+        *          response=403,
+        *          description="Forbidden"
+        *      ),
+        * @OA\Response(
+        *      response=400,
+        *      description="Bad Request"
+        *   ),
+        * @OA\Response(
+        *      response=404,
+        *      description="not found"
+        *   ),
+        *  )
+        */
     public function delete($id)
     {
         $res = new Result();

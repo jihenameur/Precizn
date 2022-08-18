@@ -329,7 +329,50 @@ class SupplierController extends Controller
         }
         return new JsonResponse($res, $res->code);
     }
-
+ /**
+     * @OA\Post(
+     *      path="/addimagesupplier",
+     *      operationId="addimagesupplier",
+     *      tags={"Supplier"},
+     *     security={{"Authorization":{}}},
+     *      summary="create image supplier" ,
+     *      description="create image supplier",
+     *   @OA\Parameter (
+     *     in="query",
+     *     name="image",
+     *     required=true,
+     *     description="image supplier",
+     *     @OA\Schema (type="file")
+     *      ),
+     *   @OA\Parameter (
+     *     in="query",
+     *     name="type",
+     *     required=false,
+     *     description="type",
+     *     @OA\Schema (type="string")
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *       ),
+     *     @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=400,
+     *          description="Bad request. User ID must be an integer and bigger than 0",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     *    @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     *  )
+     */
     public function addImage(Request $request)
     {
         if (!Auth::user()->isAuthorized(['admin', 'supplier'])) {

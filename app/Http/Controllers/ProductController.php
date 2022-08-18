@@ -132,6 +132,13 @@ class ProductController extends Controller
      *     @OA\Items( 
      *              type="array", 
      *          )),
+     * @OA\Parameter(
+     *     in="query",
+     *     name="image[]",
+     *     required=false,
+     *     description="image[]",
+     *     @OA\Schema (type="file")
+     *      ),
      *      @OA\Response(
      *          response=200,
      *          description="Successful operation",
@@ -255,6 +262,20 @@ class ProductController extends Controller
      *     description="description",
      *     @OA\Schema (type="string")
      *      ),
+     *   @OA\Parameter (
+     *     in="query",
+     *     name="supplier_id",
+     *     required=true,
+     *     description="supplier_id",
+     *     @OA\Schema (type="string")
+     *      ),
+     * @OA\Parameter (
+     *     in="query",
+     *     name="option_id",
+     *     required=false,
+     *     description="option_id",
+     *     @OA\Schema (type="string")
+     *      ),
      *     @OA\Parameter (
      *     in="query",
      *     name="price",
@@ -276,13 +297,14 @@ class ProductController extends Controller
      *     description="max_period_time",
      *     @OA\Schema (type="integer")
      *      ),
-     *    @OA\Parameter (
+     * @OA\Parameter (
      *     in="query",
-     *     name="available",
-     *     required=true,
-     *     description="available",
-     *     @OA\Schema (type="integer")
-     *      ),
+     *     name="menu_id",
+     *     required=false,
+     *     description="menu_id",
+     *     @OA\Items( 
+     *              type="array", 
+     *          )),
      *     @OA\Parameter(
      *     in="query",
      *     name="unit_type",
@@ -312,20 +334,27 @@ class ProductController extends Controller
      *     @OA\Schema (type="string") ),
      *  @OA\Parameter (
      *     in="query",
-     *     name="typeproduct",
+     *     name="typeProduct",
      *     required=false,
-     *     description="typeproduct",
+     *     description="type product",
      *     @OA\Items( 
      *              type="array", 
      *          )),
      *  *  @OA\Parameter (
      *     in="query",
-     *     name="tag",
+     *     name="tags",
      *     required=false,
-     *     description="tag",
+     *     description="tags",
      *     @OA\Items( 
      *              type="array", 
      *          )),
+     *   @OA\Parameter(
+     *     in="query",
+     *     name="image",
+     *     required=false,
+     *     description="image",
+     *     @OA\Schema (type="file")
+     *      ),
      *      @OA\Response(
      *          response=200,
      *          description="Successful operation",
