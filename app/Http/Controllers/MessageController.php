@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\BaseModel\Result;
 use App\Events\Admin\MessageSent;
 use App\Http\Resources\DeliverySocketResource;
+use App\Jobs\Admin\NotifyNewClientMessage;
+use App\Jobs\Client\NotifyNewAdminMessage;
 use App\Models\Admin;
 use App\Models\Client;
 use App\Models\Message;
@@ -74,9 +76,9 @@ class MessageController extends Controller
         $message->date = date('Y-m-d H:i:s');
 
         $message->save();
-
-        event(new \App\Events\Admin\MessageSent(new DeliverySocketResource(auth()->user()->userable), $message));
         $fromUser = Client::where('id', auth()->user()->userable_id)->first();
+        $this->dispatch(new NotifyNewClientMessage($fromUser, $message));
+
         $toUser  = Admin::find(1);
         $toUser->notify(new MessageNotification($message, $fromUser));
         // Notification::send($toUser, new MessageNotification($message,auth()->user()));
@@ -102,10 +104,9 @@ class MessageController extends Controller
 
         $message->save();
 
-        event(new \App\Events\Admin\MessageSent(new DeliverySocketResource(Client::find($request->client_id)), $message));
         $fromUser = Admin::find(auth()->user()->userable_id);
         $toUser = Client::find($request->client_id);
-
+        $this->dispatch(new NotifyNewAdminMessage($toUser, $message));
         $toUser->notify(new MessageNotification($message, $fromUser));
 
         //Notification::send($toUser, new MessageNotification(auth()->user()));
