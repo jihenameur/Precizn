@@ -169,7 +169,13 @@ class AuthController extends Controller
         try {
             $user = User::where('email', $request['email'])
                 ->orWhere('tel', $request['email'])->first();
-            if (!$user && !($user->password == bcrypt($request->password))) {
+            if (!$user) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Login credentials are invalid.',
+                ], 400);
+            }
+            if (!($user->password == bcrypt($request->password))) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Login credentials are invalid.',
