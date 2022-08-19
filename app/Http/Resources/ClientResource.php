@@ -16,9 +16,8 @@ class ClientResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'firstname' =>$this->name,
-            'lastname' =>$this->description,
-            'max_period_time' =>$this->max_period_time,
+            'firstname' =>$this->firstname,
+            'lastname' =>$this->lastname,
             'image' => new FileResource($this->file)
         ];
     }
