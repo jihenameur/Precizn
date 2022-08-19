@@ -300,8 +300,8 @@ class ProductController extends Controller
      *     name="menu_id",
      *     required=false,
      *     description="menu_id",
-     *     @OA\Items( 
-     *              type="array", 
+     *     @OA\Items(
+     *              type="array",
      *          )),
      *     @OA\Parameter(
      *     in="query",
@@ -450,10 +450,11 @@ class ProductController extends Controller
                 $supplier = Supplier::find($request->supplier_id);
 
                 $product->suppliers()->attach($supplier, ['price' => $request->price]);
-
-                foreach (json_decode($request->option_id) as $key => $value) {
-                    $option = Option::find($value);
-                    $product->options()->attach($option, ['supplier_id' => $request->supplier_id]);
+                if(count($request->option_id)) {
+                    foreach (json_decode($request->option_id) as $key => $value) {
+                        $option = Option::find($value);
+                        $product->options()->attach($option, ['supplier_id' => $request->supplier_id]);
+                    }
                 }
                 foreach (json_decode($request->typeProduct) as $key => $value) {
                     $typeProduct = TypeProduct::find($value);
@@ -463,9 +464,11 @@ class ProductController extends Controller
                     $tag = Tag::find($value);
                     $product->tag()->attach($tag);
                 }
-                foreach (json_decode($request->menu_id) as $key => $value) {
-                    $menu = Menu::find($value);
-                    $product->menu()->attach($menu, ['supplier_id' => $request->supplier_id]);
+                if(count($request->menu_id)) {
+                    foreach (json_decode($request->menu_id) as $key => $value) {
+                        $menu = Menu::find($value);
+                        $product->menu()->attach($menu, ['supplier_id' => $request->supplier_id]);
+                    }
                 }
                 foreach ($images as $image) {
                     $name = Str::uuid()->toString() . '.' . $image->getClientOriginalExtension();
