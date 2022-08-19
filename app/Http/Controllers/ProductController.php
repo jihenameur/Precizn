@@ -406,14 +406,17 @@ class ProductController extends Controller
                 $supplier = Supplier::find($request->supplier_id);
 
                 $product->suppliers()->attach($supplier, ['price' => $request->price]);
-
-                foreach (json_decode($request->option_id) as $key => $value) {
-                    $option = Option::find($value);
-                    $product->options()->attach($option, ['supplier_id' => $request->supplier_id]);
+                if(count($request->option_id)) {
+                    foreach (json_decode($request->option_id) as $key => $value) {
+                        $option = Option::find($value);
+                        $product->options()->attach($option, ['supplier_id' => $request->supplier_id]);
+                    }
                 }
-                foreach (json_decode($request->menu_id) as $key => $value) {
-                    $menu = Menu::find($value);
-                    $product->menu()->attach($menu, ['supplier_id' => $request->supplier_id]);
+                if(count($request->menu_id)) {
+                    foreach (json_decode($request->menu_id) as $key => $value) {
+                        $menu = Menu::find($value);
+                        $product->menu()->attach($menu, ['supplier_id' => $request->supplier_id]);
+                    }
                 }
                 $res->success($product);
             } else {
