@@ -13,4 +13,5 @@ npm-debug.log
 yarn-error.log
 /.idea
 /.vscode
-.gitlab-ci.yml 
+.gitlab-ci.yml
+/public/public
