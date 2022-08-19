@@ -288,9 +288,10 @@ class TypeProductController extends Controller
      * @param $keyword
      * @return \Closure
      */
-    private function getFilterByKeywordClosure($keyword)
+    private function getFilterByKeywordClosure($keyword, $orderBy, $orderByType)
     {
         $TypeProduct = ModelsTypeProduct::where('name', 'like', "%$keyword%")
+            ->orderBy($orderBy, $orderByType)
             ->get();
         return $TypeProduct;
     }
@@ -342,14 +343,28 @@ class TypeProductController extends Controller
                 'massage' => 'unauthorized'
             ],403);
         }
+        $orderBy = 'created_at';
+        $orderByType = "DESC";
+        if ($request->has('orderBy') && $request->orderBy != null) {
+            $this->validate($request, [
+                'orderBy' => 'required|in:firstName,lastName,id' // complete the akak list
+            ]);
+            $orderBy = $request->orderBy;
+        }
+        if ($request->has('orderByType') && $request->orderByType != null) {
+            $this->validate($request, [
+                'orderByType' => 'required|in:ASC,DESC' // complete the akak list
+            ]);
+            $orderByType = $request->orderByType;
+        }
         $res = new Result();
         try {
             $keyword = $request->has('keyword') ? $request->get('keyword') : null;
-            $TypeProduct = ModelsTypeProduct::paginate($per_page);
+            $TypeProduct = ModelsTypeProduct::orderBy($orderBy, $orderByType)->paginate($per_page);
             if ($keyword !== null) {
                 $keyword = $this->cleanKeywordSpaces($keyword);
 
-                $TypeProduct = $this->getFilterByKeywordClosure($keyword);
+                $TypeProduct = $this->getFilterByKeywordClosure($keyword, $orderBy, $orderByType);
             }
             $res->success($TypeProduct);
         } catch (\Exception $exception) {

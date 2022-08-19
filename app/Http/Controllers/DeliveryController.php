@@ -220,7 +220,7 @@ class DeliveryController extends Controller
             $validator = Validator::make($request->all(), [
                 'firstName' => 'required',
                 'lastName' => 'required',
-                'vehicle' => 'required',
+                'vehicle' => 'required|in:Scooter,Voiture,Velo',
                 'Mark_vehicle' => 'required',
                 'start_worktime' => 'required',
                 'end_worktime' => 'required',
@@ -726,7 +726,7 @@ class DeliveryController extends Controller
         $validator = Validator::make($request->all(), [
             'firstName' => 'required',
             'lastName' => 'required',
-            'vehicle' => 'required',
+            'vehicle' => 'required|in:Scooter,Voiture,Velo',
             'Mark_vehicle' => 'required',
             'start_worktime' => 'required',
             'end_worktime' => 'required'
