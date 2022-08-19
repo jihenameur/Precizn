@@ -34,14 +34,15 @@ class MenuController extends Controller
         $res = new Result();
         try {
             $validator = Validator::make($request->all(), [
-                'name' => 'required'
+                'name' => 'required',
+                'image' => 'required|mimes:jpeg,png,jpg,gif,svg|max:2048',
+
             ]); // create the validations
             if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
             {
                 return ($validator->errors());
 
             }
-
             $menu = new Menu();
             $menu->name = $request->name;
             $menu->description = $request->description;
@@ -50,7 +51,7 @@ class MenuController extends Controller
                 $file = $request->file('image');
                 $filename = Str::uuid()->toString() . '.' . $file->getClientOriginalExtension();
                 $file->move(public_path('public/Menu'), $filename);
-                $file->path = asset('public/Products/' . $filename);
+                $file->path = asset('public/Menu/' . $filename);
                 $menu['image'] =  $file->path;
             }
 
@@ -144,11 +145,12 @@ class MenuController extends Controller
         }
         $validator = Validator::make($request->all(), [
             'name' => 'required',
+            'image.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
 
         ]); // create the validations
         if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
         {
-            throw new Exception($validator->errors());
+            return $validator->errors();
         }
         $res = new Result();
         try {
