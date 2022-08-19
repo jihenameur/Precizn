@@ -46,7 +46,6 @@ class SeederDelivery extends Seeder
             $delivery = new Delivery();
             $delivery->firstName = $faker->firstName();
             $delivery->lastName = $faker->lastName();
-            $delivery->vehicle = rand(0, 2);
             $delivery->available = rand(0, 1);
             $delivery->street = $faker->streetName();
             $delivery->region = $faker->country();
