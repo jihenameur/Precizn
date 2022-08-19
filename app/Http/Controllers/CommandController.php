@@ -811,13 +811,10 @@ class CommandController extends Controller
     {
         $res = new Result();
         try {
-            /** @var Command $command */
             $command = Command::find($id);
-            $command->products()->detach();
-            $command->suppliers()->detach();
-            $command->address()->detach();
+
             $command->delete();
-            $res->success($command);
+            $res->success("Deleted");
         } catch (\Exception $exception) {
              if(env('APP_DEBUG')){
                 $res->fail($exception->getMessage());

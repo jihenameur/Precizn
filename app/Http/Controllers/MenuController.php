@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\BaseModel\Result;
+use App\Http\Resources\MenuResource;
+use App\Http\Resources\ProductResource;
 use App\Models\Menu;
 use App\Models\Product;
 use Illuminate\Http\Request;
@@ -43,16 +45,18 @@ class MenuController extends Controller
             $menu = new Menu();
             $menu->name = $request->name;
             $menu->description = $request->description;
+            $menu->supplier_id  = $request->supplier_id ;
             if ($request->file('image')) {
                 $file = $request->file('image');
                 $filename = Str::uuid()->toString() . '.' . $file->getClientOriginalExtension();
                 $file->move(public_path('public/Menu'), $filename);
-                $menu['image'] = $filename;
+                $file->path = asset('public/Products/' . $filename);
+                $menu['image'] =  $file->path;
             }
 
             $menu->save();
 
-            $res->success($menu);
+            $res->success(new MenuResource($menu));
         } catch (\Exception $exception) {
              if(env('APP_DEBUG')){
                 $res->fail($exception->getMessage());
@@ -74,7 +78,7 @@ class MenuController extends Controller
             $products = Product::whereHas('menu', function ($q) use ($id) {
                 $q->where('menu_id', $id);
             })->paginate($per_page);
-            $res->success($products);
+            $res->success(ProductResource::collection($products));
         } catch (\Exception $exception) {
              if(env('APP_DEBUG')){
                 $res->fail($exception->getMessage());
@@ -94,9 +98,36 @@ class MenuController extends Controller
         $res = new Result();
         try {
             $menu = Menu::find($id);
-            $res->success($menu);
+            $res->success(new MenuResource($menu));
         } catch (\Exception $exception) {
              if(env('APP_DEBUG')){
+                $res->fail($exception->getMessage());
+            }
+            $res->fail('erreur serveur 500');
+        }
+        return new JsonResponse($res, $res->code);
+    }
+    public function getMenuBySupplierId(Request $request)
+    {
+        if (!Auth::user()->isAuthorized(['admin', 'supplier'])) {
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ], 403);
+        }
+        $validator = Validator::make($request->all(), [
+            'supplier_id' => 'required'
+        ]); // create the validations
+        if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
+        {
+            return ($validator->errors());
+        }
+        $res = new Result();
+        try {
+            $menu = Menu::where('supplier_id',$request->supplier_id)->get();
+            $res->success(MenuResource::collection($menu));
+        } catch (\Exception $exception) {
+            if(env('APP_DEBUG')){
                 $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
@@ -126,16 +157,16 @@ class MenuController extends Controller
             $menu->name = $request->name;
             $menu->description = $request->description;
             if ($request->file('image')) {
+                unlink('public/Menu/' . $menu->image);
                 $file = $request->file('image');
-                $filename = $file->getClientOriginalName();
-                //dd( $filename);
-
+                $filename = Str::uuid()->toString() . '.' . $file->getClientOriginalExtension();
                 $file->move(public_path('public/Menu'), $filename);
-                $menu['image'] = $filename;
+                $file->path = asset('public/Menu/' . $filename);
+                $menu['image'] =  $file->path;
             }
             $menu->update();
 
-            $res->success($menu);
+            $res->success(new MenuResource($menu));
         } catch (\Exception $exception) {
              if(env('APP_DEBUG')){
                 $res->fail($exception->getMessage());
