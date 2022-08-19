@@ -10,7 +10,13 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
-
+/**
+ * @OA\Tag(
+ *     name="Address",
+ *     description="Gestion address",
+ *
+ * )
+ */
 class AddressController extends Controller
 {
     protected $controller;
@@ -21,6 +27,89 @@ class AddressController extends Controller
         $this->locationController = $locationController;
     }
 
+    /**
+     * @OA\Post(
+     *      path="/createAdresse/{id}",
+     *      operationId="createAdresse",
+     *      tags={"Address"},
+     *     security={{"Authorization":{}}},
+     *      summary="create addresse" ,
+     *      description="create addresse",
+     *    @OA\Parameter(
+     *          name="id",
+     *          in="path",
+     *          required=true,    
+     *      ),
+     *     @OA\Parameter (
+     *     in="query",
+     *     name="postcode",
+     *     required=true,
+     *     description="postcode",
+     *     @OA\Schema (type="string")
+     *      ),
+     *     @OA\Parameter (
+     *     in="query",
+     *     name="city",
+     *     required=true,
+     *     description="city",
+     *     @OA\Schema (type="string")
+     *      ),
+     *  @OA\Parameter (
+     *     in="query",
+     *     name="street",
+     *     required=true,
+     *     description="rue",
+     *     @OA\Schema (type="string")
+     *      ),
+     *      @OA\Parameter (
+     *     in="query",
+     *     name="region",
+     *     required=true,
+     *     description="region",
+     *     @OA\Schema (type="string")
+     *      ),
+     * 
+     *   @OA\Parameter (
+     *     in="query",
+     *     name="label",
+     *     required=true,
+     *     description="label",
+     *     @OA\Schema (type="string")
+     *      ),
+     *   @OA\Parameter (
+     *     in="query",
+     *     name="type",
+     *     required=true,
+     *     description="type",
+     *     @OA\Schema (type="integer",
+     *           format="int(11)")
+     *      ),
+     *  @OA\Parameter (
+     *     in="query",
+     *     name="user_id",
+     *     required=true,
+     *     description="user_id",
+     *     @OA\Schema ( type="integer",
+     *           format="bigint(20)" )
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *       ),
+     *     @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     *    @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     *  )
+     */
     public function create($id, Request $request)
     {
         if (!Auth::user()->isAuthorized(['admin', 'client'])) {
@@ -87,6 +176,36 @@ class AddressController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    /**
+     * @OA\Get(
+     *      path="/showAddresses",
+     *      operationId="showAddresses",
+     *      tags={"Address"},
+     *     security={{"Authorization":{}}},
+     *      summary="Get List Of Adresses",
+     *      description="Returns all Adresses and associated provinces.",
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *      ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     *  @OA\Response(
+     *      response=400,
+     *      description="Bad Request"
+     *   ),
+     * @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     *  )
+     */
     public function getAll()
     {
         $addresses = Address::all();
@@ -112,11 +231,81 @@ class AddressController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+      /**
+     * @OA\Get(
+     *      path="/show/{id}",
+     *     tags={"Address"},
+     *     security={{"Authorization":{}}},
+     *      operationId="show",
+     *      summary="Get address by address id",
+     *     @OA\Parameter(
+     *          name="id",
+     *          in="path",
+     *          required=true, 
+     *         
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *      ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     * @OA\Response(
+     *      response=400,
+     *      description="Bad Request"
+     *   ),
+     * @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     * )
+     */
     public function show($id)
     {
         $address = Address::find($id);
         return $address;
     }
+     /**
+     * @OA\Get(
+     *      path="/GetClientAddress/{id}",
+     *     tags={"Address"},
+     *     security={{"Authorization":{}}},
+     *      operationId="GetClientAddress",
+     *      summary="Get address by client id",
+     *     @OA\Parameter(
+     *          name="id",
+     *          in="path",
+     *          required=true, 
+     *         
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *      ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     * @OA\Response(
+     *      response=400,
+     *      description="Bad Request"
+     *   ),
+     * @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     * )
+     */
     public function GetClientAddress($id)
     {
         if (!Auth::user()->isAuthorized(['admin', 'client'])) {
@@ -156,6 +345,89 @@ class AddressController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
+     */
+    /**
+     * @OA\Put(
+     *      path="/updateAdresse/{id}",
+     *      operationId="updateAdresse",
+     *      tags={"Address"},
+     *     security={{"Authorization":{}}},
+     *      summary="update addresse" ,
+     *      description="update addresse",
+     *    @OA\Parameter(
+     *          name="id",
+     *          in="path",
+     *          required=true,    
+     *      ),
+     *     @OA\Parameter (
+     *     in="query",
+     *     name="postcode",
+     *     required=true,
+     *     description="postcode",
+     *     @OA\Schema (type="string")
+     *      ),
+     *     @OA\Parameter (
+     *     in="query",
+     *     name="city",
+     *     required=true,
+     *     description="city",
+     *     @OA\Schema (type="string")
+     *      ),
+     *  @OA\Parameter (
+     *     in="query",
+     *     name="street",
+     *     required=true,
+     *     description="rue",
+     *     @OA\Schema (type="string")
+     *      ),
+     *      @OA\Parameter (
+     *     in="query",
+     *     name="region",
+     *     required=true,
+     *     description="region",
+     *     @OA\Schema (type="string")
+     *      ),
+     * 
+     *   @OA\Parameter (
+     *     in="query",
+     *     name="label",
+     *     required=true,
+     *     description="label",
+     *     @OA\Schema (type="string")
+     *      ),
+     *   @OA\Parameter (
+     *     in="query",
+     *     name="type",
+     *     required=true,
+     *     description="type",
+     *     @OA\Schema (type="integer",
+     *           format="int(11)")
+     *      ),
+     *  @OA\Parameter (
+     *     in="query",
+     *     name="user_id",
+     *     required=true,
+     *     description="user_id",
+     *     @OA\Schema ( type="integer",
+     *           format="bigint(20)" )
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *       ),
+     *     @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     *    @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     *  )
      */
     public function update(Request $request, $id)
     {
@@ -215,6 +487,42 @@ class AddressController extends Controller
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
+     */
+      /**
+     * @OA\Delete(
+     *      path="/deleteAddresse/{id}",
+     *      operationId="deleteAddresse",
+     *      tags={"Address"},
+     *     security={{"Authorization":{}}},
+     *      summary="delete Address",
+     *      description="delete one Address.",
+     *     @OA\Parameter(
+     *          name="id",
+     *          in="path",
+     *          required=true,
+     *
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *      ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     * @OA\Response(
+     *      response=400,
+     *      description="Bad Request"
+     *   ),
+     * @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     *  )
      */
     public function destroy($id)
     {

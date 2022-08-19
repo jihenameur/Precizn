@@ -132,6 +132,13 @@ class ProductController extends Controller
      *     @OA\Items(
      *              type="array",
      *          )),
+     * @OA\Parameter(
+     *     in="query",
+     *     name="image[]",
+     *     required=false,
+     *     description="image[]",
+     *     @OA\Schema (type="file")
+     *      ),
      *      @OA\Response(
      *          response=200,
      *          description="Successful operation",
@@ -253,6 +260,20 @@ class ProductController extends Controller
      *     description="description",
      *     @OA\Schema (type="string")
      *      ),
+     *   @OA\Parameter (
+     *     in="query",
+     *     name="supplier_id",
+     *     required=true,
+     *     description="supplier_id",
+     *     @OA\Schema (type="string")
+     *      ),
+     *   @OA\Parameter (
+     *     in="query",
+     *     name="option_id",
+     *     required=false,
+     *     description="option_id",
+     *     @OA\Schema (type="string")
+     *      ),
      *     @OA\Parameter (
      *     in="query",
      *     name="price",
@@ -274,13 +295,14 @@ class ProductController extends Controller
      *     description="max_period_time",
      *     @OA\Schema (type="integer")
      *      ),
-     *    @OA\Parameter (
+     * @OA\Parameter (
      *     in="query",
-     *     name="available",
-     *     required=true,
-     *     description="available",
-     *     @OA\Schema (type="integer")
-     *      ),
+     *     name="menu_id",
+     *     required=false,
+     *     description="menu_id",
+     *     @OA\Items( 
+     *              type="array", 
+     *          )),
      *     @OA\Parameter(
      *     in="query",
      *     name="unit_type",
@@ -293,37 +315,48 @@ class ProductController extends Controller
      *     name="unit_limit",
      *     required=false,
      *     description="unit_limit",
-     *     @OA\Schema (type="double(8,2)")
+     *     @OA\Schema (type="integer",
+     *           format="double(8,2)")
      *      ),
      *   @OA\Parameter (
      *     in="query",
      *     name="weight",
      *     required=false,
      *     description="weight",
-     *     @OA\Schema (type="double(8,2)")
+     *     @OA\Schema (type="integer",
+     *           format="double(8,2)")
      *      ),
      *   @OA\Parameter (
      *     in="query",
      *     name="dimension",
      *     required=false,
      *     description="dimension",
-     *     @OA\Schema (type="string") ),
+     *     @OA\Schema (type="string")),
      *  @OA\Parameter (
      *     in="query",
-     *     name="typeproduct",
+     *     name="typeProduct",
      *     required=false,
      *     description="typeproduct",
      *     @OA\Items(
      *              type="array",
+
      *          )),
      *  *  @OA\Parameter (
      *     in="query",
-     *     name="tag",
+     *     name="tags",
      *     required=false,
      *     description="tag",
      *     @OA\Items(
      *              type="array",
+
      *          )),
+     *   @OA\Parameter(
+     *     in="query",
+     *     name="image",
+     *     required=false,
+     *     description="image",
+     *     @OA\Schema (type="file")
+     *      ),
      *      @OA\Response(
      *          response=200,
      *          description="Successful operation",

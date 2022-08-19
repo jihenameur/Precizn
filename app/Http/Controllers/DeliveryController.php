@@ -34,7 +34,13 @@ use App\Http\Controllers\Auth\VerificationApiController;
 use App\Models\File;
 
 use function PHPUnit\Framework\returnSelf;
-
+/**
+ * @OA\Tag(
+ *     name="Delivery",
+ *     description="Gestion Delivery ",
+ *
+ * )
+ */
 class DeliveryController extends Controller
 {
     protected $controller;
@@ -50,7 +56,163 @@ class DeliveryController extends Controller
         $this->locationController = $locationController;
         $this->verificationApiController = $verificationApiController;
     }
-
+/**
+     * @OA\Post(
+     *      path="/addDelivery",
+     *      operationId="addDelivery",
+     *      tags={"Delivery"},
+     *     security={{"Authorization":{}}},
+     *      summary="create delivery" ,
+     *      description="create delivery",
+     *     @OA\Parameter (
+     *     in="query",
+     *     name="firstName",
+     *     required=true,
+     *     description="firstName",
+     *     @OA\Schema (type="string")
+     *      ),
+     *     @OA\Parameter (
+     *     in="query",
+     *     name="lastName",
+     *     required=true,
+     *     description="lastName",
+     *     @OA\Schema (type="string")
+     *      ),
+     *   @OA\Parameter (
+     *     in="query",
+     *     name="tel",
+     *     required=false,
+     *     description="téléphone",
+     *     @OA\Schema (type="string")
+     *      ),
+     *     @OA\Parameter (
+     *     in="query",
+     *     name="email",
+     *     required=true,
+     *     description="email",
+     *     @OA\Schema (type="string")
+     *      ),
+     *  @OA\Parameter (
+     *     in="query",
+     *     name="password",
+     *     required=true,
+     *     description="password",
+     *     @OA\Schema (type="string")
+     *      ),
+     *     @OA\Parameter (
+     *     in="query",
+     *     name="confirm_password",
+     *     required=true,
+     *     description="confirm_password",
+     *     @OA\Schema (type="string")
+     *      ),
+     *   @OA\Parameter (
+     *     in="query",
+     *     name="vehicle",
+     *     required=false,
+     *     description="vehicle",
+     *     @OA\Schema (type="integer")
+     *      ),
+     *   @OA\Parameter (
+     *     in="query",
+     *     name="Mark_vehicle",
+     *     required=false,
+     *     description="Mark vehicle",
+     *     @OA\Schema (type="string")
+     *      ),
+     *   @OA\Parameter (
+     *     in="query",
+     *     name="start_worktime",
+     *     required=false,
+     *     description="start_worktime",
+     *     @OA\Schema (type="time", format="time")
+     *      ),
+     *   @OA\Parameter (
+     *     in="query",
+     *     name="end_worktime",
+     *     required=false,
+     *     description="end_worktime",
+     *     @OA\Schema (type="time", format="time")
+     *      ),
+     *    @OA\Parameter (
+     *     in="query",
+     *     name="street",
+     *     required=true,
+     *     description="street",
+     *     @OA\Schema (type="string")
+     *      ),
+     *   @OA\Parameter (
+     *     in="query",
+     *     name="postcode",
+     *     required=true,
+     *     description="postcode",
+     *     @OA\Schema (type="string")
+     *      ),
+     *   @OA\Parameter (
+     *     in="query",
+     *     name="city",
+     *     required=true,
+     *     description="city",
+     *     @OA\Schema (type="string")
+     *      ),
+     *    @OA\Parameter (
+     *     in="query",
+     *     name="region",
+     *     required=true,
+     *     description="region",
+     *     @OA\Schema (type="string")
+     *      ),
+     *     
+     *   @OA\Parameter (
+     *     in="query",
+     *     name="salary",
+     *     required=true,
+     *     description="salary",
+     *     @OA\Schema (type="integer")
+     *      ),
+     *    @OA\Parameter(
+     *     in="query",
+     *     name="cycle",
+     *     required=false,
+     *     description="cycle",
+     *     @OA\Schema(type="string",enum={"OFF", "ON"})  
+     *      ),
+     *    @OA\Parameter (
+     *     in="query",
+     *     name="rating",
+     *     required=false,
+     *     description="rating",
+     *     @OA\Schema (type="double(8,2)")
+     *      ),
+     *    @OA\Parameter (
+     *     in="query",
+     *     name="image",
+     *     required=false,
+     *     description="image",
+     *     @OA\Schema (type="file")
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *       ),
+     *     @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=400,
+     *          description="Bad request. User ID must be an integer and bigger than 0",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     *    @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     *   )
+     */
     public function create(Request $request)
     {
         $res = new Result();
@@ -213,6 +375,42 @@ class DeliveryController extends Controller
      *
      * @return Collection|Model[]|mixed|void
      */
+     /**
+     * @OA\Get(
+     *      path="/getAllDelivery/{per_page}",
+     *      operationId="getAllDelivery",
+     *      tags={"Delivery"},
+     *     security={{"Authorization":{}}},
+     *      summary="Get List Of delivery",
+     *      description="Returns all delivery and associated provinces.",
+     *    @OA\Parameter(
+     *          name="per_page",
+     *          in="path",
+     *          required=true, 
+     *         
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *      ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     * @OA\Response(
+     *      response=400,
+     *      description="Bad Request"
+     *   ),
+     * @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     *  )
+     */
     public function all($per_page, Request $request)
     {
         if (!Auth::user()->isAuthorized(['admin'])) {
@@ -272,6 +470,41 @@ class DeliveryController extends Controller
         }
         return new JsonResponse($res, $res->code);
     }
+    /**
+     * @OA\Get(
+     *      path="/getDeliveryById/{id}",
+     *     tags={"Delivery"},
+     *     security={{"Authorization":{}}},
+     *      operationId="getDeliveryById",
+     *      summary="Get delivery by delivery id",
+     *     @OA\Parameter(
+     *          name="id",
+     *          in="path",
+     *          required=true, 
+     *         
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *      ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     * @OA\Response(
+     *      response=400,
+     *      description="Bad Request"
+     *   ),
+     * @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     * )
+     */
     public function getByid($id)
     {
         if (!Auth::user()->isAuthorized(['admin', 'delivery'])) {
@@ -340,6 +573,148 @@ class DeliveryController extends Controller
      * @param null $params
      * @return Client|mixed|void
      */
+    /**
+     * @OA\Post(
+     *      path="/updateDelivery/{id}",
+     *      operationId="updateDelivery",
+     *      tags={"Delivery"},
+     *     security={{"Authorization":{}}},
+     *      summary="update delivery",
+     *      description="update delivery",
+     *     @OA\Parameter(
+     *          name="id",
+     *          in="path",
+     *          required=true, 
+     *         
+     *      ),
+     *     @OA\Parameter (
+     *     in="query",
+     *     name="firstName",
+     *     required=true,
+     *     description="firstName",
+     *     @OA\Schema (type="string")
+     *      ),
+     *     @OA\Parameter (
+     *     in="query",
+     *     name="lastName",
+     *     required=true,
+     *     description="lastName",
+     *     @OA\Schema (type="string")
+     *      ),
+     *   @OA\Parameter (
+     *     in="query",
+     *     name="tel",
+     *     required=false,
+     *     description="téléphone",
+     *     @OA\Schema (type="string")
+     *      ),
+     *     @OA\Parameter (
+     *     in="query",
+     *     name="email",
+     *     required=true,
+     *     description="email",
+     *     @OA\Schema (type="string")
+     *      ),
+     *   @OA\Parameter (
+     *     in="query",
+     *     name="vehicle",
+     *     required=false,
+     *     description="vehicle",
+     *     @OA\Schema (type="integer")
+     *      ),
+     *   @OA\Parameter (
+     *     in="query",
+     *     name="Mark_vehicle",
+     *     required=false,
+     *     description="Mark vehicle",
+     *     @OA\Schema (type="string")
+     *      ),
+     *   @OA\Parameter (
+     *     in="query",
+     *     name="start_worktime",
+     *     required=false,
+     *     description="start_worktime",
+     *     @OA\Schema (type="time", format="time")
+     *      ),
+     *   @OA\Parameter (
+     *     in="query",
+     *     name="end_worktime",
+     *     required=false,
+     *     description="end_worktime",
+     *     @OA\Schema (type="time", format="time")
+     *      ),
+     *    @OA\Parameter (
+     *     in="query",
+     *     name="street",
+     *     required=true,
+     *     description="street",
+     *     @OA\Schema (type="string")
+     *      ),
+     *   @OA\Parameter (
+     *     in="query",
+     *     name="postcode",
+     *     required=true,
+     *     description="postcode",
+     *     @OA\Schema (type="string")
+     *      ),
+     *   @OA\Parameter (
+     *     in="query",
+     *     name="city",
+     *     required=true,
+     *     description="city",
+     *     @OA\Schema (type="string")
+     *      ),
+     *    @OA\Parameter (
+     *     in="query",
+     *     name="region",
+     *     required=true,
+     *     description="region",
+     *     @OA\Schema (type="string")
+     *      ),
+     *     
+     *   @OA\Parameter (
+     *     in="query",
+     *     name="salary",
+     *     required=true,
+     *     description="salary",
+     *     @OA\Schema (type="integer")
+     *      ),
+     *    @OA\Parameter(
+     *     in="query",
+     *     name="cycle",
+     *     required=false,
+     *     description="cycle",
+     *     @OA\Schema(type="string",enum={"OFF", "ON"})  
+     *      ),
+     *    @OA\Parameter (
+     *     in="query",
+     *     name="rating",
+     *     required=false,
+     *     description="rating",
+     *     @OA\Schema (type="double(8,2)")
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *       ),
+     *     @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=400,
+     *          description="The email has already been taken",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     *    @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     *     )
+     */
     public function update($id, Request $request)
     {
         if (!Auth::user()->isAuthorized(['admin', 'delivery'])) {
@@ -395,6 +770,42 @@ class DeliveryController extends Controller
      * @param null $id
      * @return bool|mixed|void
      */
+    /**
+     * @OA\Delete(
+     *      path="/deleteDelivery/{id}",
+     *      operationId="deleteDelivery",
+     *      tags={"Delivery"},
+     *     security={{"Authorization":{}}},
+     *      summary="delete delivery",
+     *      description="delete one delivery.",
+     *     @OA\Parameter(
+     *          name="id",
+     *          in="path",
+     *          required=true, 
+     *         
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *      ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     * @OA\Response(
+     *      response=400,
+     *      description="Bad Request"
+     *   ),
+     * @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     *  )
+     */
     public function delete($id)
     {
         if (!Auth::user()->isAuthorized(['admin'])) {
@@ -419,6 +830,50 @@ class DeliveryController extends Controller
         }
         return new JsonResponse($res, $res->code);
     }
+     /**
+     * @OA\Post(
+     *      path="/acceptCommand",
+     *      operationId="acceptCommand",
+     *      tags={"Delivery"},
+     *     security={{"Authorization":{}}},
+     *      summary="Accepte ordre by delivery",
+     *   
+     *  @OA\Parameter (
+     *     in="query",
+     *     name="delivery_id",
+     *     required=true,
+     *     description="delivery_id",
+     *     @OA\Schema (type="integer")
+     *      ),
+     * *     @OA\Parameter (
+     *     in="query",
+     *     name="command_id",
+     *     required=true,
+     *     description="command_id",
+     *     @OA\Schema (type="integer")
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *       ),
+     *     @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=400,
+     *          description="bad request",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     *    @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     *     )
+     */
     public function acceptCommand(Request $request)
     {
         if (!Auth::user()->isAuthorized(['admin', 'delivery'])) {
@@ -460,6 +915,43 @@ class DeliveryController extends Controller
         return new JsonResponse($res, $res->code);
 
     }
+     /**
+     * @OA\Get(
+     *      path="/notifCommand",
+     *      operationId="notifCommand",
+     *      tags={"Delivery"},
+     *     security={{"Authorization":{}}},
+     *      summary="Get List Of delivery",
+     *      description="Returns all delivery and associated provinces.",
+     * *    @OA\Parameter (
+     *     in="query",
+     *     name="command_id",
+     *     required=true,
+     *     description="command_id",
+     *     @OA\Schema (type="integer")
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *      ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     * @OA\Response(
+     *      response=400,
+     *      description="Bad Request"
+     *   ),
+     * @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     *  )
+     */
     public function notifCommand(Request $request)
     {
         $res = new Result();
@@ -501,6 +993,49 @@ class DeliveryController extends Controller
         }
         return new JsonResponse($res, $res->code);
     }
+     /**
+     * @OA\Post(
+     *      path="/rejectCommand",
+     *      operationId="rejectCommand",
+     *      tags={"Delivery"},
+     *     security={{"Authorization":{}}},
+     *      summary="Accepte ordre by delivery",  
+     *  @OA\Parameter (
+     *     in="query",
+     *     name="delivery_id",
+     *     required=true,
+     *     description="delivery_id",
+     *     @OA\Schema (type="integer")
+     *      ),
+     * *     @OA\Parameter (
+     *     in="query",
+     *     name="command_id",
+     *     required=true,
+     *     description="command_id",
+     *     @OA\Schema (type="integer")
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *       ),
+     *     @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=400,
+     *          description="bad request",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     *    @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     *     )
+     */
     public function rejectCommand(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -565,6 +1100,48 @@ class DeliveryController extends Controller
         }
         return new JsonResponse($res, $res->code);
     }
+      /**
+     * @OA\Get(
+     *      path="/ListCommandRejected/{per_page}",
+     *      operationId="ListCommandRejected",
+     *      tags={"Delivery"},
+     *     security={{"Authorization":{}}},
+     *      summary="Get List Of order refuced",
+     *      description="Returns all  order refuced.",
+     *    @OA\Parameter(
+     *          name="per_page",
+     *          in="path",
+     *          required=true,       
+     *      ),
+     *  @OA\Parameter (
+     *     in="query",
+     *     name="delivery_id",
+     *     required=true,
+     *     description="delivery_id",
+     *     @OA\Schema (type="integer")
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *      ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     * @OA\Response(
+     *      response=400,
+     *      description="Bad Request"
+     *   ),
+     * @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     *  )
+     */
     public function ListCommandRejected($per_page, Request $request)
     {
         if (!Auth::user()->isAuthorized(['admin', 'delivery'])) {
@@ -596,6 +1173,53 @@ class DeliveryController extends Controller
         }
         return new JsonResponse($res, $res->code);
     }
+    /**
+     * @OA\Get(
+     *      path="/gainCommands",
+     *      operationId="gainCommands",
+     *      tags={"Delivery"},
+     *     security={{"Authorization":{}}},
+     *      summary="Get List Of order refuced",
+     *      description="Returns all  order refuced.",
+     *  @OA\Parameter (
+     *     in="query",
+     *     name="delivery_id",
+     *     required=true,
+     *     description="delivery_id",
+     *     @OA\Schema (type="integer")
+     *      ),
+     *  *  @OA\Parameter (
+     *     in="query",
+     *     name="date",
+     *     required=true,
+     *     description="date",
+     *     @OA\Schema(
+     *           type="string",
+     *           format="date-time"
+     *        ),
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *      ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     * @OA\Response(
+     *      response=400,
+     *      description="Bad Request"
+     *   ),
+     * @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     *  )
+     */
     public function gainCommands(Request $request)
     {
         if (!Auth::user()->isAuthorized(['admin', 'delivery'])) {
@@ -633,6 +1257,49 @@ class DeliveryController extends Controller
         }
         return new JsonResponse($res, $res->code);
     }
+     /**
+     * @OA\Get(
+     *      path="/CommandDelivered",
+     *      operationId="CommandDelivered",
+     *      tags={"Delivery"},
+     *     security={{"Authorization":{}}},
+     *      summary="List Orders delivered",  
+     *  @OA\Parameter (
+     *     in="query",
+     *     name="delivery_id",
+     *     required=true,
+     *     description="delivery_id",
+     *     @OA\Schema (type="integer")
+     *      ),
+     * *     @OA\Parameter (
+     *     in="query",
+     *     name="command_id",
+     *     required=true,
+     *     description="command_id",
+     *     @OA\Schema (type="integer")
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *       ),
+     *     @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=400,
+     *          description="bad request",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     *    @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     *     )
+     */
     public function CommandDelivered(Request $request)
     {
         if (!Auth::user()->isAuthorized(['admin', 'delivery'])) {
@@ -666,6 +1333,50 @@ class DeliveryController extends Controller
             }
             $res->fail('erreur serveur 500');
     }    }
+    
+    /**
+     * @OA\Get(
+     *      path="/generateInvoicePDF",
+     *      operationId="generateInvoicePDF",
+     *      tags={"Delivery"},
+     *     security={{"Authorization":{}}},
+     *      summary="generate invoice pdf",  
+     *  @OA\Parameter (
+     *     in="query",
+     *     name="delivery_id",
+     *     required=true,
+     *     description="delivery_id",
+     *     @OA\Schema (type="integer")
+     *      ),
+     * *     @OA\Parameter (
+     *     in="query",
+     *     name="action",
+     *     required=true,
+     *     description="action",
+     *     @OA\Schema (type="string")
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *       ),
+     *     @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=400,
+     *          description="bad request",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     *    @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     *     )
+     */
     public function generateInvoicePDF()
     {
         $pdf = PDF::loadView('myPDF');
@@ -731,7 +1442,69 @@ class DeliveryController extends Controller
         }
         return new JsonResponse($res, $res->code);
     }
-
+    /**
+     * @OA\Get(
+     *      path="/statisDeliv",
+     *      operationId="statisDeliv",
+     *      tags={"Delivery"},
+     *     security={{"Authorization":{}}},
+     *      summary="orders are delivered within a given time limit.",  
+     *     @OA\Parameter (
+     *     in="query",
+     *     name="from",
+     *     required=true,
+     *     description="from",
+     *    @OA\Schema(
+     *           type="string",
+     *           format="date-time"
+     *        ),
+     *      ),
+     *     @OA\Parameter (
+     *     in="query",
+     *     name="to",
+     *     required=true,
+     *     description="to",
+     *     @OA\Schema(
+     *           type="string",
+     *           format="date-time"
+     *        ),
+     *      ),
+     *  @OA\Parameter (
+     *     in="query",
+     *     name="delivery_id",
+     *     required=true,
+     *     description="delivery_id",
+     *     @OA\Schema (type="integer")
+     *      ),
+     * *     @OA\Parameter (
+     *     in="query",
+     *     name="action",
+     *     required=true,
+     *     description="action",
+     *     @OA\Schema (type="string")
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *       ),
+     *     @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=400,
+     *          description="bad request",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     *    @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     *     )
+     */
     public function statisDeliv(Request $request)
     {
         if (!Auth::user()->isAuthorized(['admin', 'delivery'])) {
@@ -813,6 +1586,49 @@ class DeliveryController extends Controller
         }
         return new JsonResponse($res, $res->code);
     }
+    /**
+     * @OA\Post(
+     *      path="/sendposition",
+     *      operationId="sendposition",
+     *      tags={"Delivery"},
+     *     security={{"Authorization":{}}},
+     *      summary="locate delivery position",  
+     *  @OA\Parameter (
+     *     in="query",
+     *     name="long",
+     *     required=true,
+     *     description="longitude",
+     *     @OA\Schema (type="integer")
+     *      ),
+     * *     @OA\Parameter (
+     *     in="query",
+     *     name="lat",
+     *     required=true,
+     *     description="latitude",
+     *     @OA\Schema (type="integer")
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *       ),
+     *     @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=400,
+     *          description="bad request",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     *    @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     *     )
+     */
     public function sendDeliveryPosition(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -838,6 +1654,49 @@ class DeliveryController extends Controller
 
         return response()->json(json_decode(Redis::get('deliveryPostion' . $delivery->id)));
     }
+    /**
+     * @OA\Post(
+     *      path="/statusdelivery",
+     *      operationId="statusdelivery",
+     *      tags={"Delivery"},
+     *     security={{"Authorization":{}}},
+     *      summary="Get Status delivery",    
+     *  @OA\Parameter (
+     *     in="query",
+     *     name="status_id",
+     *     required=true,
+     *     description="status_id",
+     *     @OA\Schema (type="integer")
+     *      ),
+     *  @OA\Parameter (
+     *     in="query",
+     *     name="id",
+     *     required=true,
+     *     description="id",
+     *     @OA\Schema (type="integer")
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *       ),
+     *     @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=400,
+     *          description="bad request",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     *    @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     *     )
+     */
     public function statusDelivery(Request $request)
     {
         if (!Auth::user()->isAuthorized(['admin'])) {

@@ -11,7 +11,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
-
+/**
+ * @OA\Tag(
+ *     name="Tag",
+ *     description="Gestion Tags ",
+ *
+ * )
+ */
 class TagController extends Controller
 {
     protected $controller;
@@ -20,7 +26,42 @@ class TagController extends Controller
     {
         $this->model = $model;
     }
-
+ /**
+     * @OA\Post(
+     *      path="/addTag",
+     *      operationId="addTag",
+     *      tags={"Tag"},
+     *     security={{"Authorization":{}}},
+     *      summary="create tag.",  
+     *     @OA\Parameter (
+     *     in="query",
+     *     name="name",
+     *     required=true,
+     *     description="name",
+     *    @OA\Schema( type="string" ),
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *       ),
+     *     @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=400,
+     *          description="bad request",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     *    @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     *     )
+     */
     public function create(Request $request)
     {
         if (!Auth::user()->isAuthorized(['admin', 'supplier'])) {
@@ -88,6 +129,47 @@ class TagController extends Controller
             ->orderBy($orderBy, $orderByType)->get();
         return $tag;
     }
+
+ /**
+     * @OA\Get(
+     *      path="/getAllTags/{per_page}",
+     *      operationId="getAllTags",
+     *      tags={"Tag"},
+     *     security={{"Authorization":{}}},
+     *      summary="Get List Of tags",
+     *      description="Returns all tags and associated provinces.",
+     *    @OA\Parameter(
+     *          name="per_page",
+     *          in="path",
+     *          required=true,
+     *
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *      ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     * @OA\Response(
+     *      response=400,
+     *      description="Bad Request"
+     *   ),
+     * @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     * @OA\Response(
+     *      response=500,
+     *      description="erreur serveur 500"
+     *   ),
+     *  )
+     */
 
     public function getAllTags($per_page, Request $request)
     {
@@ -199,7 +281,47 @@ class TagController extends Controller
         }
         return new JsonResponse($res, $res->code);
     }
-
+/**
+     * @OA\Put(
+     *      path="/updateTag/{id}",
+     *      operationId="updateTag",
+     *      tags={"Tag"},
+     *     security={{"Authorization":{}}},
+     *      summary="update tag.", 
+     *    @OA\Parameter(
+     *          name="id",
+     *          in="path",
+     *          required=true,
+     *      ), 
+     *     @OA\Parameter(
+     *     in="query",
+     *     name="name",
+     *     required=true,
+     *     description="name",
+     *    @OA\Schema( type="string" ),
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *       ),
+     *     @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=400,
+     *          description="bad request",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     *    @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     *   )
+     */
     public function update($id, Request $request)
     {
         if (!Auth::user()->isAuthorized(['admin', 'supplier'])) {
@@ -237,6 +359,42 @@ class TagController extends Controller
         }
         return new JsonResponse($res, $res->code);
     }
+
+     /** @OA\Delete(
+        *      path="/deleteTag/{id}",
+        *      operationId="deleteTag",
+        *      tags={"Commande"},
+        *     security={{"Authorization":{}}},
+        *      summary="delete tag",
+        *      description="delete one tag.",
+        *     @OA\Parameter(
+        *          name="id",
+        *          in="path",
+        *          required=true, 
+        *         
+        *      ),
+        *      @OA\Response(
+        *          response=200,
+        *          description="Successful operation",
+        *      ),
+        *      @OA\Response(
+        *          response=401,
+        *          description="Unauthenticated",
+        *      ),
+        *      @OA\Response(
+        *          response=403,
+        *          description="Forbidden"
+        *      ),
+        * @OA\Response(
+        *      response=400,
+        *      description="Bad Request"
+        *   ),
+        * @OA\Response(
+        *      response=404,
+        *      description="not found"
+        *   ),
+        *  )
+        */
 
     public function delete($id)
     {

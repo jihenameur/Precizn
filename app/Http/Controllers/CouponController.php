@@ -12,15 +12,151 @@ use App\Models\Command;
 use App\Models\Coupon;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
-class CouponController extends Controller
-{
-    /**
+  /**
      * @OA\Tag(
      *     name="Coupon",
-     *     description="Authentification & Authorisation ",
+     *     description="Gestion Coupon",
      *
      * )
-     */
+   */
+class CouponController extends Controller
+{
+   /**
+     * @OA\Post(
+     *      path="/addCoupon",
+     *      operationId="addCoupon",
+     *      tags={"Coupon"},
+     *     security={{"Authorization":{}}},
+     *      summary="create coupon.",  
+     *     @OA\Parameter (
+     *     in="query",
+     *     name="code_coupon",
+     *     required=true,
+     *     description="code coupon ",
+     *    @OA\Schema( type="string" )
+     *      ),
+     *   @OA\Parameter (
+     *     in="query",
+     *     name="value",
+     *     required=false,
+     *     description="value",
+     *    @OA\Schema(type="integer",
+     *           format="double(8,2)" ),
+     *      ),
+     *  *  @OA\Parameter (
+     *     in="query",
+     *     name="title",
+     *     required=false,
+     *     description="title",
+     *    @OA\Schema( type="string"),
+     *      ),
+     *  @OA\Parameter (
+     *     in="query",
+     *     name="start_date",
+     *     required=true,
+     *     description="start_date",
+     *    @OA\Schema( type="string",
+     *           format="date-time"),
+     *      ),
+     *  @OA\Parameter (
+     *     in="query",
+     *     name="end_date",
+     *     required=true,
+     *     description="end_date",
+     *    @OA\Schema( type="string",
+     *      format="date-time"),
+     *      ),
+     *  @OA\Parameter (
+     *     in="query",
+     *     name="description",
+     *     required=true,
+     *     description="description",
+     *    @OA\Schema( type="string" ),
+     *      ),
+     *    @OA\Parameter (
+     *     in="query",
+     *     name="quantity",
+     *     required=true,
+     *     description="quantity",
+     *    @OA\Schema(type="integer",
+     *           format="int(11)"),
+     *      ),
+     *  @OA\Parameter (
+     *     in="query",
+     *     name="client_quantity",
+     *     required=true,
+     *     description="client_quantity",
+     *    @OA\Schema(type="integer",
+     *           format="int(11)"),
+     *      ),
+     *   @OA\Parameter (
+     *     in="query",
+     *     name="status",
+     *     required=true,
+     *     description="status",
+     *    @OA\Schema(type="integer",
+     *           format="int(11)"),
+     *      ),
+     *   @OA\Parameter (
+     *     in="query",
+     *     name="client_id ",
+     *     required=true,
+     *     description="client_id ",
+     *    @OA\Schema(type="integer",
+     *           format="bigint(20)"),
+     *      ),
+     *  @OA\Parameter (
+     *     in="query",
+     *     name="montant_min ",
+     *     required=true,
+     *     description="montant_min ",
+     *    @OA\Schema(type="integer",
+     *           format="double(8,2)"),
+     *      ),
+     *  @OA\Parameter (
+     *     in="query",
+     *     name="frais_port ",
+     *     required=true,
+     *     description="frais_port ",
+     *    @OA\Schema(type="integer",
+     *           format="tinyint(1)"),
+     *      ),
+     *  *  @OA\Parameter (
+     *     in="query",
+     *     name="taxe ",
+     *     required=true,
+     *     description="taxe ",
+     *     @OA\Schema(type="string",enum={"TTC", "HT"})  
+     *      ),
+     *   @OA\Parameter (
+     *     in="query",
+     *     name="currency",
+     *     required=true,
+     *     description="currency",
+     *    @OA\Schema( type="string" ),
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *       ),
+     *     @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=400,
+     *          description="bad request",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden",
+     *      ),
+     *    @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     *     )
+     */  
     public function create(Request $request)
     {
         if(!Auth::user()->isAuthorized(['admin'])){
@@ -68,7 +204,41 @@ class CouponController extends Controller
         }
         return new JsonResponse($res, $res->code);
     }
-
+/**
+     * @OA\Get(
+     *      path="/getCoupon/{id}",
+     *     tags={"Coupon"},
+     *     security={{"Authorization":{}}},
+     *      operationId="getCoupon",
+     *      summary="Get coupon by coupon id",
+     *     @OA\Parameter(
+     *          name="id",
+     *          in="path",
+     *          required=true,
+     *
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *      ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     * @OA\Response(
+     *      response=400,
+     *      description="Bad Request"
+     *   ),
+     * @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     * )
+     */
     public function getByid($id)
     {
         if(!Auth::user()->isAuthorized(['admin'])){
@@ -89,6 +259,50 @@ class CouponController extends Controller
         }
         return new JsonResponse($res, $res->code);
     }
+     /**
+     * @OA\Get(
+     *      path="/getAllCoupon/{per_page}",
+     *      operationId="getAllCoupon",
+     *      tags={"Coupon"},
+     *     security={{"Authorization":{}}},
+     *      summary="Get List Of coupon",
+     *      description="Returns all coupon.",
+     *    @OA\Parameter(
+     *          name="per_page",
+     *          in="path",
+     *          required=true, 
+     *         
+     *      ),
+     *  @OA\Parameter (
+     *     in="query",
+     *     name="orderBy",
+     *     required=true,
+     *     description="orderBy",
+     *    @OA\Schema( type="string" ),
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *      ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     * @OA\Response(
+     *      response=400,
+     *      description="Bad Request"
+     *   ),
+     * @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     *  )
+     */
+    
     public function getAll($per_page,Request $request)
     {
         if(!Auth::user()->isAuthorized(['admin'])){
@@ -149,6 +363,148 @@ class CouponController extends Controller
         }
         return new JsonResponse($res, $res->code);
     }
+    /**
+     * @OA\Put(
+     *      path="/updateCoupon/{id}",
+     *      operationId="updateCoupon",
+     *      tags={"Coupon"},
+     *     security={{"Authorization":{}}},
+     *      summary="update coupon.", 
+     *    @OA\Parameter(
+     *          name="id",
+     *          in="path",
+     *          required=true,
+     *
+     *      ), 
+     *     @OA\Parameter (
+     *     in="query",
+     *     name="code_coupon",
+     *     required=true,
+     *     description="code coupon ",
+     *    @OA\Schema( type="string" )
+     *      ),
+     *   @OA\Parameter (
+     *     in="query",
+     *     name="value",
+     *     required=false,
+     *     description="value",
+     *    @OA\Schema(type="integer",
+     *           format="double(8,2)" ),
+     *      ),
+     *  *  @OA\Parameter (
+     *     in="query",
+     *     name="title",
+     *     required=false,
+     *     description="title",
+     *    @OA\Schema( type="string"),
+     *      ),
+     *  @OA\Parameter (
+     *     in="query",
+     *     name="start_date",
+     *     required=true,
+     *     description="start_date",
+     *    @OA\Schema( type="string",
+     *           format="date-time"),
+     *      ),
+     *  @OA\Parameter (
+     *     in="query",
+     *     name="end_date",
+     *     required=true,
+     *     description="end_date",
+     *    @OA\Schema( type="string",
+     *      format="date-time"),
+     *      ),
+     *  @OA\Parameter (
+     *     in="query",
+     *     name="description",
+     *     required=true,
+     *     description="description",
+     *    @OA\Schema( type="string" ),
+     *      ),
+     *    @OA\Parameter (
+     *     in="query",
+     *     name="quantity",
+     *     required=true,
+     *     description="quantity",
+     *    @OA\Schema(type="integer",
+     *           format="int(11)"),
+     *      ),
+     *  @OA\Parameter (
+     *     in="query",
+     *     name="client_quantity",
+     *     required=true,
+     *     description="client_quantity",
+     *    @OA\Schema(type="integer",
+     *           format="int(11)"),
+     *      ),
+     *   @OA\Parameter (
+     *     in="query",
+     *     name="status",
+     *     required=true,
+     *     description="status",
+     *    @OA\Schema(type="integer",
+     *           format="int(11)"),
+     *      ),
+     *   @OA\Parameter (
+     *     in="query",
+     *     name="client_id ",
+     *     required=true,
+     *     description="client_id ",
+     *    @OA\Schema(type="integer",
+     *           format="bigint(20)"),
+     *      ),
+     *  @OA\Parameter (
+     *     in="query",
+     *     name="montant_min ",
+     *     required=true,
+     *     description="montant_min ",
+     *    @OA\Schema(type="integer",
+     *           format="double(8,2)"),
+     *      ),
+     *  @OA\Parameter (
+     *     in="query",
+     *     name="frais_port ",
+     *     required=true,
+     *     description="frais_port ",
+     *    @OA\Schema(type="integer",
+     *           format="tinyint(1)"),
+     *      ),
+     *  *  @OA\Parameter (
+     *     in="query",
+     *     name="taxe ",
+     *     required=true,
+     *     description="taxe ",
+     *     @OA\Schema(type="string",enum={"TTC", "HT"})  
+     *      ),
+     *   @OA\Parameter (
+     *     in="query",
+     *     name="currency",
+     *     required=true,
+     *     description="currency",
+     *    @OA\Schema( type="string" ),
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *       ),
+     *     @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=400,
+     *          description="bad request",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden",
+     *      ),
+     *    @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     *     )
+     */  
     public function update($id, Request $request)
     {
         if(!Auth::user()->isAuthorized(['admin'])){
@@ -198,6 +554,42 @@ class CouponController extends Controller
         }
         return new JsonResponse($res, $res->code);
     }
+       /**
+     * @OA\Delete(
+     *      path="/deleteCoupon/{id}",
+     *      operationId="deleteCoupon",
+     *      tags={"Coupon"},
+     *     security={{"Authorization":{}}},
+     *      summary="delete coupon",
+     *      description="delete one coupon.",
+     *     @OA\Parameter(
+     *          name="id",
+     *          in="path",
+     *          required=true,
+     *
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *      ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     * @OA\Response(
+     *      response=400,
+     *      description="Bad Request"
+     *   ),
+     * @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     *  )
+     */
     public function delete($id)
     {
         if(!Auth::user()->isAuthorized(['admin'])){
