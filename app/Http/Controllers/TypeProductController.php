@@ -11,7 +11,13 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\JsonResponse;
 use Exception;
 use Illuminate\Support\Facades\Auth;
-
+/**
+ * @OA\Tag(
+ *     name="TypeProduct",
+ *     description="Gestion Type Product ",
+ *
+ * )
+ */
 class TypeProductController extends Controller
 {
     protected $controller;
@@ -20,7 +26,73 @@ class TypeProductController extends Controller
     {
         $this->model = $model;
     }
-
+    /**
+     * @OA\Post(
+     *      path="/addtypeProduct",
+     *      operationId="addtypeProduct",
+     *      tags={"TypeProduct"},
+     *     security={{"Authorization":{}}},
+     *      summary="create type product.",  
+     *     @OA\Parameter (
+     *     in="query",
+     *     name="name",
+     *     required=true,
+     *     description="the type product name ",
+     *    @OA\Schema( type="string" ),
+     *      ),
+     *   @OA\Parameter (
+     *     in="query",
+     *     name="description",
+     *     required=false,
+     *     description="description",
+     *    @OA\Schema( type="string" ),
+     *      ),
+     *  *  @OA\Parameter (
+     *     in="query",
+     *     name="type_served",
+     *     required=false,
+     *     description="type_served",
+     *    @OA\Schema( type="integer",
+     *           format="int11"),
+     *      ),
+     *  @OA\Parameter (
+     *     in="query",
+     *     name="order_id",
+     *     required=true,
+     *     description="order_id",
+     *    @OA\Schema( type="integer",
+     *           format="int64" ),
+     *      ),
+     *  @OA\Parameter (
+     *     in="query",
+     *     name="parent_id",
+     *     required=true,
+     *     description="parent_id",
+     *    @OA\Schema( type="integer",
+     *           format="bigint(20)" ),
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *       ),
+     *     @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=400,
+     *          description="bad request",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     *    @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     *     )
+     */  
     public function create(Request $request)
     {
         if(!Auth::user()->isAuthorized(['admin','supplier'])){
@@ -75,6 +147,79 @@ class TypeProductController extends Controller
         }
         return new JsonResponse($res, $res->code);
     }
+     /**
+     * @OA\Put(
+     *      path="/updateTypeProduct/{id}",
+     *      operationId="updateTypeProduct",
+     *      tags={"TypeProduct"},
+     *     security={{"Authorization":{}}},
+     *      summary="update type product.", 
+     *   @OA\Parameter(
+     *          name="id",
+     *          in="path",
+     *          required=true,
+     *
+     *      ), 
+     *     @OA\Parameter (
+     *     in="query",
+     *     name="name",
+     *     required=true,
+     *     description="the type product name ",
+     *    @OA\Schema( type="string" ),
+     *      ),
+     *   @OA\Parameter (
+     *     in="query",
+     *     name="description",
+     *     required=false,
+     *     description="description",
+     *    @OA\Schema( type="string" ),
+     *      ),
+     *  *  @OA\Parameter (
+     *     in="query",
+     *     name="type_served",
+     *     required=false,
+     *     description="type_served",
+     *    @OA\Schema( type="integer",
+     *           format="int11"),
+     *      ),
+     *  @OA\Parameter (
+     *     in="query",
+     *     name="order_id",
+     *     required=true,
+     *     description="order_id",
+     *    @OA\Schema( type="integer",
+     *           format="int64" ),
+     *      ),
+     *  @OA\Parameter (
+     *     in="query",
+     *     name="parent_id",
+     *     required=true,
+     *     description="parent_id",
+     *    @OA\Schema( type="integer",
+     *           format="bigint(20)" ),
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *       ),
+     *     @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=400,
+     *          description="bad request",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     *    @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     *     )
+     */ 
     public function update($id,Request $request)
     {
         if(!Auth::user()->isAuthorized(['admin','supplier'])){
@@ -150,6 +295,46 @@ class TypeProductController extends Controller
             ->get();
         return $TypeProduct;
     }
+    /**
+     * @OA\Get(
+     *      path="/getAllTypeProduct/{per_page}",
+     *      operationId="getAllTypeProduct",
+     *      tags={"TypeProduct"},
+     *     security={{"Authorization":{}}},
+     *      summary="Get List Of type product",
+     *      description="Returns all type product and associated provinces.",
+     *    @OA\Parameter(
+     *          name="per_page",
+     *          in="path",
+     *          required=true,
+     *
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *      ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     * @OA\Response(
+     *      response=400,
+     *      description="Bad Request"
+     *   ),
+     * @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     * @OA\Response(
+     *      response=500,
+     *      description="erreur serveur 500"
+     *   ),
+     *  )
+     */
     public function getAllTypeProduct($per_page,Request $request)
     {
         if(!Auth::user()->isAuthorized(['admin','supplier'])){
@@ -211,6 +396,41 @@ class TypeProductController extends Controller
         }
         return new JsonResponse($res, $res->code);
     }
+    /** @OA\Delete(
+        *      path="/deleteTypeProduct/{id}",
+        *      operationId="deleteTypeProduct",
+        *      tags={"TypeProduct"},
+        *     security={{"Authorization":{}}},
+        *      summary="delete type product",
+        *      description="delete one type product.",
+        *     @OA\Parameter(
+        *          name="id",
+        *          in="path",
+        *          required=true, 
+        *         
+        *      ),
+        *      @OA\Response(
+        *          response=200,
+        *          description="Successful operation",
+        *      ),
+        *      @OA\Response(
+        *          response=401,
+        *          description="Unauthenticated",
+        *      ),
+        *      @OA\Response(
+        *          response=403,
+        *          description="Forbidden"
+        *      ),
+        * @OA\Response(
+        *      response=400,
+        *      description="Bad Request"
+        *   ),
+        * @OA\Response(
+        *      response=404,
+        *      description="not found"
+        *   ),
+        *  )
+        */
     public function delete($id)
     {
         if (!Auth::user()->isAuthorized(['admin'])) {

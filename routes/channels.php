@@ -19,17 +19,6 @@ use Illuminate\Support\Facades\Broadcast;
 Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
     return (int) $user->id === (int) $id;
 });
-Broadcast::channel('.chat.{client_id}', function ($client_id) {
-    if(Auth::check()){
-        return $client_id;
-    }
-});
-
-Broadcast::channel('.positionDelivery', function ($admin_id) {
-    if(Auth::user()->userable_type=="App\Models\Admin"){ // add verify admin role
-        return $admin_id;
-    }
-});
 
 Broadcast::channel('online', function ($user) {
     if (auth()->check()) {
@@ -38,7 +27,7 @@ Broadcast::channel('online', function ($user) {
 
     }
 });
-
+/*
 Broadcast::channel('.verify.command.{admin_id}', function ($admin_id) {
     if(Auth::check()){
         return $admin_id;
@@ -49,9 +38,15 @@ Broadcast::channel('.supplier.command.{supplier_id}', function ($supplier_id) {
         return $supplier_id;
     }
 });
-
+*/
 Broadcast::channel('.admin.{admin_id}', function ($admin_id) {
     if(Auth::check()){ // verify  role
         return $admin_id;
+    }
+});
+
+Broadcast::channel('.client.{client_id}', function ($client_id) {
+    if(Auth::check()){ // verify  role
+        return $client_id;
     }
 });

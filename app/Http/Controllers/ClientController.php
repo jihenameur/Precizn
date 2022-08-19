@@ -456,12 +456,12 @@ class ClientController extends Controller
      *     security={{"Authorization":{}}},
      *      summary="create image client" ,
      *      description="create image client",
-     *     @OA\Parameter (
+     *   @OA\Parameter (
      *     in="query",
      *     name="image",
      *     required=true,
-     *     description="image",
-     *     @OA\Schema (type="string")
+     *     description="image client",
+     *     @OA\Schema (type="file")
      *      ),
      *      @OA\Response(
      *          response=200,
@@ -483,7 +483,7 @@ class ClientController extends Controller
      *      response=404,
      *      description="not found"
      *   ),
-     *     )
+     *  )
      */
     public function addImage(Request $request)
     {
