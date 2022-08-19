@@ -138,8 +138,8 @@ class CategoryController extends Controller
      *     @OA\Parameter(
      *          name="id",
      *          in="path",
-     *          required=true, 
-     *         
+     *          required=true,
+     *
      *      ),
      *      @OA\Response(
      *          response=200,
@@ -198,8 +198,8 @@ class CategoryController extends Controller
      *     @OA\Parameter(
      *          name="id",
      *          in="path",
-     *          required=true, 
-     *         
+     *          required=true,
+     *
      *      ),
      *      @OA\Response(
      *          response=200,
@@ -270,14 +270,14 @@ class CategoryController extends Controller
      *    @OA\Parameter(
      *          name="id",
      *          in="path",
-     *          required=true, 
-     *         
+     *          required=true,
+     *
      *      ),
      *    @OA\Parameter(
      *          name="per_page",
      *          in="path",
-     *          required=true, 
-     *         
+     *          required=true,
+     *
      *      ),
      *      @OA\Response(
      *          response=200,
@@ -334,14 +334,14 @@ class CategoryController extends Controller
      *    @OA\Parameter(
      *          name="id",
      *          in="path",
-     *          required=true, 
-     *         
+     *          required=true,
+     *
      *      ),
      *    @OA\Parameter(
      *          name="per_page",
      *          in="path",
-     *          required=true, 
-     *         
+     *          required=true,
+     *
      *      ),
      *      @OA\Response(
      *          response=200,
@@ -485,14 +485,28 @@ class CategoryController extends Controller
     {
 
         $res = new Result();
+        $orderBy = 'created_at';
+        $orderByType = "DESC";
+        if ($request->has('orderBy') && $request->orderBy != null) {
+            $this->validate($request, [
+                'orderBy' => 'required|in:firstName,lastName,id' // complete the akak list
+            ]);
+            $orderBy = $request->orderBy;
+        }
+        if ($request->has('orderByType') && $request->orderByType != null) {
+            $this->validate($request, [
+                'orderByType' => 'required|in:ASC,DESC' // complete the akak list
+            ]);
+            $orderByType = $request->orderByType;
+        }
         try {
             $keyword = $request->has('keyword') ? $request->get('keyword') : null;
             // $supplier = Supplier::all();
-            $categorys = Category::paginate($per_page);
+            $categorys = Category::orderBy($orderBy, $orderByType)->paginate($per_page);
             if ($keyword !== null) {
                 $keyword = $this->cleanKeywordSpaces($keyword);
 
-                $categorys = $this->getFilterByKeywordClosure($keyword);
+                $categorys = $this->getFilterByKeywordClosure($keyword, $orderBy, $orderByType);
             }
             $res->success($categorys);
         } catch (\Exception $exception) {
@@ -567,9 +581,10 @@ class CategoryController extends Controller
      * @param $keyword
      * @return \Closure
      */
-    private function getFilterByKeywordClosure($keyword)
+    private function getFilterByKeywordClosure($keyword, $orderBy, $orderByType)
     {
         $category = Category::where('name', 'like', "%$keyword%")
+            ->orderBy($orderBy, $orderByType)
             ->get();
         return $category;
     }

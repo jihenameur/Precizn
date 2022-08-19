@@ -7,6 +7,7 @@ use App\Http\Resources\AdsResource;
 use App\Models\Ads;
 use App\Models\Adsarea;
 use App\Models\Category;
+use App\Models\File;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -116,7 +117,7 @@ class AdsController extends Controller
         try {
             $validator = Validator::make($request->all(), [
                 'adsarea_id' => 'required',
-                'file_id' => 'required',
+                'image.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
                 'start_date' => 'required|date',
                 'end_date' => 'required|date',
                 'price' => 'required',
@@ -128,13 +129,16 @@ class AdsController extends Controller
             }
             $ads = new Ads();
             if ($request->file('image')) {
-                $file = $request->file('image');
-                $filename = Str::uuid()->toString() . '.' . $file->getClientOriginalExtension();
-                $file->move(public_path('public/Menu'), $filename);
-                $file->path = asset('public/Products/' . $filename);
-                $menu['image'] =  $file->path;
+                $name = Str::uuid()->toString() . '.' . $request->image->getClientOriginalExtension();
+                $request->image->move(public_path('public/Ads'), $name); // your folder path
+                $file = new File();
+                $file->name = $name;
+                $file->path = asset('public/Ads/' . $name);
+                $file->user_id = Auth::user()->id;
+                $file->save();
             }
-            $ads->file_id = $request->file_id;
+            $ads->file_id = $file->id;
+            $ads->adsarea_id  = $request->adsarea_id ;
             $ads->supplier_id = $request->supplier_id;
             $ads->product_id = $request->product_id;
             $ads->menu_id = $request->menu_id;
@@ -142,6 +146,7 @@ class AdsController extends Controller
             $ads->end_date = $request->end_date;
             $ads->price = $request->price;
             $ads->save();
+
             $res->success(new AdsResource($ads));
         } catch (\Exception $exception) {
             $res->fail($exception->getMessage());
@@ -417,7 +422,7 @@ class AdsController extends Controller
         }
         $validator = Validator::make($request->all(), [
             'adsarea_id' => 'required',
-            'file_id' => 'required',
+            'image.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'start_date' => 'required|date',
             'end_date' => 'required|date',
             'price' => 'required',
@@ -429,8 +434,21 @@ class AdsController extends Controller
         $res = new Result();
         try {
             $ads = Ads::find($id);
+            if ($request->file('image')) {
+                $image = Ads::find($ads->file_id);
+                if($image) {
+                    unlink('public/Ads/' . $image->name);
+                }
+                $name = Str::uuid()->toString() . '.' . $request->image->getClientOriginalExtension();
+                $request->image->move(public_path('public/Ads'), $name); // your folder path
+                $file = new File();
+                $file->name = $name;
+                $file->path = asset('public/Ads/' . $name);
+                $file->user_id = Auth::user()->id;
+                $file->save();
+            }
             $ads->adsarea_id = $request->adsarea_id;
-            $ads->file_id = $request->file_id;
+            $ads->file_id = $file->id;
             $ads->supplier_id = $request->supplier_id;
             $ads->product_id = $request->product_id;
             $ads->menu_id = $request->menu_id;

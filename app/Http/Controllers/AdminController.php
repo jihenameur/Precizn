@@ -37,7 +37,7 @@ class AdminController extends Controller
         $this->model = $model;
         $this->res = $res;
     }
- 
+
     /**
      * @OA\Post(
      *      path="/addSuperAdmin",
@@ -95,7 +95,7 @@ class AdminController extends Controller
      *     description="confirm_password",
      *     @OA\Schema (type="string")
      *      ),
-     * 
+     *
      *      @OA\Response(
      *          response=200,
      *          description="Successful operation",
@@ -257,8 +257,8 @@ class AdminController extends Controller
      *    @OA\Parameter(
      *          name="per_page",
      *          in="path",
-     *          required=true, 
-     *         
+     *          required=true,
+     *
      *      ),
      *      @OA\Response(
      *          response=200,
@@ -284,14 +284,34 @@ class AdminController extends Controller
      */
     public function all($per_page, Request $request)
     {
+        if (!Auth::user()->isAuthorized(['superadmin'])) {
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ], 403);
+        }
+        $orderBy = 'created_at';
+        $orderByType = "DESC";
+        if ($request->has('orderBy') && $request->orderBy != null) {
+            $this->validate($request, [
+                'orderBy' => 'required|in:firstName,lastName,id' // complete the akak list
+            ]);
+            $orderBy = $request->orderBy;
+        }
+        if ($request->has('orderByType') && $request->orderByType != null) {
+            $this->validate($request, [
+                'orderByType' => 'required|in:ASC,DESC' // complete the akak list
+            ]);
+            $orderByType = $request->orderByType;
+        }
         $res = new Result();
         try {
             $keyword = $request->has('keyword') ? $request->get('keyword') : null;
-            $admins = Admin::paginate($per_page);
+            $admins = Admin::orderBy($orderBy, $orderByType)->paginate($per_page);
             if ($keyword !== null) {
                 $keyword = $this->cleanKeywordSpaces($keyword);
 
-                $admins=$this->getFilterByKeywordClosure($keyword);
+                $admins=$this->getFilterByKeywordClosure($keyword, $orderBy, $orderByType);
             }
             $res->success($admins);
         } catch (\Exception $exception) {
@@ -312,8 +332,8 @@ class AdminController extends Controller
      *     @OA\Parameter(
      *          name="id",
      *          in="path",
-     *          required=true, 
-     *         
+     *          required=true,
+     *
      *      ),
      *      @OA\Response(
      *          response=200,
@@ -360,10 +380,12 @@ class AdminController extends Controller
      * @param $keyword
      * @return \Closure
      */
-    private function getFilterByKeywordClosure($keyword)
+    private function getFilterByKeywordClosure($keyword, $orderBy, $orderByType)
     {
 
-        $admins = Admin::where('firstname', 'like', "%$keyword%")->where('lastname', 'like', "%$keyword%")
+        $admins = Admin::where('firstname', 'like', "%$keyword%")
+            ->where('lastname', 'like', "%$keyword%")
+            ->orderBy($orderBy, $orderByType)
             ->get();
 
         return $admins;
@@ -379,8 +401,8 @@ class AdminController extends Controller
      *     @OA\Parameter(
      *          name="id",
      *          in="path",
-     *          required=true, 
-     *         
+     *          required=true,
+     *
      *      ),
      *      @OA\Response(
      *          response=200,
@@ -441,8 +463,8 @@ class AdminController extends Controller
      *     @OA\Parameter(
      *          name="id",
      *          in="path",
-     *          required=true, 
-     *         
+     *          required=true,
+     *
      *      ),
      *     @OA\Parameter (
      *     in="query",
@@ -549,8 +571,8 @@ class AdminController extends Controller
      *     @OA\Parameter(
      *          name="id",
      *          in="path",
-     *          required=true, 
-     *         
+     *          required=true,
+     *
      *      ),
      *   @OA\Response(
      *          response=200,
@@ -572,7 +594,7 @@ class AdminController extends Controller
      *      response=404,
      *      description="not found"
      *   ),
-     *    
+     *
      *     )
      */
     public function getLastPostionDelivery($id)
