@@ -19,6 +19,355 @@
         }
     ],
     "paths": {
+        "/createAdresse/{id}": {
+            "post": {
+                "tags": [
+                    "Address"
+                ],
+                "summary": "create addresse",
+                "description": "create addresse",
+                "operationId": "createAdresse",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "name": "postcode",
+                        "in": "query",
+                        "description": "postcode",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "city",
+                        "in": "query",
+                        "description": "city",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "street",
+                        "in": "query",
+                        "description": "rue",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "region",
+                        "in": "query",
+                        "description": "region",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "label",
+                        "in": "query",
+                        "description": "label",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "type",
+                        "in": "query",
+                        "description": "type",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int(11)"
+                        }
+                    },
+                    {
+                        "name": "user_id",
+                        "in": "query",
+                        "description": "user_id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "bigint(20)"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "not found"
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
+            }
+        },
+        "/showAddresses": {
+            "get": {
+                "tags": [
+                    "Address"
+                ],
+                "summary": "Get List Of Adresses",
+                "description": "Returns all Adresses and associated provinces.",
+                "operationId": "showAddresses",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "not found"
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
+            }
+        },
+        "/show/{id}": {
+            "get": {
+                "tags": [
+                    "Address"
+                ],
+                "summary": "Get address by address id",
+                "operationId": "show",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "not found"
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
+            }
+        },
+        "/GetClientAddress/{id}": {
+            "get": {
+                "tags": [
+                    "Address"
+                ],
+                "summary": "Get address by client id",
+                "operationId": "GetClientAddress",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "not found"
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
+            }
+        },
+        "/updateAdresse/{id}": {
+            "put": {
+                "tags": [
+                    "Address"
+                ],
+                "summary": "update addresse",
+                "description": "update addresse",
+                "operationId": "updateAdresse",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "name": "postcode",
+                        "in": "query",
+                        "description": "postcode",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "city",
+                        "in": "query",
+                        "description": "city",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "street",
+                        "in": "query",
+                        "description": "rue",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "region",
+                        "in": "query",
+                        "description": "region",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "label",
+                        "in": "query",
+                        "description": "label",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "type",
+                        "in": "query",
+                        "description": "type",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int(11)"
+                        }
+                    },
+                    {
+                        "name": "user_id",
+                        "in": "query",
+                        "description": "user_id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "bigint(20)"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "not found"
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
+            }
+        },
+        "/deleteAddresse/{id}": {
+            "delete": {
+                "tags": [
+                    "Address"
+                ],
+                "summary": "delete Address",
+                "description": "delete one Address.",
+                "operationId": "deleteAddresse",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "not found"
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
+            }
+        },
         "/addSuperAdmin": {
             "post": {
                 "tags": [
@@ -1547,10 +1896,10 @@
                     {
                         "name": "image",
                         "in": "query",
-                        "description": "image",
+                        "description": "image client",
                         "required": true,
                         "schema": {
-                            "type": "string"
+                            "type": "file"
                         }
                     }
                 ],
@@ -2353,6 +2702,1942 @@
                 ]
             }
         },
+        "/addCommand": {
+            "post": {
+                "tags": [
+                    "Commande"
+                ],
+                "summary": "create commande",
+                "description": "create command",
+                "operationId": "addCommand",
+                "parameters": [
+                    {
+                        "name": "date",
+                        "in": "query",
+                        "description": "date",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "date-time"
+                        }
+                    },
+                    {
+                        "name": "client_id",
+                        "in": "query",
+                        "description": "client id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "supplier_id ",
+                        "in": "query",
+                        "description": "supplier id ",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "addresse_id ",
+                        "in": "query",
+                        "description": "addresse id ",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "tip",
+                        "in": "query",
+                        "description": "tip",
+                        "required": false,
+                        "schema": {
+                            "type": "decimal(8,2)"
+                        }
+                    },
+                    {
+                        "name": "mode_pay",
+                        "in": "query",
+                        "description": "mode de paiment",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "codepromo",
+                        "in": "query",
+                        "description": "codepromo",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "400": {
+                        "description": "Bad request. User ID must be an integer and bigger than 0"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "not found"
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
+            }
+        },
+        "/getAllCommand/{per_page}": {
+            "get": {
+                "tags": [
+                    "Commande"
+                ],
+                "summary": "Get List Of commandes",
+                "description": "Returns all commades and associated provinces.",
+                "operationId": "getAllCommand",
+                "parameters": [
+                    {
+                        "name": "per_page",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "not found"
+                    },
+                    "500": {
+                        "description": "erreur serveur 500"
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
+            }
+        },
+        "/getCommandPanier/{id}": {
+            "get": {
+                "tags": [
+                    "Commande"
+                ],
+                "summary": "Get commande in panier by commande id.",
+                "description": "Returns  commande in panier by commande id.",
+                "operationId": "getCommandPanier",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "not found"
+                    },
+                    "500": {
+                        "description": "erreur serveur 500"
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
+            }
+        },
+        "/getCommand/{id}": {
+            "get": {
+                "tags": [
+                    "Commande"
+                ],
+                "summary": "Get commande  by commande id.",
+                "description": "Returns  commande  by commande id.",
+                "operationId": "getCommand",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "not found"
+                    },
+                    "500": {
+                        "description": "erreur serveur 500"
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
+            }
+        },
+        "/getCommandsByKeyClientDelivery": {
+            "get": {
+                "tags": [
+                    "Commande"
+                ],
+                "summary": "Get commande  where key client.",
+                "description": "Returns  commande  by key client.",
+                "operationId": "getCommandsByKeyClientDelivery",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "description": "Identifiant client",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "not found"
+                    },
+                    "500": {
+                        "description": "erreur serveur 500"
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
+            }
+        },
+        "/updateCommand/{id}": {
+            "put": {
+                "tags": [
+                    "Commande"
+                ],
+                "summary": "update commande",
+                "description": "update command",
+                "operationId": "updateCommand",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "name": "date",
+                        "in": "query",
+                        "description": "date",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "date-time"
+                        }
+                    },
+                    {
+                        "name": "client_id",
+                        "in": "query",
+                        "description": "client id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "supplier_id ",
+                        "in": "query",
+                        "description": "supplier id ",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "addresse_id ",
+                        "in": "query",
+                        "description": "addresse id ",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "tip",
+                        "in": "query",
+                        "description": "tip",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "format": "decimal(8,2)"
+                        }
+                    },
+                    {
+                        "name": "mode_pay",
+                        "in": "query",
+                        "description": "mode de paiment",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "codepromo",
+                        "in": "query",
+                        "description": "codepromo",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "400": {
+                        "description": "Bad request. User ID must be an integer and bigger than 0"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "not found"
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
+            }
+        },
+        "/commandStatus": {
+            "get": {
+                "tags": [
+                    "Commande"
+                ],
+                "summary": "Get commande by status.",
+                "operationId": "commandStatus",
+                "parameters": [
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "description": "status",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "400": {
+                        "description": "bad request"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "not found"
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
+            }
+        },
+        "/deleteCommand/{id}": {
+            "delete": {
+                "tags": [
+                    "Commande"
+                ],
+                "summary": "delete commande",
+                "description": "delete one commande.",
+                "operationId": "deleteCommand",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "not found"
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
+            }
+        },
+        "/addCoupon": {
+            "post": {
+                "tags": [
+                    "Coupon"
+                ],
+                "summary": "create coupon.",
+                "operationId": "addCoupon",
+                "parameters": [
+                    {
+                        "name": "code_coupon",
+                        "in": "query",
+                        "description": "code coupon ",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "value",
+                        "in": "query",
+                        "description": "value",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "format": "double(8,2)"
+                        }
+                    },
+                    {
+                        "name": "title",
+                        "in": "query",
+                        "description": "title",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "start_date",
+                        "in": "query",
+                        "description": "start_date",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "date-time"
+                        }
+                    },
+                    {
+                        "name": "end_date",
+                        "in": "query",
+                        "description": "end_date",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "date-time"
+                        }
+                    },
+                    {
+                        "name": "description",
+                        "in": "query",
+                        "description": "description",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "quantity",
+                        "in": "query",
+                        "description": "quantity",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int(11)"
+                        }
+                    },
+                    {
+                        "name": "client_quantity",
+                        "in": "query",
+                        "description": "client_quantity",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int(11)"
+                        }
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "description": "status",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int(11)"
+                        }
+                    },
+                    {
+                        "name": "client_id ",
+                        "in": "query",
+                        "description": "client_id ",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "bigint(20)"
+                        }
+                    },
+                    {
+                        "name": "montant_min ",
+                        "in": "query",
+                        "description": "montant_min ",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "double(8,2)"
+                        }
+                    },
+                    {
+                        "name": "frais_port ",
+                        "in": "query",
+                        "description": "frais_port ",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "tinyint(1)"
+                        }
+                    },
+                    {
+                        "name": "taxe ",
+                        "in": "query",
+                        "description": "taxe ",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "TTC",
+                                "HT"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "currency",
+                        "in": "query",
+                        "description": "currency",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "400": {
+                        "description": "bad request"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "not found"
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
+            }
+        },
+        "/getCoupon/{id}": {
+            "get": {
+                "tags": [
+                    "Coupon"
+                ],
+                "summary": "Get coupon by coupon id",
+                "operationId": "getCoupon",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "not found"
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
+            }
+        },
+        "/getAllCoupon/{per_page}": {
+            "get": {
+                "tags": [
+                    "Coupon"
+                ],
+                "summary": "Get List Of coupon",
+                "description": "Returns all coupon.",
+                "operationId": "getAllCoupon",
+                "parameters": [
+                    {
+                        "name": "per_page",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "name": "orderBy",
+                        "in": "query",
+                        "description": "orderBy",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "not found"
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
+            }
+        },
+        "/updateCoupon/{id}": {
+            "put": {
+                "tags": [
+                    "Coupon"
+                ],
+                "summary": "update coupon.",
+                "operationId": "updateCoupon",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "name": "code_coupon",
+                        "in": "query",
+                        "description": "code coupon ",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "value",
+                        "in": "query",
+                        "description": "value",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "format": "double(8,2)"
+                        }
+                    },
+                    {
+                        "name": "title",
+                        "in": "query",
+                        "description": "title",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "start_date",
+                        "in": "query",
+                        "description": "start_date",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "date-time"
+                        }
+                    },
+                    {
+                        "name": "end_date",
+                        "in": "query",
+                        "description": "end_date",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "date-time"
+                        }
+                    },
+                    {
+                        "name": "description",
+                        "in": "query",
+                        "description": "description",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "quantity",
+                        "in": "query",
+                        "description": "quantity",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int(11)"
+                        }
+                    },
+                    {
+                        "name": "client_quantity",
+                        "in": "query",
+                        "description": "client_quantity",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int(11)"
+                        }
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "description": "status",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int(11)"
+                        }
+                    },
+                    {
+                        "name": "client_id ",
+                        "in": "query",
+                        "description": "client_id ",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "bigint(20)"
+                        }
+                    },
+                    {
+                        "name": "montant_min ",
+                        "in": "query",
+                        "description": "montant_min ",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "double(8,2)"
+                        }
+                    },
+                    {
+                        "name": "frais_port ",
+                        "in": "query",
+                        "description": "frais_port ",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "tinyint(1)"
+                        }
+                    },
+                    {
+                        "name": "taxe ",
+                        "in": "query",
+                        "description": "taxe ",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "TTC",
+                                "HT"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "currency",
+                        "in": "query",
+                        "description": "currency",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "400": {
+                        "description": "bad request"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "not found"
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
+            }
+        },
+        "/deleteCoupon/{id}": {
+            "delete": {
+                "tags": [
+                    "Coupon"
+                ],
+                "summary": "delete coupon",
+                "description": "delete one coupon.",
+                "operationId": "deleteCoupon",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "not found"
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
+            }
+        },
+        "/addDelivery": {
+            "post": {
+                "tags": [
+                    "Delivery"
+                ],
+                "summary": "create delivery",
+                "description": "create delivery",
+                "operationId": "addDelivery",
+                "parameters": [
+                    {
+                        "name": "firstName",
+                        "in": "query",
+                        "description": "firstName",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "lastName",
+                        "in": "query",
+                        "description": "lastName",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "tel",
+                        "in": "query",
+                        "description": "téléphone",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "email",
+                        "in": "query",
+                        "description": "email",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "password",
+                        "in": "query",
+                        "description": "password",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "confirm_password",
+                        "in": "query",
+                        "description": "confirm_password",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "vehicle",
+                        "in": "query",
+                        "description": "vehicle",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "Mark_vehicle",
+                        "in": "query",
+                        "description": "Mark vehicle",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "start_worktime",
+                        "in": "query",
+                        "description": "start_worktime",
+                        "required": false,
+                        "schema": {
+                            "type": "time",
+                            "format": "time"
+                        }
+                    },
+                    {
+                        "name": "end_worktime",
+                        "in": "query",
+                        "description": "end_worktime",
+                        "required": false,
+                        "schema": {
+                            "type": "time",
+                            "format": "time"
+                        }
+                    },
+                    {
+                        "name": "street",
+                        "in": "query",
+                        "description": "street",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "postcode",
+                        "in": "query",
+                        "description": "postcode",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "city",
+                        "in": "query",
+                        "description": "city",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "region",
+                        "in": "query",
+                        "description": "region",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "salary",
+                        "in": "query",
+                        "description": "salary",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "cycle",
+                        "in": "query",
+                        "description": "cycle",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "OFF",
+                                "ON"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "rating",
+                        "in": "query",
+                        "description": "rating",
+                        "required": false,
+                        "schema": {
+                            "type": "double(8,2)"
+                        }
+                    },
+                    {
+                        "name": "image",
+                        "in": "query",
+                        "description": "image",
+                        "required": false,
+                        "schema": {
+                            "type": "file"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "400": {
+                        "description": "Bad request. User ID must be an integer and bigger than 0"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "not found"
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
+            }
+        },
+        "/getAllDelivery/{per_page}": {
+            "get": {
+                "tags": [
+                    "Delivery"
+                ],
+                "summary": "Get List Of delivery",
+                "description": "Returns all delivery and associated provinces.",
+                "operationId": "getAllDelivery",
+                "parameters": [
+                    {
+                        "name": "per_page",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "not found"
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
+            }
+        },
+        "/getDeliveryById/{id}": {
+            "get": {
+                "tags": [
+                    "Delivery"
+                ],
+                "summary": "Get delivery by delivery id",
+                "operationId": "getDeliveryById",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "not found"
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
+            }
+        },
+        "/updateDelivery/{id}": {
+            "post": {
+                "tags": [
+                    "Delivery"
+                ],
+                "summary": "update delivery",
+                "description": "update delivery",
+                "operationId": "updateDelivery",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "name": "firstName",
+                        "in": "query",
+                        "description": "firstName",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "lastName",
+                        "in": "query",
+                        "description": "lastName",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "tel",
+                        "in": "query",
+                        "description": "téléphone",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "email",
+                        "in": "query",
+                        "description": "email",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "vehicle",
+                        "in": "query",
+                        "description": "vehicle",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "Mark_vehicle",
+                        "in": "query",
+                        "description": "Mark vehicle",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "start_worktime",
+                        "in": "query",
+                        "description": "start_worktime",
+                        "required": false,
+                        "schema": {
+                            "type": "time",
+                            "format": "time"
+                        }
+                    },
+                    {
+                        "name": "end_worktime",
+                        "in": "query",
+                        "description": "end_worktime",
+                        "required": false,
+                        "schema": {
+                            "type": "time",
+                            "format": "time"
+                        }
+                    },
+                    {
+                        "name": "street",
+                        "in": "query",
+                        "description": "street",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "postcode",
+                        "in": "query",
+                        "description": "postcode",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "city",
+                        "in": "query",
+                        "description": "city",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "region",
+                        "in": "query",
+                        "description": "region",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "salary",
+                        "in": "query",
+                        "description": "salary",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "cycle",
+                        "in": "query",
+                        "description": "cycle",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "OFF",
+                                "ON"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "rating",
+                        "in": "query",
+                        "description": "rating",
+                        "required": false,
+                        "schema": {
+                            "type": "double(8,2)"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "400": {
+                        "description": "The email has already been taken"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "not found"
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
+            }
+        },
+        "/deleteDelivery/{id}": {
+            "delete": {
+                "tags": [
+                    "Delivery"
+                ],
+                "summary": "delete delivery",
+                "description": "delete one delivery.",
+                "operationId": "deleteDelivery",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "not found"
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
+            }
+        },
+        "/acceptCommand": {
+            "post": {
+                "tags": [
+                    "Delivery"
+                ],
+                "summary": "Accepte ordre by delivery",
+                "operationId": "acceptCommand",
+                "parameters": [
+                    {
+                        "name": "delivery_id",
+                        "in": "query",
+                        "description": "delivery_id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "command_id",
+                        "in": "query",
+                        "description": "command_id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "400": {
+                        "description": "bad request"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "not found"
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
+            }
+        },
+        "/notifCommand": {
+            "get": {
+                "tags": [
+                    "Delivery"
+                ],
+                "summary": "Get List Of delivery",
+                "description": "Returns all delivery and associated provinces.",
+                "operationId": "notifCommand",
+                "parameters": [
+                    {
+                        "name": "command_id",
+                        "in": "query",
+                        "description": "command_id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "not found"
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
+            }
+        },
+        "/rejectCommand": {
+            "post": {
+                "tags": [
+                    "Delivery"
+                ],
+                "summary": "Accepte ordre by delivery",
+                "operationId": "rejectCommand",
+                "parameters": [
+                    {
+                        "name": "delivery_id",
+                        "in": "query",
+                        "description": "delivery_id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "command_id",
+                        "in": "query",
+                        "description": "command_id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "400": {
+                        "description": "bad request"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "not found"
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
+            }
+        },
+        "/ListCommandRejected/{per_page}": {
+            "get": {
+                "tags": [
+                    "Delivery"
+                ],
+                "summary": "Get List Of order refuced",
+                "description": "Returns all  order refuced.",
+                "operationId": "ListCommandRejected",
+                "parameters": [
+                    {
+                        "name": "per_page",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "name": "delivery_id",
+                        "in": "query",
+                        "description": "delivery_id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "not found"
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
+            }
+        },
+        "/gainCommands": {
+            "get": {
+                "tags": [
+                    "Delivery"
+                ],
+                "summary": "Get List Of order refuced",
+                "description": "Returns all  order refuced.",
+                "operationId": "gainCommands",
+                "parameters": [
+                    {
+                        "name": "delivery_id",
+                        "in": "query",
+                        "description": "delivery_id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "date",
+                        "in": "query",
+                        "description": "date",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "date-time"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "not found"
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
+            }
+        },
+        "/CommandDelivered": {
+            "get": {
+                "tags": [
+                    "Delivery"
+                ],
+                "summary": "List Orders delivered",
+                "operationId": "CommandDelivered",
+                "parameters": [
+                    {
+                        "name": "delivery_id",
+                        "in": "query",
+                        "description": "delivery_id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "command_id",
+                        "in": "query",
+                        "description": "command_id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "400": {
+                        "description": "bad request"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "not found"
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
+            }
+        },
+        "/generateInvoicePDF": {
+            "get": {
+                "tags": [
+                    "Delivery"
+                ],
+                "summary": "generate invoice pdf",
+                "operationId": "generateInvoicePDF",
+                "parameters": [
+                    {
+                        "name": "delivery_id",
+                        "in": "query",
+                        "description": "delivery_id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "action",
+                        "in": "query",
+                        "description": "action",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "400": {
+                        "description": "bad request"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "not found"
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
+            }
+        },
+        "/statisDeliv": {
+            "get": {
+                "tags": [
+                    "Delivery"
+                ],
+                "summary": "orders are delivered within a given time limit.",
+                "operationId": "statisDeliv",
+                "parameters": [
+                    {
+                        "name": "from",
+                        "in": "query",
+                        "description": "from",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "date-time"
+                        }
+                    },
+                    {
+                        "name": "to",
+                        "in": "query",
+                        "description": "to",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "date-time"
+                        }
+                    },
+                    {
+                        "name": "delivery_id",
+                        "in": "query",
+                        "description": "delivery_id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "action",
+                        "in": "query",
+                        "description": "action",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "400": {
+                        "description": "bad request"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "not found"
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
+            }
+        },
+        "/sendposition": {
+            "post": {
+                "tags": [
+                    "Delivery"
+                ],
+                "summary": "locate delivery position",
+                "operationId": "sendposition",
+                "parameters": [
+                    {
+                        "name": "long",
+                        "in": "query",
+                        "description": "longitude",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "lat",
+                        "in": "query",
+                        "description": "latitude",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "400": {
+                        "description": "bad request"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "not found"
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
+            }
+        },
+        "/statusdelivery": {
+            "post": {
+                "tags": [
+                    "Delivery"
+                ],
+                "summary": "Get Status delivery",
+                "operationId": "statusdelivery",
+                "parameters": [
+                    {
+                        "name": "status_id",
+                        "in": "query",
+                        "description": "status_id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "description": "id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "400": {
+                        "description": "bad request"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "not found"
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
+            }
+        },
         "/createPublicProduct": {
             "post": {
                 "tags": [
@@ -2469,6 +4754,15 @@
                         "in": "query",
                         "description": "tag",
                         "required": false
+                    },
+                    {
+                        "name": "image[]",
+                        "in": "query",
+                        "description": "image[]",
+                        "required": false,
+                        "schema": {
+                            "type": "file"
+                        }
                     }
                 ],
                 "responses": {
@@ -2520,6 +4814,24 @@
                         }
                     },
                     {
+                        "name": "supplier_id",
+                        "in": "query",
+                        "description": "supplier_id",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "option_id",
+                        "in": "query",
+                        "description": "option_id",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
                         "name": "price",
                         "in": "query",
                         "description": "price",
@@ -2547,13 +4859,10 @@
                         }
                     },
                     {
-                        "name": "available",
+                        "name": "menu_id",
                         "in": "query",
-                        "description": "available",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
+                        "description": "menu_id",
+                        "required": false
                     },
                     {
                         "name": "unit_type",
@@ -2576,7 +4885,8 @@
                         "description": "unit_limit",
                         "required": false,
                         "schema": {
-                            "type": "double(8,2)"
+                            "type": "integer",
+                            "format": "double(8,2)"
                         }
                     },
                     {
@@ -2585,7 +4895,8 @@
                         "description": "weight",
                         "required": false,
                         "schema": {
-                            "type": "double(8,2)"
+                            "type": "integer",
+                            "format": "double(8,2)"
                         }
                     },
                     {
@@ -2598,16 +4909,25 @@
                         }
                     },
                     {
-                        "name": "typeproduct",
+                        "name": "typeProduct",
                         "in": "query",
                         "description": "typeproduct",
                         "required": false
                     },
                     {
-                        "name": "tag",
+                        "name": "tags",
                         "in": "query",
                         "description": "tag",
                         "required": false
+                    },
+                    {
+                        "name": "image",
+                        "in": "query",
+                        "description": "image",
+                        "required": false,
+                        "schema": {
+                            "type": "file"
+                        }
                     }
                 ],
                 "responses": {
@@ -3336,6 +5656,58 @@
                 ]
             }
         },
+        "/addimagesupplier": {
+            "post": {
+                "tags": [
+                    "Supplier"
+                ],
+                "summary": "create image supplier",
+                "description": "create image supplier",
+                "operationId": "addimagesupplier",
+                "parameters": [
+                    {
+                        "name": "image",
+                        "in": "query",
+                        "description": "image supplier",
+                        "required": true,
+                        "schema": {
+                            "type": "file"
+                        }
+                    },
+                    {
+                        "name": "type",
+                        "in": "query",
+                        "description": "type",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "400": {
+                        "description": "Bad request. User ID must be an integer and bigger than 0"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "not found"
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
+            }
+        },
         "/getAllSupplier/{per_page}": {
             "get": {
                 "tags": [
@@ -3817,6 +6189,424 @@
                     }
                 ]
             }
+        },
+        "/addTag": {
+            "post": {
+                "tags": [
+                    "Tag"
+                ],
+                "summary": "create tag.",
+                "operationId": "addTag",
+                "parameters": [
+                    {
+                        "name": "name",
+                        "in": "query",
+                        "description": "name",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "400": {
+                        "description": "bad request"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "not found"
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
+            }
+        },
+        "/getAllTags/{per_page}": {
+            "get": {
+                "tags": [
+                    "Tag"
+                ],
+                "summary": "Get List Of tags",
+                "description": "Returns all tags and associated provinces.",
+                "operationId": "getAllTags",
+                "parameters": [
+                    {
+                        "name": "per_page",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "not found"
+                    },
+                    "500": {
+                        "description": "erreur serveur 500"
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
+            }
+        },
+        "/updateTag/{id}": {
+            "put": {
+                "tags": [
+                    "Tag"
+                ],
+                "summary": "update tag.",
+                "operationId": "updateTag",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "name": "name",
+                        "in": "query",
+                        "description": "name",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "400": {
+                        "description": "bad request"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "not found"
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
+            }
+        },
+        "/deleteTag/{id}": {
+            "delete": {
+                "tags": [
+                    "Commande"
+                ],
+                "summary": "delete tag",
+                "description": "delete one tag.",
+                "operationId": "deleteTag",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "not found"
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
+            }
+        },
+        "/addtypeProduct": {
+            "post": {
+                "tags": [
+                    "TypeProduct"
+                ],
+                "summary": "create type product.",
+                "operationId": "addtypeProduct",
+                "parameters": [
+                    {
+                        "name": "name",
+                        "in": "query",
+                        "description": "the type product name ",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "description",
+                        "in": "query",
+                        "description": "description",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "type_served",
+                        "in": "query",
+                        "description": "type_served",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int11"
+                        }
+                    },
+                    {
+                        "name": "order_id",
+                        "in": "query",
+                        "description": "order_id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    },
+                    {
+                        "name": "parent_id",
+                        "in": "query",
+                        "description": "parent_id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "bigint(20)"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "400": {
+                        "description": "bad request"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "not found"
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
+            }
+        },
+        "/updateTypeProduct/{id}": {
+            "put": {
+                "tags": [
+                    "TypeProduct"
+                ],
+                "summary": "update type product.",
+                "operationId": "updateTypeProduct",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "name": "name",
+                        "in": "query",
+                        "description": "the type product name ",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "description",
+                        "in": "query",
+                        "description": "description",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "type_served",
+                        "in": "query",
+                        "description": "type_served",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int11"
+                        }
+                    },
+                    {
+                        "name": "order_id",
+                        "in": "query",
+                        "description": "order_id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    },
+                    {
+                        "name": "parent_id",
+                        "in": "query",
+                        "description": "parent_id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "bigint(20)"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "400": {
+                        "description": "bad request"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "not found"
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
+            }
+        },
+        "/getAllTypeProduct/{per_page}": {
+            "get": {
+                "tags": [
+                    "TypeProduct"
+                ],
+                "summary": "Get List Of type product",
+                "description": "Returns all type product and associated provinces.",
+                "operationId": "getAllTypeProduct",
+                "parameters": [
+                    {
+                        "name": "per_page",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "not found"
+                    },
+                    "500": {
+                        "description": "erreur serveur 500"
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
+            }
+        },
+        "/deleteTypeProduct/{id}": {
+            "delete": {
+                "tags": [
+                    "TypeProduct"
+                ],
+                "summary": "delete type product",
+                "description": "delete one type product.",
+                "operationId": "deleteTypeProduct",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "not found"
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
+            }
         }
     },
     "components": {
@@ -3829,6 +6619,10 @@
         }
     },
     "tags": [
+        {
+            "name": "Address",
+            "description": "Gestion address"
+        },
         {
             "name": "Administrateur",
             "description": "Gestion administrateur "
@@ -3854,8 +6648,16 @@
             "description": "Gestion client "
         },
         {
+            "name": "Commande",
+            "description": "Gestion Commande "
+        },
+        {
             "name": "Coupon",
-            "description": "Authentification & Authorisation "
+            "description": "Gestion Coupon"
+        },
+        {
+            "name": "Delivery",
+            "description": "Gestion Delivery "
         },
         {
             "name": "Product",
@@ -3864,6 +6666,14 @@
         {
             "name": "Supplier",
             "description": "Gestion supplier "
+        },
+        {
+            "name": "Tag",
+            "description": "Gestion Tags "
+        },
+        {
+            "name": "TypeProduct",
+            "description": "Gestion Type Product "
         }
     ]
 }
