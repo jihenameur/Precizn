@@ -13,7 +13,13 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
-
+/**
+ * @OA\Tag(
+ *     name="Menu",
+ *     description="Gestion Menu ",
+ *
+ * )
+ */
 class MenuController extends Controller
 {
     protected $controller;
@@ -22,7 +28,56 @@ class MenuController extends Controller
     {
         $this->model = $model;
     }
-
+/**
+     * @OA\Post(
+     *      path="/addMenu",
+     *      operationId="addMenu",
+     *      tags={"Menu"},
+     *     security={{"Authorization":{}}},
+     *      summary="create option.",  
+     *    @OA\Parameter (
+     *     in="query",
+     *     name="name",
+     *     required=true,
+     *     description="name",
+     *     @OA\Schema( type="string" ),
+     *      ),
+     *  @OA\Parameter (
+     *     in="query",
+     *     name="description",
+     *     required=false,
+     *     description="description",
+     *     @OA\Schema( type="string" ),
+     *      ),
+     *  @OA\Parameter (
+     *     in="query",
+     *     name="image",
+     *     required=true,
+     *     description="image menu",
+     *      @OA\Schema(type="array", @OA\Items(type="file")),
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *       ),
+     *     @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=400,
+     *          description="bad request",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     *    @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     *     )
+     */
     public function create(Request $request)
     {
         if (!Auth::user()->isAuthorized(['admin', 'supplier'])) {
@@ -65,6 +120,52 @@ class MenuController extends Controller
         }
         return new JsonResponse($res, $res->code);
     }
+    /**
+     * @OA\Get(
+     *      path="/getMenuProducts/{id}/{per_page}",
+     *      operationId="getMenuProducts",
+     *      tags={"Menu"},
+     *     security={{"Authorization":{}}},
+     *      summary="Get List Of products  of menu where product id",
+     *      description="Returns all  produnct of menu where product id.",
+     *    @OA\Parameter(
+     *          name="id",
+     *          in="path",
+     *          required=true,
+     *
+     *      ),
+     *    @OA\Parameter(
+     *          name="per_page",
+     *          in="path",
+     *          required=true,
+     *
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *      ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     * @OA\Response(
+     *      response=400,
+     *      description="Bad Request"
+     *   ),
+     * @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     * @OA\Response(
+     *      response=500,
+     *      description="erreur serveur 500"
+     *   ),
+     *  )
+     */
     public function getMenuProducts($id, $per_page)
     {
         if (!Auth::user()->isAuthorized(['admin', 'supplier'])) {
@@ -107,6 +208,48 @@ class MenuController extends Controller
         }
         return new JsonResponse($res, $res->code);
     }
+     /**
+     * @OA\Get(
+     *      path="/getmenuBysupplierid",
+     *      operationId="getmenuBysupplierid",
+     *      tags={"Menu"},
+     *     security={{"Authorization":{}}},
+     *      summary="Get Menu of supplier",
+     *      description="Returns menu of supplier.",
+     *  @OA\Parameter (
+     *     in="query",
+     *     name="supplier_id",
+     *     required=false,
+     *     description="supplier_id",
+     *     @OA\Schema (type="integer",
+     *           format="bigint(20)")
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *      ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     * @OA\Response(
+     *      response=400,
+     *      description="Bad Request"
+     *   ),
+     * @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     * @OA\Response(
+     *      response=500,
+     *      description="erreur serveur 500"
+     *   ),
+     *  )
+     */
     public function getMenuBySupplierId(Request $request)
     {
         if (!Auth::user()->isAuthorized(['admin', 'supplier'])) {
@@ -134,6 +277,65 @@ class MenuController extends Controller
         }
         return new JsonResponse($res, $res->code);
     }
+    /**
+     * @OA\Put(
+     *      path="/updateMenu/{id}",
+     *      operationId="updateMenu",
+     *      tags={"Menu"},
+     *     security={{"Authorization":{}}},
+     *      summary="update option.", 
+     *   @OA\Parameter (
+     *     in="query",
+     *     name="supplier_id",
+     *     required=false,
+     *     description="supplier_id",
+     *     @OA\Schema (type="integer",
+     *           format="bigint(20)")
+     *      ), 
+     *    @OA\Parameter (
+     *     in="query",
+     *     name="name",
+     *     required=true,
+     *     description="name",
+     *     @OA\Schema( type="string" ),
+     *      ),
+     *   @OA\Parameter (
+     *     in="query",
+     *     name="description",
+     *     required=false,
+     *     description="description",
+     *     @OA\Schema( type="string" ),
+     *      ),
+     * 
+     *   @OA\Parameter (
+     *     in="query",
+     *     name="image",
+     *     required=true,
+     *     description="image menu",
+     *      @OA\Schema(type="array", @OA\Items(type="file")),
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *       ),
+     *     @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=400,
+     *          description="bad request",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     *    @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     *     )
+     */
     public function update($id, Request $request)
     {
         if (!Auth::user()->isAuthorized(['admin', 'supplier'])) {
@@ -175,6 +377,42 @@ class MenuController extends Controller
         }
         return new JsonResponse($res, $res->code);
     }
+    
+        /** @OA\Delete(
+        *      path="/deleteMenu/{id}",
+        *      operationId="deleteMenu",
+        *      tags={"Menu"},
+        *     security={{"Authorization":{}}},
+        *      summary="delete menu",
+        *      description="delete one menu.",
+        *     @OA\Parameter(
+        *          name="id",
+        *          in="path",
+        *          required=true, 
+        *         
+        *      ),
+        *      @OA\Response(
+        *          response=200,
+        *          description="Successful operation",
+        *      ),
+        *      @OA\Response(
+        *          response=401,
+        *          description="Unauthenticated",
+        *      ),
+        *      @OA\Response(
+        *          response=403,
+        *          description="Forbidden"
+        *      ),
+        * @OA\Response(
+        *      response=400,
+        *      description="Bad Request"
+        *   ),
+        * @OA\Response(
+        *      response=404,
+        *      description="not found"
+        *   ),
+        *  )
+        */
     public function delete($id)
     {
         if (!Auth::user()->isAuthorized(['admin', 'supplier'])) {

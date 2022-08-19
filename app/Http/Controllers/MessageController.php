@@ -16,7 +16,13 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Notification;
-
+/**
+ * @OA\Tag(
+ *     name="Message",
+ *     description="Gestion message.",
+ *
+ * )
+ */
 class MessageController extends Controller
 {
     /**
@@ -24,6 +30,57 @@ class MessageController extends Controller
      *
      * @param  Request $request
      * @return Response
+     */
+    /**
+     * @OA\Post(
+     *      path="/sendMessage",
+     *      operationId="sendMessage",
+     *      tags={"Message"},
+     *     security={{"Authorization":{}}},
+     *      summary="create message.",  
+     *    @OA\Parameter (
+     *     in="query",
+     *     name="id",
+     *     required=true,
+     *     description="id client",
+     *     @OA\Schema( type="integer",
+     *           format="bigint(20)"),
+     *      ),
+     *  @OA\Parameter (
+     *     in="query",
+     *     name="sendclient",
+     *     required=false,
+     *     description="sendclient",
+     *     @OA\Schema( type="string" ),
+     *      ),
+     *  @OA\Parameter (
+     *     in="query",
+     *     name="message",
+     *     required=false,
+     *     description="massage",
+     *     @OA\Schema( type="string" ),
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *       ),
+     *     @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=400,
+     *          description="bad request",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     *    @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     *     )
      */
     public function sendMessage(Request $request)
     {
@@ -61,7 +118,42 @@ class MessageController extends Controller
             ->get();
         return $messages;
     }
-
+ /**
+     * @OA\Post(
+     *      path="/createmessage",
+     *      operationId="createmessage",
+     *      tags={"Message"},
+     *     security={{"Authorization":{}}},
+     *      summary="create message.",  
+     *  @OA\Parameter(
+     *     in="query",
+     *     name="message",
+     *     required=false,
+     *     description="message",
+     *     @OA\Schema( type="string" ),
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *       ),
+     *     @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=400,
+     *          description="bad request",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     *    @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     *     )
+     */
 
     public function createMessage(Request $request)
     {

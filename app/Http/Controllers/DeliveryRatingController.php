@@ -11,9 +11,72 @@ use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
-
+ /**
+     * @OA\Tag(
+     *     name="Rating",
+     *     description="Gestion rating delivery",
+     *
+     * )
+   */
 class DeliveryRatingController extends Controller
 {
+      /**
+     * @OA\Post(
+     *      path="/createDeliveryRating",
+     *      operationId="createDeliveryRating",
+     *      tags={"Rating"},
+     *     security={{"Authorization":{}}},
+     *      summary="create rating delivery" ,
+     *      description="create rating delivery",
+     *    @OA\Parameter (
+     *     in="query",
+     *     name="comment",
+     *     required=false,
+     *     description="comment",
+     *     @OA\Schema (type="string")
+     *      ),
+     *     @OA\Parameter (
+     *     in="query",
+     *     name="rating",
+     *     required=true,
+     *     description="rating",
+     *     @OA\Schema (type="integer",
+     *           format="int(11))")
+     *      ),
+     *   @OA\Parameter (
+     *     in="query",
+     *     name="client_id",
+     *     required=true,
+     *     description="client_id",
+     *     @OA\Schema (type="integer",
+     *           format="int(11)")
+     *      ),
+     *  @OA\Parameter (
+     *     in="query",
+     *     name="delivery_id",
+     *     required=true,
+     *     description="delivery_id",
+     *     @OA\Schema ( type="integer",
+     *           format="bigint(20)" )
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *       ),
+     *     @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     *    @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     *  )
+     */
     public function createDeliveryRating(Request $request)
     {
         $res = new Result();
