@@ -6,7 +6,13 @@ use App\Models\Client;
 use App\Models\Message;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-
+/**
+ * @OA\Tag(
+ *     name="Menu",
+ *     description="Gestion Menu ",
+ *
+ * )
+ */
 class ChatsController extends Controller
 {
 

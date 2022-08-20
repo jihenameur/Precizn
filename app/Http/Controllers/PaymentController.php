@@ -10,7 +10,13 @@ use App\Models\Command;
 use App\Models\Payment;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-
+/**
+ * @OA\Tag(
+ *     name="Payment",
+ *     description="Gestion Payment ",
+ *
+ * )
+ */
 class PaymentController extends Controller
 {
 
@@ -43,7 +49,43 @@ class PaymentController extends Controller
         }
     }
 
-
+/**
+     * @OA\Get(
+     *      path="/paymentgetway/verify/payment",
+     *     tags={"Payment"},
+     *     security={{"Authorization":{}}},
+     *      operationId="paymentgetway",
+     *      summary="Get Payment by order id",
+     *   *   @OA\Parameter (
+     *     in="query",
+     *     name="orderId",
+     *     required=true,
+     *     description="orderId",
+     *    @OA\Schema(type="integer",
+     *       format="bigint(20)"),
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *      ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     * @OA\Response(
+     *      response=400,
+     *      description="Bad Request"
+     *   ),
+     * @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     * )
+     */
     public function verifyPayment(Request $request)
     {
         $res = new Result();

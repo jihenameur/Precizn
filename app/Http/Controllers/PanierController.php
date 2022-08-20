@@ -12,9 +12,47 @@ use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-
+/**
+ * @OA\Tag(
+ *     name="Panier",
+ *     description="Gestion panier",
+ *
+ * )
+ */
 class PanierController extends Controller
 {
+/**
+     * @OA\Post(
+     *      path="/create",
+     *      operationId="create",
+     *      tags={"Panier"},
+     *     security={{"Authorization":{}}},
+     *      summary="create  panier." ,
+     *      description="create panier.",
+     *     @OA\Parameter (
+     *     in="query",
+     *     name="price",
+     *     required=true,
+     *     description="prix.",
+     *     @OA\Schema ( type="integer",
+     *           format="decimal(8,2)")
+     *      ),
+     *   
+     *    
+     *     @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     *    @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     *  )
+     */
     public function create(Request $request)
     {
         $res = new Result();
@@ -41,6 +79,58 @@ class PanierController extends Controller
         }
         return new JsonResponse($res, $res->code);
     }
+    /**
+     * @OA\Post(
+     *      path="/addProduct/{id}",
+     *      operationId="addProduct",
+     *      tags={"Panier"},
+     *     security={{"Authorization":{}}},
+     *      summary="add products to shopping cart.." ,
+     *      description="add products to shopping cart.",
+     *    @OA\Parameter(
+     *          name="id",
+     *          in="path",
+     *          required=true, 
+     *         
+     *      ),
+     *     @OA\Parameter (
+     *     in="query",
+     *     name="quantity",
+     *     required=true,
+     *     description="quantity products.",
+     *     @OA\Schema ( type="integer",
+     *           format="int(11)")
+     *      ),
+     *    @OA\Parameter (
+     *     in="query",
+     *     name="product_id",
+     *     required=true,
+     *     description="product id.",
+     *     @OA\Schema ( type="integer",
+     *           format="bigint(20)")
+     *      ),
+     *  @OA\Parameter (
+     *     in="query",
+     *     name="options",
+     *     required=true,
+     *     description="options.",
+     *  @OA\Items(type="array")
+     *          
+     *     ),
+     *     @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     *    @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     *  )
+     */
     public function addProduct(Request $request, $id)
     {
         $res = new Result();
@@ -111,6 +201,41 @@ class PanierController extends Controller
         }
         return new JsonResponse($res, $res->code);
     }
+     /** @OA\Delete(
+        *      path="/deleteProduct/{id}",
+        *      operationId="deleteProduct",
+        *      tags={"Panier"},
+        *     security={{"Authorization":{}}},
+        *      summary="delete product panier",
+        *      description="delete product panier.",
+        *     @OA\Parameter(
+        *          name="id",
+        *          in="path",
+        *          required=true, 
+        *         
+        *      ),
+        *      @OA\Response(
+        *          response=200,
+        *          description="Successful operation",
+        *      ),
+        *      @OA\Response(
+        *          response=401,
+        *          description="Unauthenticated",
+        *      ),
+        *      @OA\Response(
+        *          response=403,
+        *          description="Forbidden"
+        *      ),
+        * @OA\Response(
+        *      response=400,
+        *      description="Bad Request"
+        *   ),
+        * @OA\Response(
+        *      response=404,
+        *      description="not found"
+        *   ),
+        *  )
+        */
     public function deleteProduct(Request $request, $id)
     {
         $res = new Result();
@@ -130,6 +255,7 @@ class PanierController extends Controller
         }
         return new JsonResponse($res, $res->code);
     }
+    
     public function deletePanier($id)
     {
         $res = new Result();
@@ -145,6 +271,40 @@ class PanierController extends Controller
         }
         return new JsonResponse($res, $res->code);
     }
+    /** @OA\Get(
+        *      path="/getPanier/{id}",
+        *     tags={"Panier"},
+        *     security={{"Authorization":{}}},
+        *      operationId="getPanier",
+        *      summary="Get panier by panier id",
+        *     @OA\Parameter(
+        *          name="id",
+        *          in="path",
+        *          required=true, 
+        *         
+        *      ),
+        *      @OA\Response(
+        *          response=200,
+        *          description="Successful operation",
+        *      ),
+        *      @OA\Response(
+        *          response=401,
+        *          description="Unauthenticated",
+        *      ),
+        *      @OA\Response(
+        *          response=403,
+        *          description="Forbidden"
+        *      ),
+        * @OA\Response(
+        *      response=400,
+        *      description="Bad Request"
+        *   ),
+        * @OA\Response(
+        *      response=404,
+        *      description="not found"
+        *   ),
+        * )
+        */
     public function getPanier($id)
     {
         $res = new Result();

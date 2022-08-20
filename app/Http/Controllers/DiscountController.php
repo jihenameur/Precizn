@@ -11,10 +11,79 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Validator;
 use Exception;
 use Illuminate\Support\Facades\Auth;
-
+/**
+ * @OA\Tag(
+ *     name="Discount",
+ *     description="Gestion Discount ",
+ *
+ * )
+ */
 class DiscountController extends Controller
 {
-
+ /**
+     * @OA\Post(
+     *      path="/createDiscount",
+     *      operationId="createDiscount",
+     *      tags={"Discount"},
+     *     security={{"Authorization":{}}},
+     *      summary="create  Discount" ,
+     *      description="create  Discount",
+     *    @OA\Parameter (
+     *     in="query",
+     *     name="start_date",
+     *     required=false,
+     *     description="start_date",
+     *        @OA\Schema (type="date-time")
+     *      ),
+     *     @OA\Parameter (
+     *     in="query",
+     *     name="end_date",
+     *     required=false,
+     *     description="end_date",
+     *      @OA\Schema (type="date-time")
+     *      ),
+     *   @OA\Parameter (
+     *     in="query",
+     *     name="supplier_id",
+     *     required=true,
+     *     description="supplier_id",
+     *     @OA\Schema (type="integer",
+     *           format="int(11)")
+     *      ),
+     *  @OA\Parameter (
+     *     in="query",
+     *     name="product_id",
+     *     required=true,
+     *     description="product_id",
+     *     @OA\Schema ( type="integer",
+     *           format="bigint(20)" )
+     *      ),
+     *  @OA\Parameter (
+     *     in="query",
+     *     name="percentage",
+     *     required=true,
+     *     description="percentage",
+     *     @OA\Schema ( type="integer",
+     *           format="int(11)" )
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *       ),
+     *     @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     *    @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     *  )
+     */
     public function create(Request $request)
     {
         if(!Auth::user()->isAuthorized(['admin','supplier'])){
@@ -65,6 +134,41 @@ class DiscountController extends Controller
         }
         return new JsonResponse($res, $res->code);
     }
+       /**
+     * @OA\Get(
+     *      path="/getDiscountByid/{id}",
+     *     tags={"Discount"},
+     *     security={{"Authorization":{}}},
+     *      operationId="getDiscountByid",
+     *      summary="Get Discount by Discount id",
+     *     @OA\Parameter(
+     *          name="id",
+     *          in="path",
+     *          required=true,
+     *
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *      ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     * @OA\Response(
+     *      response=400,
+     *      description="Bad Request"
+     *   ),
+     * @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     * )
+     */
     public function getByid($id)
     {
         if(!Auth::user()->isAuthorized(['admin','supplier'])){
@@ -85,6 +189,43 @@ class DiscountController extends Controller
         }
         return new JsonResponse($res, $res->code);
     }
+     /**
+     * @OA\Get(
+     *      path="/getAllDiscount/{per_page}",
+     *      operationId="getAllDiscount",
+     *      tags={"Discount"},
+     *     security={{"Authorization":{}}},
+     *      summary="Get List Of Discount",
+     *      description="Returns all Discount.",
+     *    @OA\Parameter(
+     *          name="per_page",
+     *          in="path",
+     *          required=true, 
+     *         
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *      ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     * @OA\Response(
+     *      response=400,
+     *      description="Bad Request"
+     *   ),
+     * @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     *  )
+     */
+    
     public function getAll($per_page,Request $request)
     {
         if(!Auth::user()->isAuthorized(['admin'])){

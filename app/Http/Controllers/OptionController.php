@@ -11,7 +11,13 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
-
+/**
+ * @OA\Tag(
+ *     name="Option",
+ *     description="Gestion Option ",
+ *
+ * )
+ */
 class OptionController extends Controller
 {
     protected $controller;
@@ -20,7 +26,65 @@ class OptionController extends Controller
     {
         $this->model = $model;
     }
-
+/**
+     * @OA\Post(
+     *      path="/addOption",
+     *      operationId="addOption",
+     *      tags={"Option"},
+     *     security={{"Authorization":{}}},
+     *      summary="create option.",  
+     *    @OA\Parameter (
+     *     in="query",
+     *     name="name",
+     *     required=true,
+     *     description="name",
+     *     @OA\Schema( type="string" ),
+     *      ),
+     *   @OA\Parameter (
+     *     in="query",
+     *     name="description",
+     *     required=true,
+     *     description="description",
+     *     @OA\Schema( type="string" ),
+     *      ),
+     *   @OA\Parameter (
+     *     in="query",
+     *     name="price",
+     *     required=true,
+     *     description="price",
+     *    @OA\Schema(type="integer",
+     *       format="bigint(20)"),
+     *      ),
+     *   @OA\Parameter (
+     *     in="query",
+     *     name="default",
+     *     required=true,
+     *     description="default",
+     *    @OA\Schema(type="integer",
+     *           format="tinyint(1)"),
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *       ),
+     *     @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=400,
+     *          description="bad request",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     *    @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     *     )
+     */
     public function create(Request $request)
     {
         if(!Auth::user()->isAuthorized(['admin','supplier'])){
@@ -60,6 +124,52 @@ class OptionController extends Controller
         }
         return new JsonResponse($res, $res->code);
     }
+     /**
+     * @OA\Get(
+     *      path="/getProductOptions/{id}/{per_page}",
+     *      operationId="getProductOptions",
+     *      tags={"Option"},
+     *     security={{"Authorization":{}}},
+     *      summary="Get List Of option of product",
+     *      description="Returns all  option of product.",
+     *    @OA\Parameter(
+     *          name="id",
+     *          in="path",
+     *          required=true,
+     *
+     *      ),
+     *    @OA\Parameter(
+     *          name="per_page",
+     *          in="path",
+     *          required=true,
+     *
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *      ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     * @OA\Response(
+     *      response=400,
+     *      description="Bad Request"
+     *   ),
+     * @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     * @OA\Response(
+     *      response=500,
+     *      description="erreur serveur 500"
+     *   ),
+     *  )
+     */
     public function getProductOptions($id,$per_page)
     {
         if(!Auth::user()->isAuthorized(['admin','supplier','client'])){
@@ -82,6 +192,48 @@ class OptionController extends Controller
         }
         return new JsonResponse($res, $res->code);
     }
+        /**
+     * @OA\Post(
+     *      path="/getsupplieroptions",
+     *      operationId="getsupplieroptions",
+     *      tags={"Option"},
+     *     security={{"Authorization":{}}},
+     *      summary="Get List Of option of product from the  supplier.",
+     *      description="Returns all  option of product from the  supplier.",
+     *   @OA\Parameter (
+     *     in="query",
+     *     name="supplier_id",
+     *     required=true,
+     *     description="supplier_id",
+     *    @OA\Schema(type="integer",
+     *       format="bigint(20)"),
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *      ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     * @OA\Response(
+     *      response=400,
+     *      description="Bad Request"
+     *   ),
+     * @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     * @OA\Response(
+     *      response=500,
+     *      description="erreur serveur 500"
+     *   ),
+     *  )
+     */
     public function getsupplierOptions(Request $request)
     {
         if(!Auth::user()->isAuthorized(['admin','supplier'])){
@@ -111,6 +263,41 @@ class OptionController extends Controller
         }
         return new JsonResponse($res, $res->code);
     }
+    /**
+     * @OA\Get(
+     *      path="/getOptionByid/{id}",
+     *     tags={"Option"},
+     *     security={{"Authorization":{}}},
+     *      operationId="getOptionByid",
+     *      summary="Get option  by option id",
+     *     @OA\Parameter(
+     *          name="id",
+     *          in="path",
+     *          required=true,
+     *
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *      ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     * @OA\Response(
+     *      response=400,
+     *      description="Bad Request"
+     *   ),
+     * @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     * )
+     */
     public function getOptionByid($id)
     {
         if(!Auth::user()->isAuthorized(['admin','supplier'])){
@@ -138,6 +325,71 @@ class OptionController extends Controller
      * @param null $id
      * @param null $params
      * @return Option|mixed|void
+     */
+    /**
+     * @OA\Put(
+     *      path="/updateOption/{id}",
+     *      operationId="updateOption",
+     *      tags={"Option"},
+     *     security={{"Authorization":{}}},
+     *      summary="update option.",  
+     *  @OA\Parameter(
+     *          name="id",
+     *          in="path",
+     *          required=true,
+     *
+     *      ),
+     *    @OA\Parameter (
+     *     in="query",
+     *     name="name",
+     *     required=true,
+     *     description="name",
+     *     @OA\Schema( type="string" ),
+     *      ),
+     *   @OA\Parameter (
+     *     in="query",
+     *     name="description",
+     *     required=true,
+     *     description="description",
+     *     @OA\Schema( type="string" ),
+     *      ),
+     *   @OA\Parameter (
+     *     in="query",
+     *     name="price",
+     *     required=true,
+     *     description="price",
+     *    @OA\Schema(type="integer",
+     *       format="bigint(20)"),
+     *      ),
+     *   @OA\Parameter (
+     *     in="query",
+     *     name="default",
+     *     required=true,
+     *     description="default",
+     *    @OA\Schema(type="integer",
+     *           format="tinyint(1)"),
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *       ),
+     *     @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=400,
+     *          description="bad request",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     *    @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     *     )
      */
     public function update($id, Request $request)
     {
@@ -179,6 +431,41 @@ class OptionController extends Controller
      * @param null $id
      * @return bool|mixed|void
      */
+        /** @OA\Delete(
+        *      path="/deleteOption/{id}",
+        *      operationId="deleteOption",
+        *      tags={"Option"},
+        *     security={{"Authorization":{}}},
+        *      summary="delete option",
+        *      description="delete one option.",
+        *     @OA\Parameter(
+        *          name="id",
+        *          in="path",
+        *          required=true, 
+        *         
+        *      ),
+        *      @OA\Response(
+        *          response=200,
+        *          description="Successful operation",
+        *      ),
+        *      @OA\Response(
+        *          response=401,
+        *          description="Unauthenticated",
+        *      ),
+        *      @OA\Response(
+        *          response=403,
+        *          description="Forbidden"
+        *      ),
+        * @OA\Response(
+        *      response=400,
+        *      description="Bad Request"
+        *   ),
+        * @OA\Response(
+        *      response=404,
+        *      description="not found"
+        *   ),
+        *  )
+        */
     public function delete($id)
     {
         if(!Auth::user()->isAuthorized(['admin','supplier'])){
