@@ -31,6 +31,8 @@ class ProductResource extends JsonResource
             'image' => FileResource::collection($this->files),
             'type_product' => TypeProductResource::collection($this->typeproduct),
             'tags' => TagResource::collection($this->tag),
+            'menu' => MenuResource::collection($this->menu),
+
             'supplier' => SupplierResource::collection($this->suppliers)
         ];
     }
