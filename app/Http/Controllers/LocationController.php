@@ -9,9 +9,72 @@ use Exception;
 use Illuminate\Http\Request;
 use League\CommonMark\Util\Xml;
 use Illuminate\Support\Facades\Auth;
-
+/**
+ * @OA\Tag(
+ *     name="Location",
+ *     description="Gestion location ",
+ *
+ * )
+ */
 class LocationController extends Controller
 {
+     /**
+     * @OA\Post(
+     *      path="/localisationAdsress",
+     *      operationId="localisationAdsress",
+     *      tags={"Location"},
+     *     security={{"Authorization":{}}},
+     *      summary="Localise position.",
+     *   @OA\Parameter (
+     *     in="query",
+     *     name="street",
+     *     required=true,
+     *     description="street",
+     *    @OA\Schema( type="string" ),
+     *      ),
+     *    @OA\Parameter (
+     *     in="query",
+     *     name="postcode",
+     *     required=true,
+     *     description="postcode",
+     *    @OA\Schema( type="string" ),
+     *      ),
+     *   @OA\Parameter (
+     *     in="query",
+     *     name="city",
+     *     required=true,
+     *     description="city",
+     *    @OA\Schema( type="string" ),
+     *      ),
+     *  @OA\Parameter (
+     *     in="query",
+     *     name="region",
+     *     required=true,
+     *     description="region",
+     *    @OA\Schema( type="string" ),
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *       ),
+     *     @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=400,
+     *          description="bad request",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden",
+     *      ),
+     *    @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     *     )
+     */  
     public function GetLocationWithAdresse($street, $postcode, $city, $region)
     {
         $latlong = array();

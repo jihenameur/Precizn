@@ -9,9 +9,56 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
-
+/**
+ * @OA\Tag(
+ *     name="Annonce",
+ *     description="Gestion annonce",
+ *
+ * )
+ */
 class AnnonceController extends Controller
 {
+     /**
+     * @OA\Post(
+     *      path="/createAnnonce",
+     *      operationId="createAnnonce",
+     *      tags={"Annonce"},
+     *     security={{"Authorization":{}}},
+     *      summary="create Annonce" ,
+     *      description="create Annonce",
+     *    @OA\Parameter (
+     *     in="query",
+     *     name="description",
+     *     required=false,
+     *     description="description",
+     *     @OA\Schema (type="text")
+     *      ),
+     *   @OA\Parameter (
+     *     in="query",
+     *     name="supplier_id ",
+     *     required=true,
+     *     description="supplier_id ",
+     *     @OA\Schema (type="integer",
+     *           format="bigint(20)")
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *       ),
+     *     @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     *    @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     *  )
+     */
     public function __construct(Request $request, Annonces $model,  Controller $controller = null)
     {
         $this->model = $model;
@@ -107,6 +154,45 @@ class AnnonceController extends Controller
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
+     */
+    /**
+     * @OA\Get(
+     *      path="/showAnnonce/{id}",
+     *     tags={"Annonce"},
+     *     security={{"Authorization":{}}},
+     *      operationId="showAnnonce",
+     *      summary="Get annonce by annonce id. ",
+     *     @OA\Parameter(
+     *          name="id",
+     *          in="path",
+     *          required=true, 
+     *         
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *      ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     *     @OA\Response(
+     *      response=400,
+     *      description="Bad Request"
+     *   ),
+     *     @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     *     @OA\Response(
+     *      response=500,
+     *      description="erreur serveur 500"
+     *   ),
+     * )
      */
     public function show($id)
     {
