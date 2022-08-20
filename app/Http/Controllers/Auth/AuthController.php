@@ -12,6 +12,7 @@ use App\Models\Role;
 use App\Models\Supplier;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use App\Models\User;
 use Exception;
@@ -175,7 +176,8 @@ class AuthController extends Controller
                     'message' => 'Login credentials are invalid.',
                 ], 400);
             }
-            if (!($user->password == bcrypt($request->password))) {
+
+            if (!Hash::check($request->input('password'),$user->password)) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Login credentials are invalid.',
