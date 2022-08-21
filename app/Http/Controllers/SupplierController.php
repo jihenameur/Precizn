@@ -167,8 +167,8 @@ class SupplierController extends Controller
      *     name="category",
      *     required=false,
      *     description="category",
-     *     @OA\Items( 
-     *              type="array", 
+     *     @OA\Items(
+     *              type="array",
      *          )),
      *   @OA\Parameter (
      *     in="query",
@@ -177,7 +177,7 @@ class SupplierController extends Controller
      *     description="commission",
      *     @OA\Schema (type="integer")
      *      ),
-     *    
+     *
      *    @OA\Parameter (
      *     in="query",
      *     name="street",
@@ -325,7 +325,7 @@ class SupplierController extends Controller
             if (env('APP_DEBUG')) {
                 $res->fail($exception->getMessage());
             }
-            $res->fail('erreur serveur 500');
+            else {$res->fail('erreur serveur 500');}
         }
         return new JsonResponse($res, $res->code);
     }
@@ -434,7 +434,7 @@ class SupplierController extends Controller
             if (env('APP_DEBUG')) {
                 $res->fail($exception->getMessage());
             }
-            $res->fail('erreur serveur 500');
+            else {$res->fail('erreur serveur 500');}
         }
         return new JsonResponse($res, $res->code);
     }
@@ -455,8 +455,8 @@ class SupplierController extends Controller
      *    @OA\Parameter(
      *          name="per_page",
      *          in="path",
-     *          required=true, 
-     *         
+     *          required=true,
+     *
      *      ),
      *      @OA\Response(
      *          response=200,
@@ -516,7 +516,7 @@ class SupplierController extends Controller
             if (env('APP_DEBUG', true)) {
                 $res->fail($exception->getMessage());
             }
-            $res->fail('erreur serveur 500');
+            else {$res->fail('erreur serveur 500');}
         }
         return new JsonResponse($res, $res->code);
     }
@@ -536,8 +536,8 @@ class SupplierController extends Controller
      *     @OA\Parameter(
      *          name="id",
      *          in="path",
-     *          required=true, 
-     *         
+     *          required=true,
+     *
      *      ),
      *      @OA\Response(
      *          response=200,
@@ -578,7 +578,7 @@ class SupplierController extends Controller
             if (env('APP_DEBUG')) {
                 $res->fail($exception->getMessage());
             }
-            $res->fail('erreur serveur 500');
+            else {$res->fail('erreur serveur 500');}
         }
         return new JsonResponse($res, $res->code);
     }
@@ -618,7 +618,7 @@ class SupplierController extends Controller
             if (env('APP_DEBUG')) {
                 $res->fail($exception->getMessage());
             }
-            $res->fail('erreur serveur 500');
+            else {$res->fail('erreur serveur 500');}
         }
         return new JsonResponse($res, $res->code);
     }
@@ -641,8 +641,8 @@ class SupplierController extends Controller
      *     @OA\Parameter(
      *          name="id",
      *          in="path",
-     *          required=true, 
-     *         
+     *          required=true,
+     *
      *      ),
      *     @OA\Parameter (
      *     in="query",
@@ -733,8 +733,8 @@ class SupplierController extends Controller
      *     name="category",
      *     required=false,
      *     description="category",
-     *     @OA\Items( 
-     *              type="array", 
+     *     @OA\Items(
+     *              type="array",
      *          )),
      *   @OA\Parameter (
      *     in="query",
@@ -743,7 +743,7 @@ class SupplierController extends Controller
      *     description="commission",
      *     @OA\Schema (type="integer")
      *      ),
-     *    
+     *
      *    @OA\Parameter (
      *     in="query",
      *     name="street",
@@ -861,7 +861,7 @@ class SupplierController extends Controller
             if (env('APP_DEBUG')) {
                 $res->fail($exception->getMessage());
             }
-            $res->fail('erreur serveur 500');
+            else {$res->fail('erreur serveur 500');}
         }
         return new JsonResponse($res, $res->code);
     }
@@ -877,8 +877,8 @@ class SupplierController extends Controller
      *     @OA\Parameter(
      *          name="id",
      *          in="path",
-     *          required=true, 
-     *         
+     *          required=true,
+     *
      *      ),
      *     @OA\Parameter (
      *     in="query",
@@ -966,7 +966,7 @@ class SupplierController extends Controller
             if (env('APP_DEBUG')) {
                 $res->fail($exception->getMessage());
             }
-            $res->fail('erreur serveur 500');
+            else {$res->fail('erreur serveur 500');}
         }
         return new JsonResponse($res, $res->code);
     }
@@ -977,7 +977,7 @@ class SupplierController extends Controller
      * @param null $id
      * @return bool|mixed|void
      */
-    
+
     public function delete($id)
     {
         if (!Auth::user()->isAuthorized(['admin'])) {
@@ -999,7 +999,7 @@ class SupplierController extends Controller
             if (env('APP_DEBUG')) {
                 $res->fail($exception->getMessage());
             }
-            $res->fail('erreur serveur 500');
+            else {$res->fail('erreur serveur 500');}
         }
         return new JsonResponse($res, $res->code);
     }
@@ -1027,7 +1027,7 @@ class SupplierController extends Controller
             if (env('APP_DEBUG')) {
                 $res->fail($exception->getMessage());
             }
-            $res->fail('erreur serveur 500');
+            else {$res->fail('erreur serveur 500');}
         }
         return new JsonResponse($res, $res->code);
     }
@@ -1083,7 +1083,7 @@ class SupplierController extends Controller
             if (env('APP_DEBUG')) {
                 $res->fail($exception->getMessage());
             }
-            $res->fail('erreur serveur 500');
+            else {$res->fail('erreur serveur 500');}
         }
         return new JsonResponse($res, $res->code);
 
@@ -1167,7 +1167,7 @@ class SupplierController extends Controller
             if (env('APP_DEBUG')) {
                 $res->fail($exception->getMessage());
             }
-            $res->fail('erreur serveur 500');
+            else {$res->fail('erreur serveur 500');}
         }
         return new JsonResponse($res, $res->code);
     }
@@ -1178,7 +1178,7 @@ class SupplierController extends Controller
      *     tags={"Supplier"},
      *     security={{"Authorization":{}}},
      *      operationId="supplieraccceptrefusecommand",
-     *      summary="accept && Or refused order by supplier", 
+     *      summary="accept && Or refused order by supplier",
      *    @OA\Parameter (
      *     in="query",
      *     name="command_id",
@@ -1257,7 +1257,7 @@ class SupplierController extends Controller
             if (env('APP_DEBUG')) {
                 $res->fail($exception->getMessage());
             }
-            $res->fail('erreur serveur 500');
+            else {$res->fail('erreur serveur 500');}
         }
         return new JsonResponse($res, $res->code);
     }
@@ -1276,8 +1276,8 @@ class SupplierController extends Controller
      *     @OA\Parameter(
      *          name="id",
      *          in="path",
-     *          required=true, 
-     *         
+     *          required=true,
+     *
      *      ),
      *      @OA\Response(
      *          response=200,
@@ -1329,7 +1329,7 @@ class SupplierController extends Controller
             if (env('APP_DEBUG')) {
                 $res->fail($exception->getMessage());
             }
-            $res->fail('erreur serveur 500');
+            else {$res->fail('erreur serveur 500');}
         }
         return new JsonResponse($res, $res->code);
     }

@@ -34,7 +34,7 @@ class MenuController extends Controller
      *      operationId="addMenu",
      *      tags={"Menu"},
      *     security={{"Authorization":{}}},
-     *      summary="create option.",  
+     *      summary="create option.",
      *    @OA\Parameter (
      *     in="query",
      *     name="name",
@@ -117,7 +117,7 @@ class MenuController extends Controller
              if(env('APP_DEBUG')){
                 $res->fail($exception->getMessage());
             }
-            $res->fail('erreur serveur 500');
+            else {$res->fail('erreur serveur 500');}
         }
         return new JsonResponse($res, $res->code);
     }
@@ -185,7 +185,7 @@ class MenuController extends Controller
              if(env('APP_DEBUG')){
                 $res->fail($exception->getMessage());
             }
-            $res->fail('erreur serveur 500');
+            else {$res->fail('erreur serveur 500');}
         }
         return new JsonResponse($res, $res->code);
     }
@@ -205,7 +205,7 @@ class MenuController extends Controller
              if(env('APP_DEBUG')){
                 $res->fail($exception->getMessage());
             }
-            $res->fail('erreur serveur 500');
+            else {$res->fail('erreur serveur 500');}
         }
         return new JsonResponse($res, $res->code);
     }
@@ -274,7 +274,7 @@ class MenuController extends Controller
             if(env('APP_DEBUG')){
                 $res->fail($exception->getMessage());
             }
-            $res->fail('erreur serveur 500');
+            else {$res->fail('erreur serveur 500');}
         }
         return new JsonResponse($res, $res->code);
     }
@@ -284,7 +284,7 @@ class MenuController extends Controller
      *      operationId="updateMenu",
      *      tags={"Menu"},
      *     security={{"Authorization":{}}},
-     *      summary="update option.", 
+     *      summary="update option.",
      *   @OA\Parameter (
      *     in="query",
      *     name="supplier_id",
@@ -292,7 +292,7 @@ class MenuController extends Controller
      *     description="supplier_id",
      *     @OA\Schema (type="integer",
      *           format="bigint(20)")
-     *      ), 
+     *      ),
      *    @OA\Parameter (
      *     in="query",
      *     name="name",
@@ -307,7 +307,7 @@ class MenuController extends Controller
      *     description="description",
      *     @OA\Schema( type="string" ),
      *      ),
-     * 
+     *
      *   @OA\Parameter (
      *     in="query",
      *     name="image",
@@ -375,11 +375,11 @@ class MenuController extends Controller
              if(env('APP_DEBUG')){
                 $res->fail($exception->getMessage());
             }
-            $res->fail('erreur serveur 500');
+            else {$res->fail('erreur serveur 500');}
         }
         return new JsonResponse($res, $res->code);
     }
-    
+
         /** @OA\Delete(
         *      path="/deleteMenu/{id}",
         *      operationId="deleteMenu",
@@ -390,8 +390,8 @@ class MenuController extends Controller
         *     @OA\Parameter(
         *          name="id",
         *          in="path",
-        *          required=true, 
-        *         
+        *          required=true,
+        *
         *      ),
         *      @OA\Response(
         *          response=200,
@@ -432,7 +432,7 @@ class MenuController extends Controller
              if(env('APP_DEBUG')){
                 $res->fail($exception->getMessage());
             }
-            $res->fail('erreur serveur 500');
+            else {$res->fail('erreur serveur 500');}
         }
         return new JsonResponse($res, $res->code);
     }

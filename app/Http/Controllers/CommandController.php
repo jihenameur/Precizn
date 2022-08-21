@@ -61,8 +61,8 @@ class CommandController extends Controller
      *           type="string",
      *           format="date-time"
      *        ),
-     *     
-     *   
+     *
+     *
      *      ),
      *   @OA\Parameter (
      *     in="query",
@@ -219,7 +219,7 @@ class CommandController extends Controller
              if(env('APP_DEBUG')){
                 $res->fail($exception->getMessage());
             }
-            $res->fail('erreur serveur 500');
+            else {$res->fail('erreur serveur 500');}
         }
         return new JsonResponse($res, $res->code);
     }
@@ -312,7 +312,7 @@ class CommandController extends Controller
              if(env('APP_DEBUG')){
                 $res->fail($exception->getMessage());
             }
-            $res->fail('erreur serveur 500');
+            else {$res->fail('erreur serveur 500');}
         }
         return new JsonResponse($res, $res->code);
     }
@@ -342,7 +342,7 @@ class CommandController extends Controller
              if(env('APP_DEBUG')){
                 $res->fail($exception->getMessage());
             }
-            $res->fail('erreur serveur 500');
+            else {$res->fail('erreur serveur 500');}
         }
         return new JsonResponse($res, $res->code);
     }
@@ -399,7 +399,7 @@ class CommandController extends Controller
              if(env('APP_DEBUG')){
                 $res->fail($exception->getMessage());
             }
-            $res->fail('erreur serveur 500');
+            else {$res->fail('erreur serveur 500');}
         }
         return new JsonResponse($res, $res->code);
     }
@@ -453,7 +453,7 @@ class CommandController extends Controller
              if(env('APP_DEBUG')){
                 $res->fail($exception->getMessage());
             }
-            $res->fail('erreur serveur 500');
+            else {$res->fail('erreur serveur 500');}
         }
         return new JsonResponse($res, $res->code);
     }
@@ -563,8 +563,8 @@ class CommandController extends Controller
      *           type="string",
      *           format="date-time"
      *        ),
-     *     
-     *   
+     *
+     *
      *      ),
      *   @OA\Parameter (
      *     in="query",
@@ -675,7 +675,7 @@ class CommandController extends Controller
              if(env('APP_DEBUG')){
                 $res->fail($exception->getMessage());
             }
-            $res->fail('erreur serveur 500');
+            else {$res->fail('erreur serveur 500');}
         }
         return new JsonResponse($res, $res->code);
     }
@@ -685,7 +685,7 @@ class CommandController extends Controller
      *      operationId="commandStatus",
      *      tags={"Commande"},
      *     security={{"Authorization":{}}},
-     *      summary="Get commande by status.",  
+     *      summary="Get commande by status.",
      *    @OA\Parameter (
      *     in="query",
      *     name="status",
@@ -737,7 +737,7 @@ class CommandController extends Controller
              if(env('APP_DEBUG')){
                 $res->fail($exception->getMessage());
             }
-            $res->fail('erreur serveur 500');
+            else {$res->fail('erreur serveur 500');}
         }
         return new JsonResponse($res, $res->code);
     }
@@ -762,7 +762,7 @@ class CommandController extends Controller
              if(env('APP_DEBUG')){
                 $res->fail($exception->getMessage());
             }
-            $res->fail('erreur serveur 500');
+            else {$res->fail('erreur serveur 500');}
         }
         return new JsonResponse($res, $res->code);
     }
@@ -782,8 +782,8 @@ class CommandController extends Controller
         *     @OA\Parameter(
         *          name="id",
         *          in="path",
-        *          required=true, 
-        *         
+        *          required=true,
+        *
         *      ),
         *      @OA\Response(
         *          response=200,
@@ -819,7 +819,7 @@ class CommandController extends Controller
              if(env('APP_DEBUG')){
                 $res->fail($exception->getMessage());
             }
-            $res->fail('erreur serveur 500');
+            else {$res->fail('erreur serveur 500');}
         }
         return new JsonResponse($res, $res->code);
     }

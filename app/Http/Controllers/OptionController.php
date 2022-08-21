@@ -32,7 +32,7 @@ class OptionController extends Controller
      *      operationId="addOption",
      *      tags={"Option"},
      *     security={{"Authorization":{}}},
-     *      summary="create option.",  
+     *      summary="create option.",
      *    @OA\Parameter (
      *     in="query",
      *     name="name",
@@ -120,7 +120,7 @@ class OptionController extends Controller
              if(env('APP_DEBUG')){
                 $res->fail($exception->getMessage());
             }
-            $res->fail('erreur serveur 500');
+            else {$res->fail('erreur serveur 500');}
         }
         return new JsonResponse($res, $res->code);
     }
@@ -188,7 +188,7 @@ class OptionController extends Controller
              if(env('APP_DEBUG')){
                 $res->fail($exception->getMessage());
             }
-            $res->fail('erreur serveur 500');
+            else {$res->fail('erreur serveur 500');}
         }
         return new JsonResponse($res, $res->code);
     }
@@ -259,7 +259,7 @@ class OptionController extends Controller
             if(env('APP_DEBUG')){
                 $res->fail($exception->getMessage());
             }
-            $res->fail('erreur serveur 500');
+            else {$res->fail('erreur serveur 500');}
         }
         return new JsonResponse($res, $res->code);
     }
@@ -314,7 +314,7 @@ class OptionController extends Controller
              if(env('APP_DEBUG')){
                 $res->fail($exception->getMessage());
             }
-            $res->fail('erreur serveur 500');
+            else {$res->fail('erreur serveur 500');}
         }
         return new JsonResponse($res, $res->code);
     }
@@ -332,7 +332,7 @@ class OptionController extends Controller
      *      operationId="updateOption",
      *      tags={"Option"},
      *     security={{"Authorization":{}}},
-     *      summary="update option.",  
+     *      summary="update option.",
      *  @OA\Parameter(
      *          name="id",
      *          in="path",
@@ -421,7 +421,7 @@ class OptionController extends Controller
              if(env('APP_DEBUG')){
                 $res->fail($exception->getMessage());
             }
-            $res->fail('erreur serveur 500');
+            else {$res->fail('erreur serveur 500');}
         }
         return new JsonResponse($res, $res->code);
     }
@@ -441,8 +441,8 @@ class OptionController extends Controller
         *     @OA\Parameter(
         *          name="id",
         *          in="path",
-        *          required=true, 
-        *         
+        *          required=true,
+        *
         *      ),
         *      @OA\Response(
         *          response=200,
@@ -484,7 +484,7 @@ class OptionController extends Controller
              if(env('APP_DEBUG')){
                 $res->fail($exception->getMessage());
             }
-            $res->fail('erreur serveur 500');
+            else {$res->fail('erreur serveur 500');}
         }
         return new JsonResponse($res, $res->code);
     }

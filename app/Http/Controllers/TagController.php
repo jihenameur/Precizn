@@ -32,7 +32,7 @@ class TagController extends Controller
      *      operationId="addTag",
      *      tags={"Tag"},
      *     security={{"Authorization":{}}},
-     *      summary="create tag.",  
+     *      summary="create tag.",
      *     @OA\Parameter (
      *     in="query",
      *     name="name",
@@ -99,7 +99,7 @@ class TagController extends Controller
             if (env('APP_DEBUG')) {
                 $res->fail($exception->getMessage());
             }
-            $res->fail('erreur serveur 500');
+            else {$res->fail('erreur serveur 500');}
         }
         return new JsonResponse($res, $res->code);
     }
@@ -207,7 +207,7 @@ class TagController extends Controller
             if (env('APP_DEBUG')) {
                 $res->fail($exception->getMessage());
             }
-            $res->fail('erreur serveur 500');
+            else {$res->fail('erreur serveur 500');}
         }
         return new JsonResponse($res, $res->code);
     }
@@ -222,7 +222,7 @@ class TagController extends Controller
             if (env('APP_DEBUG')) {
                 $res->fail($exception->getMessage());
             }
-            $res->fail('erreur serveur 500');
+            else {$res->fail('erreur serveur 500');}
         }
         return new JsonResponse($res, $res->code);
     }
@@ -243,7 +243,7 @@ class TagController extends Controller
             if (env('APP_DEBUG')) {
                 $res->fail($exception->getMessage());
             }
-            $res->fail('erreur serveur 500');
+            else {$res->fail('erreur serveur 500');}
         }
         return new JsonResponse($res, $res->code);
     }
@@ -277,7 +277,7 @@ class TagController extends Controller
             if (env('APP_DEBUG')) {
                 $res->fail($exception->getMessage());
             }
-            $res->fail('erreur serveur 500');
+            else {$res->fail('erreur serveur 500');}
         }
         return new JsonResponse($res, $res->code);
     }
@@ -287,12 +287,12 @@ class TagController extends Controller
      *      operationId="updateTag",
      *      tags={"Tag"},
      *     security={{"Authorization":{}}},
-     *      summary="update tag.", 
+     *      summary="update tag.",
      *    @OA\Parameter(
      *          name="id",
      *          in="path",
      *          required=true,
-     *      ), 
+     *      ),
      *     @OA\Parameter(
      *     in="query",
      *     name="name",
@@ -355,7 +355,7 @@ class TagController extends Controller
             if (env('APP_DEBUG')) {
                 $res->fail($exception->getMessage());
             }
-            $res->fail('erreur serveur 500');
+            else {$res->fail('erreur serveur 500');}
         }
         return new JsonResponse($res, $res->code);
     }
@@ -370,8 +370,8 @@ class TagController extends Controller
         *     @OA\Parameter(
         *          name="id",
         *          in="path",
-        *          required=true, 
-        *         
+        *          required=true,
+        *
         *      ),
         *      @OA\Response(
         *          response=200,
@@ -413,7 +413,7 @@ class TagController extends Controller
             if (env('APP_DEBUG')) {
                 $res->fail($exception->getMessage());
             }
-            $res->fail('erreur serveur 500');
+            else {$res->fail('erreur serveur 500');}
         }
         return new JsonResponse($res, $res->code);
     }

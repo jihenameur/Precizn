@@ -32,7 +32,7 @@ class TypeProductController extends Controller
      *      operationId="addtypeProduct",
      *      tags={"TypeProduct"},
      *     security={{"Authorization":{}}},
-     *      summary="create type product.",  
+     *      summary="create type product.",
      *     @OA\Parameter (
      *     in="query",
      *     name="name",
@@ -92,7 +92,7 @@ class TypeProductController extends Controller
      *      description="not found"
      *   ),
      *     )
-     */  
+     */
     public function create(Request $request)
     {
         if(!Auth::user()->isAuthorized(['admin','supplier'])){
@@ -143,7 +143,7 @@ class TypeProductController extends Controller
              if(env('APP_DEBUG')){
                 $res->fail($exception->getMessage());
             }
-            $res->fail('erreur serveur 500');
+            else {$res->fail('erreur serveur 500');}
         }
         return new JsonResponse($res, $res->code);
     }
@@ -153,13 +153,13 @@ class TypeProductController extends Controller
      *      operationId="updateTypeProduct",
      *      tags={"TypeProduct"},
      *     security={{"Authorization":{}}},
-     *      summary="update type product.", 
+     *      summary="update type product.",
      *   @OA\Parameter(
      *          name="id",
      *          in="path",
      *          required=true,
      *
-     *      ), 
+     *      ),
      *     @OA\Parameter (
      *     in="query",
      *     name="name",
@@ -219,7 +219,7 @@ class TypeProductController extends Controller
      *      description="not found"
      *   ),
      *     )
-     */ 
+     */
     public function update($id,Request $request)
     {
         if(!Auth::user()->isAuthorized(['admin','supplier'])){
@@ -265,7 +265,7 @@ class TypeProductController extends Controller
              if(env('APP_DEBUG')){
                 $res->fail($exception->getMessage());
             }
-            $res->fail('erreur serveur 500');
+            else {$res->fail('erreur serveur 500');}
         }
         return new JsonResponse($res, $res->code);
     }
@@ -371,7 +371,7 @@ class TypeProductController extends Controller
              if(env('APP_DEBUG')){
                 $res->fail($exception->getMessage());
             }
-            $res->fail('erreur serveur 500');
+            else {$res->fail('erreur serveur 500');}
         }
         return new JsonResponse($res, $res->code);
     }
@@ -392,7 +392,7 @@ class TypeProductController extends Controller
              if(env('APP_DEBUG')){
                 $res->fail($exception->getMessage());
             }
-            $res->fail('erreur serveur 500');
+            else {$res->fail('erreur serveur 500');}
         }
         return new JsonResponse($res, $res->code);
     }
@@ -406,8 +406,8 @@ class TypeProductController extends Controller
         *     @OA\Parameter(
         *          name="id",
         *          in="path",
-        *          required=true, 
-        *         
+        *          required=true,
+        *
         *      ),
         *      @OA\Response(
         *          response=200,
