@@ -74,7 +74,7 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
 
     public function getJWTCustomClaims()
     {
-        return ['role' => $this->userable_type,'user_id'=>$this.id];
+        return ['role' => $this->userable_type,'user_id'=>$this->id];
     }
     public function sendApiEmailVerificationNotification()
     {

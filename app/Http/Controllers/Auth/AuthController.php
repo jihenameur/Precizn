@@ -166,6 +166,7 @@ class AuthController extends Controller
             'password' => 'required',
             'email' => 'required'
         ]);
+        $clt = [];
         $res = new Result();
         try {
             $user = User::where('email', $request['email'])
@@ -239,7 +240,8 @@ class AuthController extends Controller
 
                 ];
             }
-
+            //TODO clt sometime undefined
+            $clt = $clt ?? $user;
             if ($user->status_id == 1) {
                 $customClaims = ['name' => $user->name]; // Here you can pass user data on claims
                 $tokens = JWTAuth::fromUser($user, $customClaims);
@@ -251,16 +253,13 @@ class AuthController extends Controller
                     // 'expires_in' => auth()->factory()->getTTL() * 60,
                     'user' => $clt
                 ];
-                $res->success($response);
-                return new JsonResponse($res, $res->code);
             } else {
                 $response = [
-
                     'user' => $clt
                 ];
-                $res->success($response);
-                return new JsonResponse($res, $res->code);
             }
+            $res->success($response);
+            return new JsonResponse($res, $res->code);
         } catch (JWTException $e) {
 
             return response()->json([
