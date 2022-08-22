@@ -162,7 +162,7 @@ class DeliveryController extends Controller
      *     description="region",
      *     @OA\Schema (type="string")
      *      ),
-     *     
+     *
      *   @OA\Parameter (
      *     in="query",
      *     name="salary",
@@ -175,7 +175,7 @@ class DeliveryController extends Controller
      *     name="cycle",
      *     required=false,
      *     description="cycle",
-     *     @OA\Schema(type="string",enum={"OFF", "ON"})  
+     *     @OA\Schema(type="string",enum={"OFF", "ON"})
      *      ),
      *    @OA\Parameter (
      *     in="query",
@@ -268,7 +268,7 @@ class DeliveryController extends Controller
              if(env('APP_DEBUG')){
                 $res->fail($exception->getMessage());
             }
-            $res->fail('erreur serveur 500');
+           else {$res->fail('erreur serveur 500'); }
         }
         return new JsonResponse($res, $res->code);
     }
@@ -316,7 +316,7 @@ class DeliveryController extends Controller
              if(env('APP_DEBUG')){
                 $res->fail($exception->getMessage());
             }
-            $res->fail('erreur serveur 500');
+           else {$res->fail('erreur serveur 500'); }
         }
         return new JsonResponse($res, $res->code);
     }
@@ -366,7 +366,7 @@ class DeliveryController extends Controller
              if(env('APP_DEBUG')){
                 $res->fail($exception->getMessage());
             }
-            $res->fail('erreur serveur 500');
+           else {$res->fail('erreur serveur 500'); }
         }
         return new JsonResponse($res, $res->code);
     }
@@ -386,8 +386,8 @@ class DeliveryController extends Controller
      *    @OA\Parameter(
      *          name="per_page",
      *          in="path",
-     *          required=true, 
-     *         
+     *          required=true,
+     *
      *      ),
      *      @OA\Response(
      *          response=200,
@@ -466,7 +466,7 @@ class DeliveryController extends Controller
              if(env('APP_DEBUG')){
                 $res->fail($exception->getMessage());
             }
-            $res->fail('erreur serveur 500');
+           else {$res->fail('erreur serveur 500'); }
         }
         return new JsonResponse($res, $res->code);
     }
@@ -480,8 +480,8 @@ class DeliveryController extends Controller
      *     @OA\Parameter(
      *          name="id",
      *          in="path",
-     *          required=true, 
-     *         
+     *          required=true,
+     *
      *      ),
      *      @OA\Response(
      *          response=200,
@@ -523,7 +523,7 @@ class DeliveryController extends Controller
              if(env('APP_DEBUG')){
                 $res->fail($exception->getMessage());
             }
-            $res->fail('erreur serveur 500');
+           else {$res->fail('erreur serveur 500'); }
         }
         return new JsonResponse($res, $res->code);
     }
@@ -562,7 +562,9 @@ class DeliveryController extends Controller
              if(env('APP_DEBUG')){
                 $res->fail($exception->getMessage());
             }
-            $res->fail('erreur serveur 500');
+           else {
+               $res->fail('erreur serveur 500');
+            }
         }
         return new JsonResponse($res, $res->code);
     }
@@ -584,8 +586,8 @@ class DeliveryController extends Controller
      *     @OA\Parameter(
      *          name="id",
      *          in="path",
-     *          required=true, 
-     *         
+     *          required=true,
+     *
      *      ),
      *     @OA\Parameter (
      *     in="query",
@@ -671,7 +673,7 @@ class DeliveryController extends Controller
      *     description="region",
      *     @OA\Schema (type="string")
      *      ),
-     *     
+     *
      *   @OA\Parameter (
      *     in="query",
      *     name="salary",
@@ -684,7 +686,7 @@ class DeliveryController extends Controller
      *     name="cycle",
      *     required=false,
      *     description="cycle",
-     *     @OA\Schema(type="string",enum={"OFF", "ON"})  
+     *     @OA\Schema(type="string",enum={"OFF", "ON"})
      *      ),
      *    @OA\Parameter (
      *     in="query",
@@ -760,7 +762,9 @@ class DeliveryController extends Controller
              if(env('APP_DEBUG')){
                 $res->fail($exception->getMessage());
             }
-            $res->fail('erreur serveur 500');
+           else {
+               $res->fail('erreur serveur 500');
+            }
         }
         return new JsonResponse($res, $res->code);
     }
@@ -781,8 +785,8 @@ class DeliveryController extends Controller
      *     @OA\Parameter(
      *          name="id",
      *          in="path",
-     *          required=true, 
-     *         
+     *          required=true,
+     *
      *      ),
      *      @OA\Response(
      *          response=200,
@@ -826,7 +830,9 @@ class DeliveryController extends Controller
              if(env('APP_DEBUG')){
                 $res->fail($exception->getMessage());
             }
-            $res->fail('erreur serveur 500');
+           else {
+               $res->fail('erreur serveur 500');
+            }
         }
         return new JsonResponse($res, $res->code);
     }
@@ -837,7 +843,7 @@ class DeliveryController extends Controller
      *      tags={"Delivery"},
      *     security={{"Authorization":{}}},
      *      summary="Accepte ordre by delivery",
-     *   
+     *
      *  @OA\Parameter (
      *     in="query",
      *     name="delivery_id",
@@ -910,7 +916,9 @@ class DeliveryController extends Controller
              if(env('APP_DEBUG')){
                 $res->fail($exception->getMessage());
             }
-            $res->fail('erreur serveur 500');
+           else {
+               $res->fail('erreur serveur 500');
+            }
         }
         return new JsonResponse($res, $res->code);
 
@@ -989,7 +997,9 @@ class DeliveryController extends Controller
              if(env('APP_DEBUG')){
                 $res->fail($exception->getMessage());
             }
-            $res->fail('erreur serveur 500');
+           else {
+               $res->fail('erreur serveur 500');
+            }
         }
         return new JsonResponse($res, $res->code);
     }
@@ -999,7 +1009,7 @@ class DeliveryController extends Controller
      *      operationId="rejectCommand",
      *      tags={"Delivery"},
      *     security={{"Authorization":{}}},
-     *      summary="Accepte ordre by delivery",  
+     *      summary="Accepte ordre by delivery",
      *  @OA\Parameter (
      *     in="query",
      *     name="delivery_id",
@@ -1064,7 +1074,9 @@ class DeliveryController extends Controller
              if(env('APP_DEBUG')){
                 $res->fail($exception->getMessage());
             }
-            $res->fail('erreur serveur 500');
+           else {
+               $res->fail('erreur serveur 500');
+            }
         }
         return new JsonResponse($res, $res->code);
     }
@@ -1096,7 +1108,9 @@ class DeliveryController extends Controller
              if(env('APP_DEBUG')){
                 $res->fail($exception->getMessage());
             }
-            $res->fail('erreur serveur 500');
+           else {
+               $res->fail('erreur serveur 500');
+            }
         }
         return new JsonResponse($res, $res->code);
     }
@@ -1111,7 +1125,7 @@ class DeliveryController extends Controller
      *    @OA\Parameter(
      *          name="per_page",
      *          in="path",
-     *          required=true,       
+     *          required=true,
      *      ),
      *  @OA\Parameter (
      *     in="query",
@@ -1169,7 +1183,9 @@ class DeliveryController extends Controller
              if(env('APP_DEBUG')){
                 $res->fail($exception->getMessage());
             }
-            $res->fail('erreur serveur 500');
+           else {
+               $res->fail('erreur serveur 500');
+            }
         }
         return new JsonResponse($res, $res->code);
     }
@@ -1253,7 +1269,9 @@ class DeliveryController extends Controller
              if(env('APP_DEBUG')){
                 $res->fail($exception->getMessage());
             }
-            $res->fail('erreur serveur 500');
+             else {
+                 $res->fail('erreur serveur 500');
+             }
         }
         return new JsonResponse($res, $res->code);
     }
@@ -1263,7 +1281,7 @@ class DeliveryController extends Controller
      *      operationId="CommandDelivered",
      *      tags={"Delivery"},
      *     security={{"Authorization":{}}},
-     *      summary="List Orders delivered",  
+     *      summary="List Orders delivered",
      *  @OA\Parameter (
      *     in="query",
      *     name="delivery_id",
@@ -1331,16 +1349,20 @@ class DeliveryController extends Controller
          if(env('APP_DEBUG')){
                 $res->fail($exception->getMessage());
             }
-            $res->fail('erreur serveur 500');
-    }    }
-    
+         else {
+             $res->fail('erreur serveur 500');
+         }
+        }
+        return new JsonResponse($res, $res->code);
+    }
+
     /**
      * @OA\Get(
      *      path="/generateInvoicePDF",
      *      operationId="generateInvoicePDF",
      *      tags={"Delivery"},
      *     security={{"Authorization":{}}},
-     *      summary="generate invoice pdf",  
+     *      summary="generate invoice pdf",
      *  @OA\Parameter (
      *     in="query",
      *     name="delivery_id",
@@ -1438,7 +1460,9 @@ class DeliveryController extends Controller
              if(env('APP_DEBUG')){
                 $res->fail($exception->getMessage());
             }
-            $res->fail('erreur serveur 500');
+             else {
+                 $res->fail('erreur serveur 500');
+             }
         }
         return new JsonResponse($res, $res->code);
     }
@@ -1448,7 +1472,7 @@ class DeliveryController extends Controller
      *      operationId="statisDeliv",
      *      tags={"Delivery"},
      *     security={{"Authorization":{}}},
-     *      summary="orders are delivered within a given time limit.",  
+     *      summary="orders are delivered within a given time limit.",
      *     @OA\Parameter (
      *     in="query",
      *     name="from",
@@ -1582,7 +1606,9 @@ class DeliveryController extends Controller
              if(env('APP_DEBUG')){
                 $res->fail($exception->getMessage());
             }
-            $res->fail('erreur serveur 500');
+             else {
+                 $res->fail('erreur serveur 500');
+             }
         }
         return new JsonResponse($res, $res->code);
     }
@@ -1592,7 +1618,7 @@ class DeliveryController extends Controller
      *      operationId="sendposition",
      *      tags={"Delivery"},
      *     security={{"Authorization":{}}},
-     *      summary="locate delivery position",  
+     *      summary="locate delivery position",
      *  @OA\Parameter (
      *     in="query",
      *     name="long",
@@ -1660,7 +1686,7 @@ class DeliveryController extends Controller
      *      operationId="statusdelivery",
      *      tags={"Delivery"},
      *     security={{"Authorization":{}}},
-     *      summary="Get Status delivery",    
+     *      summary="Get Status delivery",
      *  @OA\Parameter (
      *     in="query",
      *     name="status_id",
@@ -1728,7 +1754,45 @@ class DeliveryController extends Controller
              if(env('APP_DEBUG')){
                 $res->fail($exception->getMessage());
             }
-            $res->fail('erreur serveur 500');
+             else {
+                 $res->fail('erreur serveur 500');
+             }
+        }
+        return new JsonResponse($res, $res->code);
+    }
+
+    public function setAvailability(Request $request)
+    {
+        if (!Auth::user()->isAuthorized(['admin','delivery'])) {
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ], 403);
+        }
+        $validator = Validator::make($request->all(), [
+            'id' => 'number', // required and number field validation
+            'available' => 'required'
+
+        ]); // create the validations
+        if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
+        {
+            return $validator->errors();
+        }
+        $res = new Result();
+        try {
+            $delivery = Delivery::where('id', isset($request['id']) ? $request['id'] : Auth::user()->userable_id)->update([
+                    'available' => $request->available
+                ]);
+
+
+            $res->success($delivery);
+        } catch (\Exception $exception) {
+            if(env('APP_DEBUG')){
+                $res->fail($exception->getMessage());
+            } else {
+               $res->fail('erreur serveur 500');
+            }
+
         }
         return new JsonResponse($res, $res->code);
     }

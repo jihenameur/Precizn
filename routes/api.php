@@ -198,6 +198,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
     Route::post('addimagedelivery', [DeliveryController::class, 'addImage']);
     Route::post('updateimagedelivery', [DeliveryController::class, 'updateImage']);
     Route::post('statusdelivery', [DeliveryController::class, 'statusDelivery']);
+    Route::post('setDeliveryAvailable', [DeliveryController::class, 'setAvailability']);
 
     /**
      * public DeliveryRating

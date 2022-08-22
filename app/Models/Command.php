@@ -32,6 +32,7 @@ class Command extends Model
         'client',
         'panier',
         'delivery',
+        'products',
         'supplier',
         'address',
 

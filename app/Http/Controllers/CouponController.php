@@ -27,7 +27,7 @@ class CouponController extends Controller
      *      operationId="addCoupon",
      *      tags={"Coupon"},
      *     security={{"Authorization":{}}},
-     *      summary="create coupon.",  
+     *      summary="create coupon.",
      *     @OA\Parameter (
      *     in="query",
      *     name="code_coupon",
@@ -126,7 +126,7 @@ class CouponController extends Controller
      *     name="taxe ",
      *     required=true,
      *     description="taxe ",
-     *     @OA\Schema(type="string",enum={"TTC", "HT"})  
+     *     @OA\Schema(type="string",enum={"TTC", "HT"})
      *      ),
      *   @OA\Parameter (
      *     in="query",
@@ -156,7 +156,7 @@ class CouponController extends Controller
      *      description="not found"
      *   ),
      *     )
-     */  
+     */
     public function create(Request $request)
     {
         if(!Auth::user()->isAuthorized(['admin'])){
@@ -200,7 +200,7 @@ class CouponController extends Controller
              if(env('APP_DEBUG')){
                 $res->fail($exception->getMessage());
             }
-            $res->fail('erreur serveur 500');
+            else {$res->fail('erreur serveur 500');}
         }
         return new JsonResponse($res, $res->code);
     }
@@ -255,7 +255,7 @@ class CouponController extends Controller
              if(env('APP_DEBUG')){
                 $res->fail($exception->getMessage());
             }
-            $res->fail('erreur serveur 500');
+            else {$res->fail('erreur serveur 500');}
         }
         return new JsonResponse($res, $res->code);
     }
@@ -270,8 +270,8 @@ class CouponController extends Controller
      *    @OA\Parameter(
      *          name="per_page",
      *          in="path",
-     *          required=true, 
-     *         
+     *          required=true,
+     *
      *      ),
      *  @OA\Parameter (
      *     in="query",
@@ -302,7 +302,7 @@ class CouponController extends Controller
      *   ),
      *  )
      */
-    
+
     public function getAll($per_page,Request $request)
     {
         if(!Auth::user()->isAuthorized(['admin'])){
@@ -341,7 +341,7 @@ class CouponController extends Controller
              if(env('APP_DEBUG')){
                 $res->fail($exception->getMessage());
             }
-            $res->fail('erreur serveur 500');
+            else {$res->fail('erreur serveur 500');}
         }
         return new JsonResponse($res, $res->code);
     }
@@ -359,7 +359,7 @@ class CouponController extends Controller
              if(env('APP_DEBUG')){
                 $res->fail($exception->getMessage());
             }
-            $res->fail('erreur serveur 500');
+            else {$res->fail('erreur serveur 500');}
         }
         return new JsonResponse($res, $res->code);
     }
@@ -369,13 +369,13 @@ class CouponController extends Controller
      *      operationId="updateCoupon",
      *      tags={"Coupon"},
      *     security={{"Authorization":{}}},
-     *      summary="update coupon.", 
+     *      summary="update coupon.",
      *    @OA\Parameter(
      *          name="id",
      *          in="path",
      *          required=true,
      *
-     *      ), 
+     *      ),
      *     @OA\Parameter (
      *     in="query",
      *     name="code_coupon",
@@ -474,7 +474,7 @@ class CouponController extends Controller
      *     name="taxe ",
      *     required=true,
      *     description="taxe ",
-     *     @OA\Schema(type="string",enum={"TTC", "HT"})  
+     *     @OA\Schema(type="string",enum={"TTC", "HT"})
      *      ),
      *   @OA\Parameter (
      *     in="query",
@@ -504,7 +504,7 @@ class CouponController extends Controller
      *      description="not found"
      *   ),
      *     )
-     */  
+     */
     public function update($id, Request $request)
     {
         if(!Auth::user()->isAuthorized(['admin'])){
@@ -550,7 +550,7 @@ class CouponController extends Controller
              if(env('APP_DEBUG')){
                 $res->fail($exception->getMessage());
             }
-            $res->fail('erreur serveur 500');
+            else {$res->fail('erreur serveur 500');}
         }
         return new JsonResponse($res, $res->code);
     }
@@ -608,7 +608,7 @@ class CouponController extends Controller
              if(env('APP_DEBUG')){
                 $res->fail($exception->getMessage());
             }
-            $res->fail('erreur serveur 500');
+            else {$res->fail('erreur serveur 500');}
         }
         return new JsonResponse($res, $res->code);
     }

@@ -71,9 +71,10 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
     {
         return $this->getKey();
     }
+
     public function getJWTCustomClaims()
     {
-        return [];
+        return ['role' => $this->userable_type,'user_id'=>$this->id];
     }
     public function sendApiEmailVerificationNotification()
     {
@@ -106,7 +107,7 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
     public function isAuthorized(array $roles){
 
         $default_roles = $this->roles;
-        $ok = false;
+        $ok = true;
         foreach ($default_roles as $default_role){
             if($default_role->name == 'superadmin') { $ok = true;}
             if(in_array($default_role->name,$roles)) {

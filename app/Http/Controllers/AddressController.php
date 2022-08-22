@@ -38,7 +38,7 @@ class AddressController extends Controller
      *    @OA\Parameter(
      *          name="id",
      *          in="path",
-     *          required=true,    
+     *          required=true,
      *      ),
      *     @OA\Parameter (
      *     in="query",
@@ -68,7 +68,7 @@ class AddressController extends Controller
      *     description="region",
      *     @OA\Schema (type="string")
      *      ),
-     * 
+     *
      *   @OA\Parameter (
      *     in="query",
      *     name="label",
@@ -166,7 +166,7 @@ class AddressController extends Controller
              if(env('APP_DEBUG')){
                 $res->fail($exception->getMessage());
             }
-            $res->fail('erreur serveur 500');
+            else {$res->fail('erreur serveur 500');}
         }
         return new JsonResponse($res, $res->code);
     }
@@ -241,8 +241,8 @@ class AddressController extends Controller
      *     @OA\Parameter(
      *          name="id",
      *          in="path",
-     *          required=true, 
-     *         
+     *          required=true,
+     *
      *      ),
      *      @OA\Response(
      *          response=200,
@@ -281,8 +281,8 @@ class AddressController extends Controller
      *     @OA\Parameter(
      *          name="id",
      *          in="path",
-     *          required=true, 
-     *         
+     *          required=true,
+     *
      *      ),
      *      @OA\Response(
      *          response=200,
@@ -324,7 +324,7 @@ class AddressController extends Controller
              if(env('APP_DEBUG')){
                 $res->fail($exception->getMessage());
             }
-            $res->fail('erreur serveur 500');
+            else {$res->fail('erreur serveur 500');}
         }
         return new JsonResponse($res, $res->code);
     }
@@ -357,7 +357,7 @@ class AddressController extends Controller
      *    @OA\Parameter(
      *          name="id",
      *          in="path",
-     *          required=true,    
+     *          required=true,
      *      ),
      *     @OA\Parameter (
      *     in="query",
@@ -387,7 +387,7 @@ class AddressController extends Controller
      *     description="region",
      *     @OA\Schema (type="string")
      *      ),
-     * 
+     *
      *   @OA\Parameter (
      *     in="query",
      *     name="label",
@@ -477,7 +477,7 @@ class AddressController extends Controller
              if(env('APP_DEBUG')){
                 $res->fail($exception->getMessage());
             }
-            $res->fail('erreur serveur 500');
+            else {$res->fail('erreur serveur 500');}
         }
         return new JsonResponse($res, $res->code);
     }
