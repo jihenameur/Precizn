@@ -36,6 +36,7 @@ class DatabaseSeeder extends Seeder
         $this->call(SeederAnnonce::class);
         $this->call(AdsAreaSeeder::class);
         $this->call(AdsSeeder::class);
+        $this->call(MenuSeeder::class);
 
 
     }

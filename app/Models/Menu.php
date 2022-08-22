@@ -9,25 +9,17 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Menu extends Model
 {
     use HasFactory,SoftDeletes;
-    protected $table = 'menu';
-    protected $fillable = [
-        'name',
-        'description',
-        "image"
-    ];
-    protected $with = [
-        //'products'
-    ];
+
     public function products() {
-        return $this->belongsToMany(
-                                  'App\Models\Product',
-                                  'supplier_menu_product',
-                                  'menu_id',
-                                  'product_id'
-                                  );
+        return $this->belongsToMany(Product::class)->withPivot('position');
    }
     public function supplier()
     {
         return $this->belongsTo(Supplier::class);
+    }
+
+    public function image()
+    {
+       return $this->belongsTo(File::class,'file_id','id');
     }
 }

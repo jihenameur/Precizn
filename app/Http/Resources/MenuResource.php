@@ -18,8 +18,10 @@ class MenuResource extends JsonResource
             "id" => $this->id,
             "name" => $this->name,
             "description" => $this->description,
-            "image" => $this->image,
-            'supplier' => new SupplierResource($this->supplier)];
+            "image" => $this->image->path,
+            'supplier_id' => $this->supplier_id,
+            'products' => $this->products
+            ];
 
     }
 }

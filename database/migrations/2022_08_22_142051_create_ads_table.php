@@ -20,7 +20,7 @@ class CreateAdsTable extends Migration
             $table->foreignId('file_id')->nullable()->constrained('files')->onDelete('cascade');
             $table->foreignId('supplier_id')->nullable()->constrained('suppliers')->onDelete('cascade');
             $table->foreignId('product_id')->nullable()->constrained('products')->onDelete('cascade');
-            $table->foreignId('menu_id')->nullable()->constrained('menu')->onDelete('cascade');
+            $table->foreignId('menu_id')->nullable()->constrained('menus')->onDelete('cascade');
             $table->dateTime('start_date');
             $table->dateTime('end_date');
             $table->decimal('price')->nullable();
