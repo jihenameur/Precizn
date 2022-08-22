@@ -23,7 +23,7 @@ use Illuminate\Support\Str;
 class MenuController extends Controller
 {
     /**
-     * @OA\Get(
+     * @OA\Post(
      *      path="/getmenu",
      *      operationId="getSupplierMenu",
      *      tags={"Menu"},
