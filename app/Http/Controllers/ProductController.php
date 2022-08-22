@@ -1313,14 +1313,16 @@ class ProductController extends Controller
             /** @var Product $product */
             $allRequestAttributes = $request->all();
             $product = Product::find($id);
+            if(!$product){
+                return  'product not found';
+            }
             $validator = Validator::make($request->all(), [
                 'name' => 'required',
                 'default_price' => 'required|numeric',
-                'image.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
                 'unit_type' => 'required|in:Piece,Kg,L,M'
 
-
             ]); // create the validations
+
             if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
             {
                 return ($validator->errors());
@@ -1354,20 +1356,40 @@ class ProductController extends Controller
                 $product_hours->end_hour = $request->end_hour;
                 $product_hours->update();
             }
-            if ($request->typeProduct) {
+            if ($request->supplier_id) {
+                $product->suppliers()->detach();
+                    $supplier = Supplier::find($request->supplier_id);
+                    $product->suppliers()->attach($supplier ,['price' => $request->price]);
+                if(count(json_decode($request->menu_id))) {
+                    $product->menu()->detach();
+                    foreach (json_decode($request->menu_id) as $key => $value) {
+                        $menu = Menu::find($value);
+                        $product->menu()->attach($menu, ['supplier_id' => $request->supplier_id]);
+                    }
+                }
+            }
+            if (count(json_decode($request->typeProduct))) {
                 $product->typeproduct()->detach();
                 foreach (json_decode($request->typeProduct) as $key => $value) {
                     $typeProduct = TypeProduct::find($value);
                     $product->typeproduct()->attach($typeProduct);
                 }
             }
-            if ($request->tags) {
+            if (count(json_decode($request->tags))) {
                 $product->tag()->detach();
                 foreach (json_decode($request->tags) as $key => $value) {
                     $tag = TypeProduct::find($value);
                     $product->tag()->attach($tag);
                 }
             }
+
+                if(count(json_decode($request->option_id))) {
+                    $product->options()->detach();
+                    foreach (json_decode($request->option_id) as $key => $value) {
+                        $option = Option::find($value);
+                        $product->options()->attach($option, ['supplier_id' => $request->supplier_id]);
+                    }
+                }
             if ($images) {
                 foreach ($images as $image) {
                     $name = Str::uuid()->toString() . '.' . $image->getClientOriginalExtension();
@@ -1387,14 +1409,14 @@ class ProductController extends Controller
                         $file->products()->attach($product);
                     }
                 }
-                $res->success($product);
+                $res->success(new ProductResource($product));
             }
         catch
             (\Exception $exception) {
                 if (env('APP_DEBUG')) {
                     $res->fail($exception->getMessage());
                 }
-                $res->fail('erreur serveur 500');
+                $res->fail($exception->getMessage());
             }
         return new JsonResponse($res, $res->code);
     }
