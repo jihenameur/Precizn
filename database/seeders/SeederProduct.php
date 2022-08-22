@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Client;
 use App\Models\Panier;
 use App\Models\Product;
 use App\Models\Supplier;
@@ -65,6 +66,15 @@ class SeederProduct extends Seeder
                 $prod->tag()->attach($tags[rand(0,count($tags) -1)]);
                 $prod->typeproduct()->attach($typeproduct[rand(0,count($typeproduct) -1)]);
             }
+        }
+
+        $clients = Client::all();
+        foreach($clients as $client){
+            $sup = Supplier::all()->random(3);
+            $client->favorit()->attach($sup[0]);
+            $client->favorit()->attach($sup[1]);
+            $client->favorit()->attach($sup[2]);
+            $client->save();
         }
 
 

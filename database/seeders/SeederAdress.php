@@ -36,6 +36,9 @@ class SeederAdress extends Seeder
 
         for ($i = 0; $i < 10; $i++) {
             $user = $users[$i];
+            /*
+             * adress 0
+             */
             $address = new Address();
             $address->street =$faker->streetName();
             $address->region = $faker->country();
@@ -44,7 +47,39 @@ class SeederAdress extends Seeder
             $address->lat = $this->postion[$i]['lat'];
             $address->long = $this->postion[$i]['long'];
             $address->user_id  =  $user->id;
-            $address->status = rand(0, 2);
+            $address->status = 0;
+            $address->label = $faker->company();
+            $address->type = rand(1, 3);
+            $address->save();
+
+            /*
+             * adress
+             */
+            $address = new Address();
+            $address->street =$faker->streetName();
+            $address->region = $faker->country();
+            $address->postcode = $faker->postcode();
+            $address->city = $faker->city();
+            $address->lat = $this->postion[$i]['lat'];
+            $address->long = $this->postion[$i]['long'];
+            $address->user_id  =  $user->id;
+            $address->status =1;
+            $address->label = $faker->company();
+            $address->type = rand(1, 3);
+            $address->save();
+
+            /*
+             * adress
+             */
+            $address = new Address();
+            $address->street =$faker->streetName();
+            $address->region = $faker->country();
+            $address->postcode = $faker->postcode();
+            $address->city = $faker->city();
+            $address->lat = $this->postion[$i]['lat'];
+            $address->long = $this->postion[$i]['long'];
+            $address->user_id  =  $user->id;
+            $address->status =2;
             $address->label = $faker->company();
             $address->type = rand(1, 3);
             $address->save();

@@ -61,11 +61,14 @@ class SeederSupplier extends Seeder
             $supplier->lat = $this->postion[$i]['lat'];
             $supplier->long = $this->postion[$i]['long'];
             $supplier->commission = rand(0, 10);
+            $supplier->star = rand(0, 100);
 
             $supplier->save();
             $supplier->user()->save($user);
             $role = Role::find(3);
             $user->roles()->attach($role);
+            $category = Category::all()->random(1);
+            $supplier->categorys()->attach($category);
         }
     }
 
