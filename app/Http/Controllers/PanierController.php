@@ -37,8 +37,8 @@ class PanierController extends Controller
      *     @OA\Schema ( type="integer",
      *           format="decimal(8,2)")
      *      ),
-     *   
-     *    
+     *
+     *
      *     @OA\Response(
      *          response=401,
      *          description="Unauthenticated",
@@ -75,7 +75,7 @@ class PanierController extends Controller
              if(env('APP_DEBUG')){
                 $res->fail($exception->getMessage());
             }
-            $res->fail('erreur serveur 500');
+            else {$res->fail('erreur serveur 500');}
         }
         return new JsonResponse($res, $res->code);
     }
@@ -90,8 +90,8 @@ class PanierController extends Controller
      *    @OA\Parameter(
      *          name="id",
      *          in="path",
-     *          required=true, 
-     *         
+     *          required=true,
+     *
      *      ),
      *     @OA\Parameter (
      *     in="query",
@@ -115,7 +115,7 @@ class PanierController extends Controller
      *     required=true,
      *     description="options.",
      *  @OA\Items(type="array")
-     *          
+     *
      *     ),
      *     @OA\Response(
      *          response=401,
@@ -197,7 +197,7 @@ class PanierController extends Controller
              if(env('APP_DEBUG')){
                 $res->fail($exception->getMessage());
             }
-            $res->fail('erreur serveur 500');
+            else {$res->fail('erreur serveur 500');}
         }
         return new JsonResponse($res, $res->code);
     }
@@ -211,8 +211,8 @@ class PanierController extends Controller
         *     @OA\Parameter(
         *          name="id",
         *          in="path",
-        *          required=true, 
-        *         
+        *          required=true,
+        *
         *      ),
         *      @OA\Response(
         *          response=200,
@@ -251,11 +251,11 @@ class PanierController extends Controller
              if(env('APP_DEBUG')){
                 $res->fail($exception->getMessage());
             }
-            $res->fail('erreur serveur 500');
+            else {$res->fail('erreur serveur 500');}
         }
         return new JsonResponse($res, $res->code);
     }
-    
+
     public function deletePanier($id)
     {
         $res = new Result();
@@ -267,7 +267,7 @@ class PanierController extends Controller
              if(env('APP_DEBUG')){
                 $res->fail($exception->getMessage());
             }
-            $res->fail('erreur serveur 500');
+            else {$res->fail('erreur serveur 500');}
         }
         return new JsonResponse($res, $res->code);
     }
@@ -280,8 +280,8 @@ class PanierController extends Controller
         *     @OA\Parameter(
         *          name="id",
         *          in="path",
-        *          required=true, 
-        *         
+        *          required=true,
+        *
         *      ),
         *      @OA\Response(
         *          response=200,
@@ -330,7 +330,7 @@ class PanierController extends Controller
              if(env('APP_DEBUG')){
                 $res->fail($exception->getMessage());
             }
-            $res->fail('erreur serveur 500');
+            else {$res->fail('erreur serveur 500');}
         }
         return new JsonResponse($res, $res->code);
     }

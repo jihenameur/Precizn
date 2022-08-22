@@ -304,7 +304,7 @@ class AnnonceController extends Controller
              if(env('APP_DEBUG')){
                 $res->fail($exception->getMessage());
             }
-            $res->fail('erreur serveur 500');
+            else {$res->fail('erreur serveur 500');}
         }
     }
 }
