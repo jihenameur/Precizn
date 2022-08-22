@@ -333,6 +333,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
     Route::get('getAllClient', [ClientController::class, 'all']);
     Route::post('addCommand', [CommandController::class, 'create']);
     Route::post('index', [ClientController::class, 'index']);
+    Route::post('index2', [ClientController::class, 'init']);
     Route::post('updateClient/{id}', [ClientController::class, 'update']);
     /*
          * payement endpoints

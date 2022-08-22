@@ -4,7 +4,11 @@ namespace App\Http\Controllers;
 
 use App\BaseModel\Result;
 use App\Helpers\Paginate;
+use App\Http\Resources\AdsResource;
 use App\Models\Address;
+use App\Models\Ads;
+use App\Models\Category;
+use App\Models\CategorySupplier;
 use App\Models\Client;
 use App\Models\Command;
 use App\Models\Favorit;
@@ -12,6 +16,7 @@ use App\Models\Panier;
 use App\Models\Product;
 use App\Models\Role;
 use App\Models\Supplier;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\User;
@@ -30,6 +35,7 @@ use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
+
 /**
  * @OA\Tag(
  *     name="Client",
@@ -44,18 +50,19 @@ class ClientController extends Controller
 
 
     public function __construct(
-        Request $request,
-        Client $model,
-        Address $address,
-        LocationController $locationController,
-        AddressController $addressController,
+        Request                   $request,
+        Client                    $model,
+        Address                   $address,
+        LocationController        $locationController,
+        AddressController         $addressController,
         VerificationApiController $verificationApiController,
 
-        Result $res,
-        ReqHelper $reqHelper
+        Result                    $res,
+        ReqHelper                 $reqHelper
 
 
-    ) {
+    )
+    {
         $this->model = $model;
         $this->address = $address;
         $this->locationController = $locationController;
@@ -65,25 +72,100 @@ class ClientController extends Controller
         $this->reqHelper = $reqHelper;
     }
 
+    public function init(Request $request)
+    {
+        $this->validate($request,[
+            'delivery' => 'required|in:0,1'
+        ]);
+        $user = Auth::user();
+        $client = Client::find($user->userable_id);
+        $favorits = null;
+        $suppliers = null;
+        $popular = null;
+        $today_offre = Supplier::all()->random(5); // to do
+        $res = new Result();
+        try {
+
+            $address = false;
+            if ($request->has('lat') && $request->has('long')) {
+                if ($request->long && $request->lat) {
+                    $address = (object)[];
+                    $address->lat = $request->lat;
+                    $address->long = $request->long;
+                }
+            }else{
+                $user_adress = Address::where('user_id', $user->id)
+                    ->where('status', 1)
+                    ->first();
+                if($user_adress){
+
+                    $address = (object)[];
+                    $address->lat = $user_adress->lat;
+                    $address->long = $user_adress->long;
+                }
+            }
+
+            if ($address) {
+                $base_suppliers = new Collection();
+                Supplier::chunk(25, function ($tmp_suppliers) use ($address, &$base_suppliers){
+                    $tmps = $this->locationController->getdistances($address, $tmp_suppliers);
+                    foreach ($tmps as $tmp){
+                        $base_suppliers->push($tmp);
+                    }
+                 });
+               $sorted_suppliers = $base_suppliers->sortBy('distance');
+               $suppliers = $sorted_suppliers;
+               $favorits = $client->favorit()->whereIn('suppliers.id',$suppliers->pluck('id'))->get();
+            } else {
+                $suppliers = Supplier::all(); //where('delivery', $request->delivery)->get();
+                $favorits = $client->favorit;
+            }
+
+            $categories = Category::whereIn('id',
+                CategorySupplier::whereIn('supplier_id',Supplier::all()->pluck('id')->toArray())->pluck('category_id')->toArray()
+            )->get();
+            $popular = $suppliers->sortByDesc('star');
+
+            $res->success([
+                "categories" => $categories,
+                "recommended" => $suppliers,
+                "popular" => $popular,
+                'today_offers' => $today_offre,
+                'favorites' => $favorits,
+                'ads' => [
+                    'HOME_1' => AdsResource::collection(Ads::where('adsarea_id',1)->get()),
+                    'HOME_2' => AdsResource::collection(Ads::where('adsarea_id',2)->get()),
+                    'HOME_3' => AdsResource::collection(Ads::where('adsarea_id',3)->get()),
+                ]
+            ]);
+
+        } catch (\Exception $exception) {
+            if (env('APP_DEBUG')) {
+                $res->fail($exception->getMessage());
+            }
+            $res->fail('erreur serveur 500');
+        }
+        return new JsonResponse($res, $res->code);
+    }
+
     public function index(Request $request)
     {
         $res = new Result();
-        //dd(TypeAddress::$typeAddress[1]["id"]);
         try {
             $suppliers = Supplier::all();
             $sizeAllSupp = count($suppliers);
-            $client =  Auth::user();
+            $client = Auth::user();
             $address = Address::where('user_id', $client->id)
                 ->where('status', 1)
                 ->first();
             if ($address == null) {
-                if($request->has('lat') && $request->lat != null &&
-                $request->has('long') && $request->long != null
-                ){
+                if ($request->has('lat') && $request->lat != null &&
+                    $request->has('long') && $request->long != null
+                ) {
                     $address = (object)[];
-                    $address->lat = $request->lat ;
+                    $address->lat = $request->lat;
                     $address->long = $request->long;
-                }else{
+                } else {
                     $res->fail("Address not found");
                     return new JsonResponse($res, $res->code);
                 }
@@ -109,7 +191,7 @@ class ClientController extends Controller
 
                         $k = 0;
                         for ($j = count($distances); $j < $x; $j++) {
-                            $distances[$j] =  $dists[$k];
+                            $distances[$j] = $dists[$k];
                             $k++;
                         }
                         $x = $x + 25;
@@ -127,7 +209,7 @@ class ClientController extends Controller
 
                         for ($j = count($distances); $j < $sizeAllSupp; $j++) {
 
-                            $distances[$j] =  $distns[$k];
+                            $distances[$j] = $distns[$k];
                             $k++;
                         }
                     }
@@ -210,21 +292,22 @@ class ClientController extends Controller
             }
             // return ["suppliersPopular" => $suppliersPopu, "favorits" => $favorits, "suppliersDistance" => $suppliers, "suppliersRecommanded" => $suppliersRecommanded];
             $response = [
-                'suppliersPopular' =>  $suppliersPopu,
+                'suppliersPopular' => $suppliersPopu,
                 'favorits' => $favorits,
-                'suppliersDistance' =>  $suppliers,
-                'suppliersRecommanded' =>  $suppliersRecommanded,
+                'suppliersDistance' => $suppliers,
+                'suppliersRecommanded' => $suppliersRecommanded,
             ];
             $res->success($response);
         } catch (\Exception $exception) {
-             if(env('APP_DEBUG')){
+            if (env('APP_DEBUG')) {
                 $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
-   /**
+
+    /**
      * @OA\Post(
      *      path="/addClient",
      *      operationId="addClient",
@@ -355,7 +438,7 @@ class ClientController extends Controller
                 'password' => 'required|min:8', // required and number field validation
                 'confirm_password' => 'required|same:password',
                 'phone' => 'required',
-                'street' => 'required',  'postcode' => 'required',  'city' => 'required',  'region' => 'required',
+                'street' => 'required', 'postcode' => 'required', 'city' => 'required', 'region' => 'required',
             ]); // create the validations
             if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
             {
@@ -383,7 +466,7 @@ class ClientController extends Controller
                 $addresse->lat = $latlong[0]['lat'];
                 $addresse->long = $latlong[0]['long'];
             } else {
-                return("Err: address not found");
+                return ("Err: address not found");
             }
             $chekphoneExist = $this->verificationApiController->checkPhoneExists($request->phone);
             if ($chekphoneExist == "phone exists") {
@@ -441,14 +524,15 @@ class ClientController extends Controller
             $res->success($response);
         } catch (\Exception $exception) {
 
-             if(env('APP_DEBUG')){
+            if (env('APP_DEBUG')) {
                 $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
-     /**
+
+    /**
      * @OA\Post(
      *      path="/addImage",
      *      operationId="addImage",
@@ -501,7 +585,7 @@ class ClientController extends Controller
             if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
             {
                 // return $validator->errors();
-                return($validator->errors());
+                return ($validator->errors());
 
                 //return back()->withInput()->withErrors($validator);
                 // validation failed redirect back to form
@@ -520,22 +604,23 @@ class ClientController extends Controller
             $client->file_id = $file->id;
             $client->update();
             $response['client'] = [
-                "id"         =>  $client->id,
-                "firstname"     =>  $client->firstname,
-                "lastname"     =>  $client->lastname,
-                "image"     =>  $file->path
+                "id" => $client->id,
+                "firstname" => $client->firstname,
+                "lastname" => $client->lastname,
+                "image" => $file->path
 
             ];
 
             $res->success($response);
         } catch (\Exception $exception) {
-             if(env('APP_DEBUG')){
+            if (env('APP_DEBUG')) {
                 $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
+
     /**
      * @OA\Post(
      *      path="/updateimage",
@@ -589,7 +674,7 @@ class ClientController extends Controller
             if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
             {
                 // return $validator->errors();
-                return($validator->errors());
+                return ($validator->errors());
 
                 //return back()->withInput()->withErrors($validator);
                 // validation failed redirect back to form
@@ -611,22 +696,23 @@ class ClientController extends Controller
             $client->file_id = $file->id;
             $client->update();
             $response['client'] = [
-                "id"         =>  $client->id,
-                "firstname"     =>  $client->firstname,
-                "lastname"     =>  $client->lastname,
-                "image"     =>  $file->path
+                "id" => $client->id,
+                "firstname" => $client->firstname,
+                "lastname" => $client->lastname,
+                "image" => $file->path
 
             ];
 
             $res->success($response);
         } catch (\Exception $exception) {
-             if(env('APP_DEBUG')){
+            if (env('APP_DEBUG')) {
                 $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
+
     /**
      * @OA\Post(
      *      path="/addfavorite",
@@ -684,21 +770,22 @@ class ClientController extends Controller
         $res = new Result();
         try {
             //$client = Client::find($request->id_client);
-            $user =  Auth::user();
+            $user = Auth::user();
             //dd($user->userable_id);
             $client = Client::find($user->userable_id);
             $supplier = Supplier::find($request->id_supplier);
             $client->favorit()->syncWithoutDetaching($supplier);
             $res->success($client);
         } catch (\Exception $exception) {
-             if(env('APP_DEBUG')){
+            if (env('APP_DEBUG')) {
                 $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
-     /**
+
+    /**
      * @OA\Delete(
      *      path="/deletefavorite",
      *      operationId="deletefavorite",
@@ -753,13 +840,13 @@ class ClientController extends Controller
         }
         $res = new Result();
         try {
-            $user =  Auth::user();
+            $user = Auth::user();
             $client = Client::find($user->userable_id);
             $supplier = Supplier::find($request->id_supplier);
             $client->favorit()->detach($supplier);
             $res->success($client);
         } catch (\Exception $exception) {
-             if(env('APP_DEBUG')){
+            if (env('APP_DEBUG')) {
                 $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
@@ -771,7 +858,7 @@ class ClientController extends Controller
      *
      * @return Collection|Model[]|mixed|void
      */
-      /**
+    /**
      * @OA\Get(
      *      path="/getAllClient/{per_page}",
      *      operationId="getAllClient",
@@ -842,13 +929,14 @@ class ClientController extends Controller
             }
             $res->success($clients);
         } catch (\Exception $exception) {
-             if(env('APP_DEBUG')){
+            if (env('APP_DEBUG')) {
                 $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
+
     /**
      * @OA\Get(
      *      path="/getlistclients/{per_page}",
@@ -912,7 +1000,7 @@ class ClientController extends Controller
             }
             $res->success($clients);
         } catch (\Exception $exception) {
-             if(env('APP_DEBUG')){
+            if (env('APP_DEBUG')) {
                 $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
@@ -982,14 +1070,15 @@ class ClientController extends Controller
                 ->paginate($per_page);
             $res->success($commands);
         } catch (\Exception $exception) {
-             if(env('APP_DEBUG')){
+            if (env('APP_DEBUG')) {
                 $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
-     /**
+
+    /**
      * @OA\Get(
      *      path="/getClient/{id}",
      *     tags={"Client"},
@@ -1041,7 +1130,7 @@ class ClientController extends Controller
                 'id' => $client['id'],
                 'firstname' => $client['firstname'],
                 'lastname' => $client['lastname'],
-                'image' => $file['path'] ??  '',
+                'image' => $file['path'] ?? '',
                 'email' => $user['email'],
                 'gender' => $client['gender'],
                 'tel' => $user['tel'],
@@ -1053,14 +1142,15 @@ class ClientController extends Controller
             ];
             $res->success($clt);
         } catch (\Exception $exception) {
-             if(env('APP_DEBUG')){
+            if (env('APP_DEBUG')) {
                 $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
-      /**
+
+    /**
      * @OA\Get(
      *      path="/getClientFavorits",
      *     tags={"Client"},
@@ -1099,7 +1189,7 @@ class ClientController extends Controller
         }
         $res = new Result();
         try {
-            $user =  Auth::user();
+            $user = Auth::user();
             $client = Client::find($user->userable_id);
             $favorits = Supplier::whereHas('favorit', function ($q) use ($client) {
                 $q->where('client_id', $client->id);
@@ -1109,13 +1199,14 @@ class ClientController extends Controller
 
             $res->success($favorits);
         } catch (\Exception $exception) {
-             if(env('APP_DEBUG')){
+            if (env('APP_DEBUG')) {
                 $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
+
     /**
      * Clean keyword from extra spaces
      *
@@ -1273,7 +1364,7 @@ class ClientController extends Controller
             ]); // create the validations
             if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
             {
-                return($validator->errors());
+                return ($validator->errors());
             }
             $allRequestAttributes = $request->all();
             $client = Client::find($id);
@@ -1283,7 +1374,7 @@ class ClientController extends Controller
             if ($request->street != null && $request->postcode != null && $request->city != null && $request->region) {
                 $latlong = $this->locationController->GetLocationWithAdresse($request->street, $request->postcode, $request->city, $request->region);
                 if (is_array($latlong) && $latlong[0]['long'] > 0) {
-                    $address['lat']  = $latlong[0]['lat'];
+                    $address['lat'] = $latlong[0]['lat'];
                     $address['long'] = $latlong[0]['long'];
                 } else {
                     throw new Exception("Err: address not found");
@@ -1321,14 +1412,15 @@ class ClientController extends Controller
 
             $res->success($clt);
         } catch (\Exception $exception) {
-             if(env('APP_DEBUG')){
+            if (env('APP_DEBUG')) {
                 $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
-     /**
+
+    /**
      * @OA\Put(
      *      path="/updateClienPW/{id}",
      *      operationId="updateClienPW",
@@ -1405,7 +1497,7 @@ class ClientController extends Controller
             ]); // create the validations
             if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
             {
-                return($validator->errors());
+                return ($validator->errors());
             }
             $client = Client::find($id);
             $user = User::where('userable_id', $id)
@@ -1439,7 +1531,7 @@ class ClientController extends Controller
 
             $res->success($clt);
         } catch (\Exception $exception) {
-             if(env('APP_DEBUG')){
+            if (env('APP_DEBUG')) {
                 $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
@@ -1506,7 +1598,7 @@ class ClientController extends Controller
 
             $res->success($client);
         } catch (\Exception $exception) {
-             if(env('APP_DEBUG')){
+            if (env('APP_DEBUG')) {
                 $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
@@ -1529,14 +1621,15 @@ class ClientController extends Controller
             $adresses = Address::where('user_id ', $user->id)->paginate($per_page);
             $res->success($adresses);
         } catch (\Exception $exception) {
-             if(env('APP_DEBUG')){
+            if (env('APP_DEBUG')) {
                 $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
-  /**
+
+    /**
      * @OA\Get(
      *      path="/statusClient",
      *     tags={"Client"},
@@ -1606,13 +1699,14 @@ class ClientController extends Controller
             ]);
             $res->success($user);
         } catch (\Exception $exception) {
-             if(env('APP_DEBUG')){
+            if (env('APP_DEBUG')) {
                 $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
+
     /**
      * @OA\Get(
      *      path="/resetPWClient",
@@ -1689,13 +1783,14 @@ class ClientController extends Controller
             ];
             $res->success($clt);
         } catch (\Exception $exception) {
-             if(env('APP_DEBUG')){
+            if (env('APP_DEBUG')) {
                 $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
+
     public function verifySmsResetPW(Request $request)
     {
         $res = new Result();
@@ -1709,7 +1804,7 @@ class ClientController extends Controller
             if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
             {
                 // return $validator->errors();
-                return($validator->errors());
+                return ($validator->errors());
             }
             $user = User::where('email', $request->email)->first();
             if ($request['code'] == $user->smscode) {
@@ -1749,7 +1844,7 @@ class ClientController extends Controller
                 $res->fail('Code not verified');
             }
         } catch (\Exception $exception) {
-             if(env('APP_DEBUG')){
+            if (env('APP_DEBUG')) {
                 $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
@@ -1760,7 +1855,8 @@ class ClientController extends Controller
         //  DB::table('users')->where('id', Auth::id())->update(['phone_verified_at' => date_format($date, 'Y-m-d H:i:s')]);
 
     }
-     /**
+
+    /**
      * @OA\Get(
      *      path="/ClientGetSupplier/{per_page}",
      *      operationId="ClientGetSupplier",
@@ -1806,7 +1902,7 @@ class ClientController extends Controller
         }
         $res = new Result();
         try {
-            $user =  Auth::user();
+            $user = Auth::user();
             $client = Client::find($user->userable_id);
             $keyword = $request->has('keyword') ? $request->get('keyword') : null;
             $suppliers = Supplier::all();
@@ -1838,13 +1934,14 @@ class ClientController extends Controller
             $paginate = new Paginate();
             $res->success($paginate->paginate($supp, $per_page));
         } catch (\Exception $exception) {
-             if(env('APP_DEBUG')){
+            if (env('APP_DEBUG')) {
                 $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
+
     private function getFilterByKeywordClosureSupplier($keyword)
     {
 
@@ -1854,12 +1951,12 @@ class ClientController extends Controller
             ->orWhere('name', 'like', "%$keyword%")
             ->orWhere('lastname', 'like', "%$keyword%")
             ->orWhere('firstname', 'like', "%$keyword%")
-
             ->get();
 
         return $supp;
     }
-     /**
+
+    /**
      * @OA\Get(
      *      path="/ClientGetSupplierByCategory/{per_page}",
      *     tags={"Client"},
@@ -1919,7 +2016,7 @@ class ClientController extends Controller
         }
         $res = new Result();
         try {
-            $user =  Auth::user();
+            $user = Auth::user();
             $client = Client::find($user->userable_id);
             $suppliers = Supplier::whereHas('categorys', function ($q) use ($request) {
                 $q->where('category_id', $request->category_id);
@@ -1956,15 +2053,13 @@ class ClientController extends Controller
 
             $res->success($paginate->paginate($supp, $per_page));
         } catch (\Exception $exception) {
-             if(env('APP_DEBUG')){
+            if (env('APP_DEBUG')) {
                 $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
         }
         return new JsonResponse($res, $res->code);
     }
-
-
 
 
     /**
@@ -2022,7 +2117,7 @@ class ClientController extends Controller
 
             $res->success($user);
         } catch (\Exception $exception) {
-             if(env('APP_DEBUG')){
+            if (env('APP_DEBUG')) {
                 $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');

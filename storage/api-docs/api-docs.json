@@ -14,7 +14,7 @@
     },
     "servers": [
         {
-            "url": "https://api.thunder-express.com",
+            "url": "http://127.0.0.1:8000/api/",
             "description": "API Server"
         }
     ],
@@ -1022,6 +1022,97 @@
                     },
                     "404": {
                         "description": "not found"
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
+            }
+        },
+        "/createAnnonce": {
+            "post": {
+                "tags": [
+                    "Annonce"
+                ],
+                "summary": "create Annonce",
+                "description": "create Annonce",
+                "operationId": "createAnnonce",
+                "parameters": [
+                    {
+                        "name": "description",
+                        "in": "query",
+                        "description": "description",
+                        "required": false,
+                        "schema": {
+                            "type": "text"
+                        }
+                    },
+                    {
+                        "name": "supplier_id ",
+                        "in": "query",
+                        "description": "supplier_id ",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "bigint(20)"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "not found"
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
+            }
+        },
+        "/showAnnonce/{id}": {
+            "get": {
+                "tags": [
+                    "Annonce"
+                ],
+                "summary": "Get annonce by annonce id. ",
+                "operationId": "showAnnonce",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "not found"
+                    },
+                    "500": {
+                        "description": "erreur serveur 500"
                     }
                 },
                 "security": [
@@ -4638,6 +4729,1320 @@
                 ]
             }
         },
+        "/createDeliveryRating": {
+            "post": {
+                "tags": [
+                    "Rating"
+                ],
+                "summary": "create rating delivery",
+                "description": "create rating delivery",
+                "operationId": "createDeliveryRating",
+                "parameters": [
+                    {
+                        "name": "comment",
+                        "in": "query",
+                        "description": "comment",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "rating",
+                        "in": "query",
+                        "description": "rating",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int(11))"
+                        }
+                    },
+                    {
+                        "name": "client_id",
+                        "in": "query",
+                        "description": "client_id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int(11)"
+                        }
+                    },
+                    {
+                        "name": "delivery_id",
+                        "in": "query",
+                        "description": "delivery_id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "bigint(20)"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "not found"
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
+            }
+        },
+        "/createDiscount": {
+            "post": {
+                "tags": [
+                    "Discount"
+                ],
+                "summary": "create  Discount",
+                "description": "create  Discount",
+                "operationId": "createDiscount",
+                "parameters": [
+                    {
+                        "name": "start_date",
+                        "in": "query",
+                        "description": "start_date",
+                        "required": false,
+                        "schema": {
+                            "type": "date-time"
+                        }
+                    },
+                    {
+                        "name": "end_date",
+                        "in": "query",
+                        "description": "end_date",
+                        "required": false,
+                        "schema": {
+                            "type": "date-time"
+                        }
+                    },
+                    {
+                        "name": "supplier_id",
+                        "in": "query",
+                        "description": "supplier_id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int(11)"
+                        }
+                    },
+                    {
+                        "name": "product_id",
+                        "in": "query",
+                        "description": "product_id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "bigint(20)"
+                        }
+                    },
+                    {
+                        "name": "percentage",
+                        "in": "query",
+                        "description": "percentage",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int(11)"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "not found"
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
+            }
+        },
+        "/getDiscountByid/{id}": {
+            "get": {
+                "tags": [
+                    "Discount"
+                ],
+                "summary": "Get Discount by Discount id",
+                "operationId": "getDiscountByid",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "not found"
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
+            }
+        },
+        "/getAllDiscount/{per_page}": {
+            "get": {
+                "tags": [
+                    "Discount"
+                ],
+                "summary": "Get List Of Discount",
+                "description": "Returns all Discount.",
+                "operationId": "getAllDiscount",
+                "parameters": [
+                    {
+                        "name": "per_page",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "not found"
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
+            }
+        },
+        "/localisationAdsress": {
+            "post": {
+                "tags": [
+                    "Location"
+                ],
+                "summary": "Localise position.",
+                "operationId": "localisationAdsress",
+                "parameters": [
+                    {
+                        "name": "street",
+                        "in": "query",
+                        "description": "street",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "postcode",
+                        "in": "query",
+                        "description": "postcode",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "city",
+                        "in": "query",
+                        "description": "city",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "region",
+                        "in": "query",
+                        "description": "region",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "400": {
+                        "description": "bad request"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "not found"
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
+            }
+        },
+        "/addMenu": {
+            "post": {
+                "tags": [
+                    "Menu"
+                ],
+                "summary": "create option.",
+                "operationId": "addMenu",
+                "parameters": [
+                    {
+                        "name": "name",
+                        "in": "query",
+                        "description": "name",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "description",
+                        "in": "query",
+                        "description": "description",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "image",
+                        "in": "query",
+                        "description": "image menu",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "file"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "400": {
+                        "description": "bad request"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "not found"
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
+            }
+        },
+        "/getMenuProducts/{id}/{per_page}": {
+            "get": {
+                "tags": [
+                    "Menu"
+                ],
+                "summary": "Get List Of products  of menu where product id",
+                "description": "Returns all  produnct of menu where product id.",
+                "operationId": "getMenuProducts",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "not found"
+                    },
+                    "500": {
+                        "description": "erreur serveur 500"
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
+            }
+        },
+        "/getmenuBysupplierid": {
+            "get": {
+                "tags": [
+                    "Menu"
+                ],
+                "summary": "Get Menu of supplier",
+                "description": "Returns menu of supplier.",
+                "operationId": "getmenuBysupplierid",
+                "parameters": [
+                    {
+                        "name": "supplier_id",
+                        "in": "query",
+                        "description": "supplier_id",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "format": "bigint(20)"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "not found"
+                    },
+                    "500": {
+                        "description": "erreur serveur 500"
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
+            }
+        },
+        "/updateMenu/{id}": {
+            "put": {
+                "tags": [
+                    "Menu"
+                ],
+                "summary": "update option.",
+                "operationId": "updateMenu",
+                "parameters": [
+                    {
+                        "name": "supplier_id",
+                        "in": "query",
+                        "description": "supplier_id",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "format": "bigint(20)"
+                        }
+                    },
+                    {
+                        "name": "name",
+                        "in": "query",
+                        "description": "name",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "description",
+                        "in": "query",
+                        "description": "description",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "image",
+                        "in": "query",
+                        "description": "image menu",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "file"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "400": {
+                        "description": "bad request"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "not found"
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
+            }
+        },
+        "/deleteMenu/{id}": {
+            "delete": {
+                "tags": [
+                    "Menu"
+                ],
+                "summary": "delete menu",
+                "description": "delete one menu.",
+                "operationId": "deleteMenu",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "not found"
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
+            }
+        },
+        "/sendMessage": {
+            "post": {
+                "tags": [
+                    "Message"
+                ],
+                "summary": "create message.",
+                "operationId": "sendMessage",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "description": "id client",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "bigint(20)"
+                        }
+                    },
+                    {
+                        "name": "sendclient",
+                        "in": "query",
+                        "description": "sendclient",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "message",
+                        "in": "query",
+                        "description": "massage",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "400": {
+                        "description": "bad request"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "not found"
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
+            }
+        },
+        "/createmessage": {
+            "post": {
+                "tags": [
+                    "Message"
+                ],
+                "summary": "create message.",
+                "operationId": "createmessage",
+                "parameters": [
+                    {
+                        "name": "message",
+                        "in": "query",
+                        "description": "message",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "400": {
+                        "description": "bad request"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "not found"
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
+            }
+        },
+        "/createNotif": {
+            "post": {
+                "tags": [
+                    "Notification"
+                ],
+                "summary": "create notification.",
+                "operationId": "createNotif",
+                "parameters": [
+                    {
+                        "name": "type",
+                        "in": "query",
+                        "description": "type",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "data",
+                        "in": "query",
+                        "description": "data",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "notifiable_type ",
+                        "in": "query",
+                        "description": "notifiable_type ",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "notifiable_id",
+                        "in": "query",
+                        "description": "notifiable_id  ",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "format": "bigint(20)"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "400": {
+                        "description": "bad request"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "not found"
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
+            }
+        },
+        "/getNotif": {
+            "get": {
+                "tags": [
+                    "Notification"
+                ],
+                "summary": "Get notification  by notification  type",
+                "operationId": "getNotif",
+                "parameters": [
+                    {
+                        "name": "type",
+                        "in": "query",
+                        "description": "type",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "not found"
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
+            }
+        },
+        "/addOption": {
+            "post": {
+                "tags": [
+                    "Option"
+                ],
+                "summary": "create option.",
+                "operationId": "addOption",
+                "parameters": [
+                    {
+                        "name": "name",
+                        "in": "query",
+                        "description": "name",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "description",
+                        "in": "query",
+                        "description": "description",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "price",
+                        "in": "query",
+                        "description": "price",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "bigint(20)"
+                        }
+                    },
+                    {
+                        "name": "default",
+                        "in": "query",
+                        "description": "default",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "tinyint(1)"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "400": {
+                        "description": "bad request"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "not found"
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
+            }
+        },
+        "/getProductOptions/{id}/{per_page}": {
+            "get": {
+                "tags": [
+                    "Option"
+                ],
+                "summary": "Get List Of option of product",
+                "description": "Returns all  option of product.",
+                "operationId": "getProductOptions",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "not found"
+                    },
+                    "500": {
+                        "description": "erreur serveur 500"
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
+            }
+        },
+        "/getsupplieroptions": {
+            "post": {
+                "tags": [
+                    "Option"
+                ],
+                "summary": "Get List Of option of product from the  supplier.",
+                "description": "Returns all  option of product from the  supplier.",
+                "operationId": "getsupplieroptions",
+                "parameters": [
+                    {
+                        "name": "supplier_id",
+                        "in": "query",
+                        "description": "supplier_id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "bigint(20)"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "not found"
+                    },
+                    "500": {
+                        "description": "erreur serveur 500"
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
+            }
+        },
+        "/getOptionByid/{id}": {
+            "get": {
+                "tags": [
+                    "Option"
+                ],
+                "summary": "Get option  by option id",
+                "operationId": "getOptionByid",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "not found"
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
+            }
+        },
+        "/updateOption/{id}": {
+            "put": {
+                "tags": [
+                    "Option"
+                ],
+                "summary": "update option.",
+                "operationId": "updateOption",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "name": "name",
+                        "in": "query",
+                        "description": "name",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "description",
+                        "in": "query",
+                        "description": "description",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "price",
+                        "in": "query",
+                        "description": "price",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "bigint(20)"
+                        }
+                    },
+                    {
+                        "name": "default",
+                        "in": "query",
+                        "description": "default",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "tinyint(1)"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "400": {
+                        "description": "bad request"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "not found"
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
+            }
+        },
+        "/deleteOption/{id}": {
+            "delete": {
+                "tags": [
+                    "Option"
+                ],
+                "summary": "delete option",
+                "description": "delete one option.",
+                "operationId": "deleteOption",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "not found"
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
+            }
+        },
+        "/create": {
+            "post": {
+                "tags": [
+                    "Panier"
+                ],
+                "summary": "create  panier.",
+                "description": "create panier.",
+                "operationId": "create",
+                "parameters": [
+                    {
+                        "name": "price",
+                        "in": "query",
+                        "description": "prix.",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "decimal(8,2)"
+                        }
+                    }
+                ],
+                "responses": {
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "not found"
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
+            }
+        },
+        "/addProduct/{id}": {
+            "post": {
+                "tags": [
+                    "Panier"
+                ],
+                "summary": "add products to shopping cart..",
+                "description": "add products to shopping cart.",
+                "operationId": "addProduct",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "name": "quantity",
+                        "in": "query",
+                        "description": "quantity products.",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int(11)"
+                        }
+                    },
+                    {
+                        "name": "product_id",
+                        "in": "query",
+                        "description": "product id.",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "bigint(20)"
+                        }
+                    },
+                    {
+                        "name": "options",
+                        "in": "query",
+                        "description": "options.",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "not found"
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
+            }
+        },
+        "/deleteProduct/{id}": {
+            "delete": {
+                "tags": [
+                    "Panier"
+                ],
+                "summary": "delete product panier",
+                "description": "delete product panier.",
+                "operationId": "deleteProduct",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "not found"
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
+            }
+        },
+        "/getPanier/{id}": {
+            "get": {
+                "tags": [
+                    "Panier"
+                ],
+                "summary": "Get panier by panier id",
+                "operationId": "getPanier",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "not found"
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
+            }
+        },
+        "/paymentgetway/verify/payment": {
+            "get": {
+                "tags": [
+                    "Payment"
+                ],
+                "summary": "Get Payment by order id",
+                "operationId": "paymentgetway",
+                "parameters": [
+                    {
+                        "name": "orderId",
+                        "in": "query",
+                        "description": "orderId",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "bigint(20)"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "not found"
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
+            }
+        },
         "/createPublicProduct": {
             "post": {
                 "tags": [
@@ -6632,6 +8037,10 @@
             "description": "Ads management"
         },
         {
+            "name": "Annonce",
+            "description": "Gestion annonce"
+        },
+        {
             "name": "Adsarea",
             "description": "Adsarea management"
         },
@@ -6642,6 +8051,10 @@
         {
             "name": "Category",
             "description": "Gestion category"
+        },
+        {
+            "name": "Menu",
+            "description": "Gestion Menu "
         },
         {
             "name": "Client",
@@ -6658,6 +8071,42 @@
         {
             "name": "Delivery",
             "description": "Gestion Delivery "
+        },
+        {
+            "name": "Rating",
+            "description": "Gestion rating delivery"
+        },
+        {
+            "name": "Discount",
+            "description": "Gestion Discount "
+        },
+        {
+            "name": "Location",
+            "description": "Gestion location "
+        },
+        {
+            "name": "Menu",
+            "description": "Gestion Menu "
+        },
+        {
+            "name": "Message",
+            "description": "Gestion message."
+        },
+        {
+            "name": "Notification",
+            "description": "Gestion notification"
+        },
+        {
+            "name": "Option",
+            "description": "Gestion Option "
+        },
+        {
+            "name": "Panier",
+            "description": "Gestion panier"
+        },
+        {
+            "name": "Payment",
+            "description": "Gestion Payment "
         },
         {
             "name": "Product",
