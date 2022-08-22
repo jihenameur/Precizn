@@ -34,6 +34,8 @@ class DatabaseSeeder extends Seeder
         $this->call(SeederCommand::class);
         $this->call(SeederWriting::class);
         $this->call(SeederAnnonce::class);
+        $this->call(AdsAreaSeeder::class);
+        $this->call(AdsSeeder::class);
 
 
     }

@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\BaseModel\Result;
 use App\Helpers\Paginate;
+use App\Http\Resources\AdsResource;
 use App\Models\Address;
+use App\Models\Ads;
 use App\Models\Category;
 use App\Models\CategorySupplier;
 use App\Models\Client;
@@ -126,9 +128,15 @@ class ClientController extends Controller
 
             $res->success([
                 "categories" => $categories,
-                "suppliers" => $suppliers,
+                "recommended" => $suppliers,
                 "popular" => $popular,
-                'today_offres' => $today_offre
+                'today_offers' => $today_offre,
+                'favorites' => $favorits,
+                'ads' => [
+                    'HOME_1' => AdsResource::collection(Ads::where('adsarea_id',1)->get()),
+                    'HOME_2' => AdsResource::collection(Ads::where('adsarea_id',2)->get()),
+                    'HOME_3' => AdsResource::collection(Ads::where('adsarea_id',3)->get()),
+                ]
             ]);
 
         } catch (\Exception $exception) {

@@ -19,11 +19,11 @@ class AdsResource extends JsonResource
             "start_date"      =>  $this->start_date,
             "end_date"     =>  $this->end_date,
             "price"     =>  $this->price,
-            'image' => new FileResource($this->file),
-            'supplier' => new SupplierResource($this->supplier),
-            'product' => new ProductResource($this->product),
-            'adsarea' => new AdsareaResource($this->adsarea),
-            'menu' => new MenuResource($this->menu)
+            'image' => $this->file->path,
+            'supplier' => $this->supplier_id ?? null,
+            'product' => $this->product_id ?? null,
+            'adsarea' => $this->adsarea->title,
+            'menu' => $this->menu_id ?? null
         ];
     }
 }
