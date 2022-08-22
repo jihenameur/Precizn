@@ -5024,86 +5024,18 @@
                 ]
             }
         },
-        "/addMenu": {
-            "post": {
-                "tags": [
-                    "Menu"
-                ],
-                "summary": "create option.",
-                "operationId": "addMenu",
-                "parameters": [
-                    {
-                        "name": "name",
-                        "in": "query",
-                        "description": "name",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "name": "description",
-                        "in": "query",
-                        "description": "description",
-                        "required": false,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "name": "image",
-                        "in": "query",
-                        "description": "image menu",
-                        "required": true,
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "type": "file"
-                            }
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successful operation"
-                    },
-                    "401": {
-                        "description": "Unauthenticated"
-                    },
-                    "400": {
-                        "description": "bad request"
-                    },
-                    "403": {
-                        "description": "Forbidden"
-                    },
-                    "404": {
-                        "description": "not found"
-                    }
-                },
-                "security": [
-                    {
-                        "Authorization": []
-                    }
-                ]
-            }
-        },
-        "/getMenuProducts/{id}/{per_page}": {
+        "/getmenu": {
             "get": {
                 "tags": [
                     "Menu"
                 ],
-                "summary": "Get List Of products  of menu where product id",
-                "description": "Returns all  produnct of menu where product id.",
-                "operationId": "getMenuProducts",
+                "summary": "Get supplier Menu",
+                "description": "Returns the menu of a supplier.",
+                "operationId": "getSupplierMenu",
                 "parameters": [
                     {
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "name": "per_page",
-                        "in": "path",
+                        "name": "supplier_id",
+                        "in": "query",
                         "required": true
                     }
                 ],
@@ -5125,165 +5057,6 @@
                     },
                     "500": {
                         "description": "erreur serveur 500"
-                    }
-                },
-                "security": [
-                    {
-                        "Authorization": []
-                    }
-                ]
-            }
-        },
-        "/getmenuBysupplierid": {
-            "get": {
-                "tags": [
-                    "Menu"
-                ],
-                "summary": "Get Menu of supplier",
-                "description": "Returns menu of supplier.",
-                "operationId": "getmenuBysupplierid",
-                "parameters": [
-                    {
-                        "name": "supplier_id",
-                        "in": "query",
-                        "description": "supplier_id",
-                        "required": false,
-                        "schema": {
-                            "type": "integer",
-                            "format": "bigint(20)"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successful operation"
-                    },
-                    "401": {
-                        "description": "Unauthenticated"
-                    },
-                    "403": {
-                        "description": "Forbidden"
-                    },
-                    "400": {
-                        "description": "Bad Request"
-                    },
-                    "404": {
-                        "description": "not found"
-                    },
-                    "500": {
-                        "description": "erreur serveur 500"
-                    }
-                },
-                "security": [
-                    {
-                        "Authorization": []
-                    }
-                ]
-            }
-        },
-        "/updateMenu/{id}": {
-            "put": {
-                "tags": [
-                    "Menu"
-                ],
-                "summary": "update option.",
-                "operationId": "updateMenu",
-                "parameters": [
-                    {
-                        "name": "supplier_id",
-                        "in": "query",
-                        "description": "supplier_id",
-                        "required": false,
-                        "schema": {
-                            "type": "integer",
-                            "format": "bigint(20)"
-                        }
-                    },
-                    {
-                        "name": "name",
-                        "in": "query",
-                        "description": "name",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "name": "description",
-                        "in": "query",
-                        "description": "description",
-                        "required": false,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "name": "image",
-                        "in": "query",
-                        "description": "image menu",
-                        "required": true,
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "type": "file"
-                            }
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successful operation"
-                    },
-                    "401": {
-                        "description": "Unauthenticated"
-                    },
-                    "400": {
-                        "description": "bad request"
-                    },
-                    "403": {
-                        "description": "Forbidden"
-                    },
-                    "404": {
-                        "description": "not found"
-                    }
-                },
-                "security": [
-                    {
-                        "Authorization": []
-                    }
-                ]
-            }
-        },
-        "/deleteMenu/{id}": {
-            "delete": {
-                "tags": [
-                    "Menu"
-                ],
-                "summary": "delete menu",
-                "description": "delete one menu.",
-                "operationId": "deleteMenu",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successful operation"
-                    },
-                    "401": {
-                        "description": "Unauthenticated"
-                    },
-                    "403": {
-                        "description": "Forbidden"
-                    },
-                    "400": {
-                        "description": "Bad Request"
-                    },
-                    "404": {
-                        "description": "not found"
                     }
                 },
                 "security": [
