@@ -148,6 +148,8 @@ Route::group(['middleware' => ['jwt.verify']], function () {
      * public Menu
      */
     Route::post('getmenu', [MenuController::class, 'getSupplierMenu']);
+    Route::post('add_product_to_submenu', [MenuController::class, 'AddProductToSubMenu']);
+    Route::post('add_submenu', [MenuController::class, 'AddSubMenu']);
     Route::post('addMenu', [MenuController::class, 'create']);
     Route::get('getMenuProducts/{id}/{per_page}', [MenuController::class, 'getMenuProducts']);
     Route::get('getMenuById/{id}', [MenuController::class, 'getMenuByid']);
