@@ -18,9 +18,10 @@ class MenuResource extends JsonResource
             "id" => $this->id,
             "name" => $this->name,
             "description" => $this->description,
+            "position" => $this->position,
             "image" => $this->image->path,
             'supplier_id' => $this->supplier_id,
-            'products' => $this->products
+            'products' => MenuProductResource::collection($this->products)
             ];
 
     }
