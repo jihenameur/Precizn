@@ -270,5 +270,189 @@ class MenuController extends Controller
         return new JsonResponse($res, $res->code);
 
     }
+    /**
+     * @OA\Post(
+     *      path="/update_submenu",
+     *      operationId="updateSubMenu",
+     *      tags={"Menu"},
+     *     security={{"Authorization":{}}},
+     *      summary="Add subMenu",
+     *      description="Returns subMenu.",
+     *    @OA\Parameter(
+     *          name="id",
+     *          in="query",
+     *          required=true,
+     *
+     *      ),
+     *    @OA\Parameter(
+     *          name="supplier_id",
+     *          in="query",
+     *          required=true,
+     *
+     *      ),
+     *    @OA\Parameter(
+     *          name="name",
+     *          in="query",
+     *          required=true,
+     *
+     *      ),
+     *    @OA\Parameter(
+     *          name="position",
+     *          in="query",
+     *          required=true,
+     *
+     *      ),
+     *    @OA\Parameter(
+     *          name="description",
+     *          in="query",
+     *          required=true,
+     *
+     *      ),
+     *    @OA\Parameter(
+     *          name="image",
+     *          in="query",
+     *          required=false,
+     *     @OA\Schema (type="file")
+     *
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *      ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     * @OA\Response(
+     *      response=400,
+     *      description="Bad Request"
+     *   ),
+     * @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     * @OA\Response(
+     *      response=500,
+     *      description="erreur serveur 500"
+     *   ),
+     *  )
+     */
+    public function updateSubMenu(Request $request)
+    {
+        $this->validate($request, [
+            'id' => 'required|exists:menus,id',
+            'supplier_id' => 'required|exists:suppliers,id',
+            'name' => 'required',
+            'description' => 'required',
+            'position' => 'required|numeric'
+        ]);
+        $res = new Result();
+        try {
+            $sub_menu = Menu::find($request->id);
+            $sub_menu->supplier_id = $request->supplier_id;
+            $sub_menu->name = $request->name;
+            $sub_menu->description = $request->description;
+            $sub_menu->position = $request->position;
+            if ($request->file('image')) {
+                $name = Str::uuid()->toString() . '.' . $request->image->getClientOriginalExtension();
+                $request->image->move(public_path('public/Products'), $name); // your folder path
+                $file = new File();
+                $file->name = $name;
+                $file->path = asset('public/Products/' . $name);
+                $file->user_id = Auth::user()->id;
+                $file->save();
+                $sub_menu->file_id = $file->id;
+            }
+            $sub_menu->save();
+            $sub_menu->refresh();
+            $res->success(new MenuResource($sub_menu));
+        } catch (\Exception $exception) {
+            if (env('APP_DEBUG')) {
+                $res->fail($exception->getMessage());
+            } else {
+                $res->fail('erreur serveur 500');
+            }
+        }
+        return new JsonResponse($res, $res->code);
+    }
+
+    /**
+     * @OA\Post(
+     *      path="/update_submenu_products",
+     *      operationId="updateSubMenuProducts",
+     *      tags={"Menu"},
+     *     security={{"Authorization":{}}},
+     *      summary="Add subMenu",
+     *      description="Returns subMenu",
+     *    @OA\Parameter(
+     *          name="id",
+     *          in="query",
+     *          required=true,
+     *
+     *      ),
+     *    @OA\Parameter(
+     *          name="products",
+     *          in="query",
+     *          required=true,
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *      ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     * @OA\Response(
+     *      response=400,
+     *      description="Bad Request"
+     *   ),
+     * @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     * @OA\Response(
+     *      response=500,
+     *      description="erreur serveur 500"
+     *   ),
+     *  )
+     */
+    public function updateSubMenuProducts(Request $request)
+    {
+        $this->validate($request, [
+            'id' => 'required|exists:menus,id',
+            'products.*.product_id' => 'required|exists:products,id',
+            'products.*.position' => 'required|numeric'
+        ]);
+        $res = new Result();
+        try {
+           $menu = Menu::find($request->id);
+          $old_products = $menu->products;
+          $menu->products()->detach();
+          foreach ($request->products as $item){
+              $product = Product::find($item['product_id']);
+              $menu->products()->attach($product,['position' => $item['position'] ?? 0]);
+          }
+            $menu->save();
+          $menu->refresh();
+            $res->success(new MenuResource($menu));
+        } catch (\Exception $exception) {
+            if (env('APP_DEBUG')) {
+                $res->fail($exception->getMessage());
+            } else {
+                $res->fail('erreur serveur 500');
+            }
+        }
+        return new JsonResponse($res, $res->code);
+    }
+
 
 }
