@@ -124,7 +124,8 @@ class ClientController extends Controller
             $categories = Category::whereIn('id',
                 CategorySupplier::whereIn('supplier_id',Supplier::all()->pluck('id')->toArray())->pluck('category_id')->toArray()
             )->get();
-            $popular = $suppliers->sortByDesc('star');
+            $popular = $suppliers->sortByDesc('star')->values();
+
 
             $res->success([
                 "categories" => $categories,
