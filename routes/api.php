@@ -324,6 +324,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
     Route::get('getAllDelivery/{per_page}', [DeliveryController::class, 'all']);
     Route::get('getSupplierById/{id}', [SupplierController::class, 'getById']);
     Route::get('getSupplierProducts/{per_page}', [ProductController::class, 'getSupplierProduct']);
+    Route::post('getSupplierProductsClean', [ProductController::class, 'getSuppliersProductClean']);
 
     // Route::middleware(['jwt.verify', 'role:superadmin'])->group(function () {
     //     Route::get('/private', function () {

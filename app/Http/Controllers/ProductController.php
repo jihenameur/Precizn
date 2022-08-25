@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\BaseModel\Result;
 use App\Helpers\Paginate;
+use App\Http\Resources\MenuProductResource;
 use App\Http\Resources\ProductResource;
 use App\Models\Category;
 use App\Models\File;
@@ -1483,6 +1484,72 @@ class ProductController extends Controller
                 $res->fail($exception->getMessage());
             }
             $res->fail('erreur serveur 500');
+        }
+        return new JsonResponse($res, $res->code);
+    }
+
+    /**
+     * @OA\Post(
+     *      path="/getSupplierProductsClean",
+     *      operationId="getSupplierProductsClean",
+     *      tags={"Product"},
+     *     security={{"Authorization":{}}},
+     *      summary="Get products of the supplier without pagination." ,
+     *      description="Get products of the supplier without pagination",
+     *     @OA\Parameter (
+     *     in="query",
+     *     name="supplier_id",
+     *     required=true,
+     *     description="the product id.",
+     *     @OA\Schema (type="string")
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *       ),
+     *     @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     *    @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     * @OA\Response(
+     *      response=500,
+     *      description="erreur serveur 500"
+     *   ),
+     *  )
+     */
+    public function getSuppliersProductClean(Request $request)
+    {
+
+        if (!Auth::user()->isAuthorized(['supplier','admin'])) {
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ], 403);
+        }
+        $this->validate($request,[
+           'supplier_id' => 'required|exists:suppliers,id'
+        ]);
+        $res = new Result();
+        try {
+            $products = Product::whereHas('suppliers', function ($q) use ($request) {
+                $q->where('supplier_id', $request->supplier_id);
+            })->get();
+            $res->success(ProductResource::collection($products));
+        } catch (\Exception $exception) {
+            if (env('APP_DEBUG')) {
+                $res->fail($exception->getMessage());
+            }else{
+                $res->fail('erreur serveur 500');
+            }
+
         }
         return new JsonResponse($res, $res->code);
     }
