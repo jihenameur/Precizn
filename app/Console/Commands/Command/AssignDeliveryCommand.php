@@ -159,7 +159,7 @@ class AssignDeliveryCommand extends Command
             $command->cycle_at = Carbon::now();
             $command->save();
             dispatch(new PreAssignCommandToDeliveryJob($pre_assinged_delivery,$command));
-            dispatch(new AssignedCommandToDeliveryJob($command));
+         //   dispatch(new AssignedCommandToDeliveryJob($command));
             return 1;
         }else{
             $redis_helper = new RedisHelper();

@@ -11,6 +11,10 @@ use Illuminate\Console\Command;
 class FakeCommandSimulationCommand extends Command
 {
     /**
+     * TODO: delete in production
+     */
+
+    /**
      * The name and signature of the console command.
      *
      * @var string
@@ -45,7 +49,7 @@ class FakeCommandSimulationCommand extends Command
         $clients = Client::all();
         $supps = Supplier::all();
 
-        for ($i = 0; $i < 100; $i++) {
+        for ($i = 0; $i < 5; $i++) {
             $client = $clients[rand(1, $clients->count() - 1)];
             $command = new \App\Models\Command();
             $command->client_id = $client->id;

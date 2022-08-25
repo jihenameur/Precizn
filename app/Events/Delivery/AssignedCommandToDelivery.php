@@ -47,7 +47,7 @@ class AssignedCommandToDelivery implements ShouldBroadcast
     {
         return [
             "type_event" => "ASSIGNED_COMMAND",
-            "message" => $this->command->id,
+            "command_id" => $this->command->id,
         ];
     }
 }
