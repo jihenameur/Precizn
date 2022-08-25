@@ -4,6 +4,8 @@ namespace App\Console\Commands\Command;
 
 use App\Helpers\RedisHelper;
 use App\Jobs\Admin\NotifyCommandNotAssignedJob;
+use App\Jobs\Delivery\AssignedCommandToDeliveryJob;
+use App\Jobs\Delivery\PreAssignCommandToDeliveryJob;
 use App\Models\Delivery;
 use App\Models\Supplier;
 use Illuminate\Console\Command;
@@ -156,7 +158,8 @@ class AssignDeliveryCommand extends Command
             $command->cycle = 'PRE_ASSIGN';
             $command->cycle_at = Carbon::now();
             $command->save();
-            // send notification to admin & delivery
+            dispatch(new PreAssignCommandToDeliveryJob($pre_assinged_delivery,$command));
+            dispatch(new AssignedCommandToDeliveryJob($command));
             return 1;
         }else{
             $redis_helper = new RedisHelper();

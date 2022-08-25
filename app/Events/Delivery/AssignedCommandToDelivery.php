@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Events\Admin;
+namespace App\Events\Delivery;
 
-use App\Models\Admin;
 use App\Models\Command;
+use App\Models\Delivery;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
@@ -12,20 +12,20 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class AdminCommandNotAssignedEvent implements ShouldBroadcast
+class AssignedCommandToDelivery implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
-    private $command;
-    private $admin;
+    protected $delivery;
+    protected $command;
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct(Admin $admin, Command $command)
+    public function __construct(Delivery $delivery, Command $command)
     {
+        $this->delivery = $delivery;
         $this->command = $command;
-        $this->admin = $admin;
     }
 
     /**
@@ -35,7 +35,7 @@ class AdminCommandNotAssignedEvent implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('.admin.'.$this->admin->id);
+        return new PrivateChannel('.delivery.'.$this->delivery->id);
     }
 
     public function broadcastAs()
@@ -46,8 +46,8 @@ class AdminCommandNotAssignedEvent implements ShouldBroadcast
     public function broadcastWith()
     {
         return [
-            "type_event" => "COMMAND_NOT_ASSIGNED",
-            "command" => $this->command->id,
+            "type_event" => "ASSIGNED_COMMAND",
+            "message" => $this->command->id,
         ];
     }
 }
