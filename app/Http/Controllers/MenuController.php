@@ -429,17 +429,18 @@ class MenuController extends Controller
     {
         $this->validate($request, [
             'id' => 'required|exists:menus,id',
-            'products.*.product_id' => 'required|exists:products,id',
-            'products.*.position' => 'required|numeric'
+            'products.*' => 'required|exists:products,id',
         ]);
         $res = new Result();
         try {
            $menu = Menu::find($request->id);
           $old_products = $menu->products;
           $menu->products()->detach();
+          $i = 1;
           foreach ($request->products as $item){
-              $product = Product::find($item['product_id']);
-              $menu->products()->attach($product,['position' => $item['position'] ?? 0]);
+              $product = Product::find($item);
+              $menu->products()->attach($product,['position' => $i]);
+              $i++;
           }
             $menu->save();
           $menu->refresh();
