@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\BaseModel\Result;
 use App\Jobs\Admin\ChangeDeliveryPositionJob;
+use App\Jobs\Delivery\AssignedCommandToDeliveryJob;
 use App\Models\Admin;
 use App\Models\Command;
 use App\Models\Delivery;
@@ -905,11 +906,14 @@ class DeliveryController extends Controller
                 ->where('command_id', $request['command_id'])
                 ->first();
             $command->delivery_id = $delivery->id;
+            $command->cycle  = 'ASSIGNED';
             $command->update();
             $delivReq->accept = 1;
             $delivReq->update();
             $delivery->available = 0;
+            $delivery->cycle = 'OFF';
             $delivery->update();
+            $this->dispatch(new AssignedCommandToDeliveryJob($command) );
             $res->success("command accepted");
 
         } catch (\Exception $exception) {
@@ -1340,8 +1344,10 @@ class DeliveryController extends Controller
         $delivery = Delivery::find($request['delivery_id']);
         $command = Command::find($request['command_id']);
         $command->status = 2;
+        $command->cycle = 'SUCCESS';
         $command->update();
         $delivery->available = 1;
+        $delivery->cycle = 'ON';
         $delivery->update();
 
         $res->success("command delivered");
