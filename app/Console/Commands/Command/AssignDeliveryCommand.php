@@ -3,6 +3,7 @@
 namespace App\Console\Commands\Command;
 
 use App\Helpers\RedisHelper;
+use App\Jobs\Admin\AdminNewPreAssignCommandJob;
 use App\Jobs\Admin\NotifyCommandNotAssignedJob;
 use App\Jobs\Delivery\AssignedCommandToDeliveryJob;
 use App\Jobs\Delivery\PreAssignCommandToDeliveryJob;
@@ -159,6 +160,7 @@ class AssignDeliveryCommand extends Command
             $command->cycle_at = Carbon::now();
             $command->save();
             dispatch(new PreAssignCommandToDeliveryJob($pre_assinged_delivery,$command));
+            dispatch(new AdminNewPreAssignCommandJob($command, $pre_assinged_delivery));
          //   dispatch(new AssignedCommandToDeliveryJob($command));
             return 1;
         }else{

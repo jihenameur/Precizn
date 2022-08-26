@@ -4,6 +4,7 @@ namespace App\Events\Admin;
 
 use App\Models\Admin;
 use App\Models\Command;
+use App\Models\Delivery;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
@@ -12,21 +13,23 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class AdminVerifyCommandEvent implements ShouldBroadcast
+class AdminNewPreAssignCommandEvent implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
+    private $command;
     private $admin;
-    private $command
-;    /**
+    private $delivery;
+    /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct(Admin $admin, Command $command)
+    public function __construct(Admin $admin, Command $command, Delivery $delivery)
     {
-        $this->admin = $admin;
         $this->command = $command;
+        $this->admin = $admin;
+        $this->delivery = $delivery;
     }
 
     /**
@@ -47,8 +50,9 @@ class AdminVerifyCommandEvent implements ShouldBroadcast
     public function broadcastWith()
     {
         return [
-            "type_event" => "NEW_COMMAND",
+            "type_event" => "COMMAND_PRE_ASSIGNE",
             "command" => $this->command->id,
+            "delivery" => $this->delivery->id
         ];
     }
 }

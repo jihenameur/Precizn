@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use App\Listeners\MessageNotification;
+use App\Models\Command;
+use App\Observers\CommandObserver;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -29,6 +31,6 @@ class EventServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        Command::observe(CommandObserver::class);
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Observers;
 
 use App\Jobs\Admin\SendCommandAdminNotification;
+use App\Models\Client;
 use App\Models\Command;
 
 class CommandObserver
@@ -15,7 +16,7 @@ class CommandObserver
      */
     public function created(Command $command)
     {
-        dispatch(new SendCommandAdminNotification($command,$command->client_id));
+        dispatch(new SendCommandAdminNotification($command,Client::find($command->client_id)));
     }
 
     /**
