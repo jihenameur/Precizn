@@ -47,7 +47,7 @@ class PreAssignCommandToDelivery implements ShouldBroadcast
     {
         return [
             "type_event" => "NEW_PRE_ASSIGN_COMMAND",
-            "message" => $this->command->id,
+            "command" => $this->command->id,
         ];
     }
 }

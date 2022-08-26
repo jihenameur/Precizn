@@ -40,7 +40,7 @@ class SeederSupplier extends Seeder
         $password = 'password';
         for ($i = 0; $i < 10; $i++) {
             $user = new User();
-            $user->email = $faker->email();
+            $user->email = 'supplier'.($i+1).'@thunder-express.com';
             $user->tel = $faker->numerify('+216########');
             $user->password = Hash::make($this->password);
             $user->status_id = 1;

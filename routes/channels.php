@@ -50,3 +50,9 @@ Broadcast::channel('.client.{client_id}', function ($client_id) {
         return $client_id;
     }
 });
+
+Broadcast::channel('.delivery.{delivery_id}', function ($delivery_id) {
+    if(Auth::check()){ // verify  role
+        return $delivery_id;
+    }
+});
