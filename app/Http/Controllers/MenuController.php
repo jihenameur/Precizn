@@ -437,10 +437,10 @@ class MenuController extends Controller
           $old_products = $menu->products;
           $menu->products()->detach();
           $i = 1;
-          foreach ($request->products as $item){
-              $product = Product::find($item);
-              $menu->products()->attach($product,['position' => $i]);
-              $i++;
+          $ids = $request->products;
+          for($i=0 ; $i < count($ids); $i++){
+              $product = Product::find($ids[$i]);
+              $menu->products()->attach($product,['position' => $i+1]);
           }
             $menu->save();
           $menu->refresh();
