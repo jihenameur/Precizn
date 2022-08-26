@@ -900,16 +900,16 @@ class DeliveryController extends Controller
         }
         $res = new Result();
         try {
-            $delivery = Delivery::find($request['delivery_id']);
-            $command = Command::find($request['command_id']);
-            $delivReq = RequestDelivery::where('delivery_id', $request['delivery_id'])
+            $delivery = Delivery::find($request->delivery_id);
+            $command = Command::find($request->command_id);
+         /*   $delivReq = RequestDelivery::where('delivery_id', $request['delivery_id'])
                 ->where('command_id', $request['command_id'])
-                ->first();
+                ->first(); */
             $command->delivery_id = $delivery->id;
             $command->cycle  = 'ASSIGNED';
             $command->update();
-            $delivReq->accept = 1;
-            $delivReq->update();
+        //    $delivReq->accept = 1;
+          //  $delivReq->update();
             $delivery->available = 0;
             $delivery->cycle = 'OFF';
             $delivery->update();

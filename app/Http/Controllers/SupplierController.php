@@ -61,7 +61,6 @@ class SupplierController extends Controller
      *      path="/addSupplier",
      *      operationId="addSupplier",
      *      tags={"Supplier"},
-     *     security={{"Authorization":{}}},
      *      summary="create supplier" ,
      *      description="create supplier",
      *     @OA\Parameter (
