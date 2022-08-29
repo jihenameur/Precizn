@@ -66,7 +66,7 @@ class MenuController extends Controller
      */
     public function getSupplierMenu(Request $request)
     {
-        if (!Auth::user()->isAuthorized(['admin', 'supplier','client'])) {
+        if (!Auth::user()->isAuthorized(['admin', 'supplier', 'client'])) {
             return response()->json([
                 'success' => false,
                 'massage' => 'unauthorized'
@@ -282,6 +282,7 @@ class MenuController extends Controller
         return new JsonResponse($res, $res->code);
 
     }
+
     /**
      * @OA\Post(
      *      path="/update_submenu",
@@ -406,15 +407,9 @@ class MenuController extends Controller
      *     security={{"Authorization":{}}},
      *      summary="Add subMenu",
      *      description="Returns subMenu.",
-     *    @OA\Parameter(
-     *          name="id",
-     *          in="query",
-     *          required=true,
-     *
-     *      ),
      *
      *    @OA\Parameter(
-     *          name="position",
+     *          name="menus",
      *          in="query",
      *          required=true,
      *
@@ -454,15 +449,19 @@ class MenuController extends Controller
             ], 403);
         }
         $this->validate($request, [
-            'id' => 'required|exists:menus,id',
-            'position' => 'required|numeric'
+            //'id' => 'required|exists:menus,id',
+            'menus.*' => 'required|exists:menus,id',
         ]);
         $res = new Result();
         try {
-            $sub_menu = Menu::find($request->id);
-            $sub_menu->position = $request->position;
-            $sub_menu->save();
-            $sub_menu->refresh();
+            $ids = $request->menus;
+            for ($i = 0; $i < count($ids); $i++) {
+                $sub_menu= Menu::find($ids[$i]);
+                $sub_menu->position = $i + 1;
+                $sub_menu->save();
+                $sub_menu->refresh();
+            }
+
             $res->success(new MenuResource($sub_menu));
         } catch (\Exception $exception) {
             if (env('APP_DEBUG')) {
@@ -473,6 +472,7 @@ class MenuController extends Controller
         }
         return new JsonResponse($res, $res->code);
     }
+
     /**
      * @OA\Post(
      *      path="/update_submenu_products",
@@ -532,17 +532,17 @@ class MenuController extends Controller
         ]);
         $res = new Result();
         try {
-           $menu = Menu::find($request->id);
-          $old_products = $menu->products;
-          $menu->products()->detach();
-          $i = 1;
-          $ids = $request->products;
-          for($i=0 ; $i < count($ids); $i++){
-              $product = Product::find($ids[$i]);
-              $menu->products()->attach($product,['position' => $i+1]);
-          }
+            $menu = Menu::find($request->id);
+            $old_products = $menu->products;
+            $menu->products()->detach();
+            $i = 1;
+            $ids = $request->products;
+            for ($i = 0; $i < count($ids); $i++) {
+                $product = Product::find($ids[$i]);
+                $menu->products()->attach($product, ['position' => $i + 1]);
+            }
             $menu->save();
-          $menu->refresh();
+            $menu->refresh();
             $res->success(new MenuResource($menu));
         } catch (\Exception $exception) {
             if (env('APP_DEBUG')) {
