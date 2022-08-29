@@ -5302,12 +5302,7 @@
                 "operationId": "updateSubMenuPosition",
                 "parameters": [
                     {
-                        "name": "id",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "name": "position",
+                        "name": "menus",
                         "in": "query",
                         "required": true
                     }

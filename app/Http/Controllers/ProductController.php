@@ -1365,7 +1365,7 @@ class ProductController extends Controller
                     $product->menu()->detach();
                     foreach (json_decode($request->menu_id) as $key => $value) {
                         $menu = Menu::find($value);
-                        $product->menu()->attach($menu, ['supplier_id' => $request->supplier_id]);
+                        $product->menu()->attach($menu);
                     }
                 }
             }
