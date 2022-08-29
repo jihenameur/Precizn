@@ -299,15 +299,15 @@ class SupplierController extends Controller
             $role = Role::find($role_id);
             $user->roles()->attach($role);
             $categories = $request->category;
-          /*  if (!is_array($categories)) {
+           if (!is_array($categories)) {
                 $categories = json_decode($request->category);
             }
             foreach ($categories as $key => $value) {
                 $category = Category::find($value);
                 $supplier->categorys()->attach($category);
-            }*/
-            $cat = Category::all()->first();
-            $supplier->categorys()->attach($cat);
+            }
+            //$cat = Category::all()->first();
+            //$supplier->categorys()->attach($cat);
             $supplier->save();
 
 
