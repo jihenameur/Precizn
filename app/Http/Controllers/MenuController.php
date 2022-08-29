@@ -382,6 +382,75 @@ class MenuController extends Controller
 
     /**
      * @OA\Post(
+     *      path="/update_submenuposition",
+     *      operationId="updateSubMenuPosition",
+     *      tags={"Menu"},
+     *     security={{"Authorization":{}}},
+     *      summary="Add subMenu",
+     *      description="Returns subMenu.",
+     *    @OA\Parameter(
+     *          name="id",
+     *          in="query",
+     *          required=true,
+     *
+     *      ),
+     *
+     *    @OA\Parameter(
+     *          name="position",
+     *          in="query",
+     *          required=true,
+     *
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *      ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     * @OA\Response(
+     *      response=400,
+     *      description="Bad Request"
+     *   ),
+     * @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     * @OA\Response(
+     *      response=500,
+     *      description="erreur serveur 500"
+     *   ),
+     *  )
+     */
+    public function updateSubMenuPosition(Request $request)
+    {
+        $this->validate($request, [
+            'id' => 'required|exists:menus,id',
+            'position' => 'required|numeric'
+        ]);
+        $res = new Result();
+        try {
+            $sub_menu = Menu::find($request->id);
+            $sub_menu->position = $request->position;
+            $sub_menu->save();
+            $sub_menu->refresh();
+            $res->success(new MenuResource($sub_menu));
+        } catch (\Exception $exception) {
+            if (env('APP_DEBUG')) {
+                $res->fail($exception->getMessage());
+            } else {
+                $res->fail('erreur serveur 500');
+            }
+        }
+        return new JsonResponse($res, $res->code);
+    }
+    /**
+     * @OA\Post(
      *      path="/update_submenu_products",
      *      operationId="updateSubMenuProducts",
      *      tags={"Menu"},
