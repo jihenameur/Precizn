@@ -823,4 +823,69 @@ class CommandController extends Controller
         }
         return new JsonResponse($res, $res->code);
     }
+
+    /** @OA\Post(
+     *      path="/validatecommand",
+     *      operationId="validateCommand",
+     *      tags={"Commande"},
+     *     security={{"Authorization":{}}},
+     *      summary="validate commande",
+     *      description="validate commande.",
+     *     @OA\Parameter(
+     *          name="command_id",
+     *          in="query",
+     *          required=true,
+     *
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *      ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     * @OA\Response(
+     *      response=400,
+     *      description="Bad Request"
+     *   ),
+     * @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     *  )
+     */
+    public function validateCommand(Request $request)
+    {
+        if (!Auth::user()->isAuthorized(['admin'])) {
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ], 403);
+        }
+
+        $this->validate($request,[
+           'command_id' => 'required|exists:command,id'
+        ]);
+        $res = new Result();
+        try {
+
+            $command = Command::find($request->command_id);
+            $command->cycle = 'VERIFY';
+            $command->save();
+            $res->success($command);
+        } catch (\Exception $exception) {
+            if(env('APP_DEBUG')){
+                $res->fail($exception->getMessage());
+            }
+            else {$res->fail('erreur serveur 500');}
+        }
+        return new JsonResponse($res, $res->code);
+
+
+    }
 }

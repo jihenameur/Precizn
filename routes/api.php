@@ -246,6 +246,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
     Route::get('getCommandPanier/{id}', [CommandController::class, 'getCommandPanier']);
     Route::get('getCommand/{id}', [CommandController::class, 'getCommand']);
     Route::post('commandassignedadmin', [CommandController::class, 'CommandAssignedAdmin']);
+    Route::post('validatecommand', [CommandController::class, 'validateCommand']);
 
     /**
      * public Coupon
