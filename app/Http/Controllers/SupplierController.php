@@ -440,7 +440,117 @@ class SupplierController extends Controller
         }
         return new JsonResponse($res, $res->code);
     }
+    /**
+     * @OA\Post(
+     *      path="/updateimagesupplier",
+     *      operationId="updateimagesupplier",
+     *      tags={"Supplier"},
+     *     security={{"Authorization":{}}},
+     *      summary="create image supplier" ,
+     *      description="create image supplier",
+     *   @OA\Parameter (
+     *     in="query",
+     *     name="image",
+     *     required=true,
+     *     description="image supplier",
+     *     @OA\Schema (type="file")
+     *      ),
+     *   @OA\Parameter (
+     *     in="query",
+     *     name="type",
+     *     required=false,
+     *     description="type",
+     *     @OA\Schema (type="string")
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *       ),
+     *     @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=400,
+     *          description="Bad request. User ID must be an integer and bigger than 0",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     *    @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     *  )
+     */
+    public function updateimagesupplier(Request $request)
+    {
+        if (!Auth::user()->isAuthorized(['admin', 'supplier'])) {
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ], 403);
+        }
+        $res = new Result();
+        try {
+            $validator = Validator::make($request->all(), [
+                'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+                'type' => 'required|in:principal,couverture'
 
+            ]); // create the validations
+            if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
+            {
+                // return $validator->errors();
+                return ($validator->errors());
+            }
+            $supplier = Supplier::find(Auth::user()->userable_id);
+            if ($request->type == "principal") {
+                if ($request->file('image')) {
+                    $file = $request->file('image');
+                    $name = Str::uuid()->toString() . '.' . $file->getClientOriginalExtension();
+                    $file->move(public_path('public/Suppliers'), $name); // your folder path
+                    $file = new File();
+                    $file->name = $name;
+                    $file->path = asset('public/Suppliers/' . $name);
+                    $file->user_id = Auth::user()->id;
+                    $file->save();
+                    $file->supplier()->detach();
+                    $file->supplier()->attach($supplier, ['type' => $request->type]);
+                }
+            } else if ($request->type == "couverture") {
+                if ($request->file('image')) {
+                    $file = $request->file('image');
+                    $name = Str::uuid()->toString() . '.' . $file->getClientOriginalExtension();
+                    $file->move(public_path('public/SuppliersCouverture'), $name); // your folder path
+                    $file = new File();
+                    $file->name = $name;
+                    $file->path = asset('public/SuppliersCouverture/' . $name);
+                    $file->user_id = Auth::user()->id;
+                    $file->save();
+                    $file->supplier()->detach();
+                    $file->supplier()->attach($supplier, ['type' => $request->type]);
+                }
+            }
+            $response['supplier'] = [
+                "id" => $supplier->id,
+                "name" => $supplier->name,
+                "firstname" => $supplier->firstName,
+                "lastname" => $supplier->firstName,
+                "image" => $file->path,
+                "type" => $file->supplier[0]->pivot->type
+
+            ];
+
+            $res->success($response);
+        } catch (\Exception $exception) {
+            if (env('APP_DEBUG')) {
+                $res->fail($exception->getMessage());
+            }
+            else {$res->fail('erreur serveur 500');}
+        }
+        return new JsonResponse($res, $res->code);
+    }
     /**
      * Filter or get all
      *
