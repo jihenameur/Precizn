@@ -158,6 +158,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
     Route::post('updateMenu/{id}', [MenuController::class, 'update']);
     Route::delete('deleteMenu/{id}', [MenuController::class, 'delete']);
     Route::post('getmenuBysupplierid', [MenuController::class, 'getMenuBySupplierId']);
+    Route::post('update_submenuposition', [MenuController::class, 'updateSubMenuPosition']);
 
     /**
      * public Client

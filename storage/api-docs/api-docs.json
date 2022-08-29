@@ -14,7 +14,7 @@
     },
     "servers": [
         {
-            "url": "http://127.0.0.1:8000/api/",
+            "url": "https://api.thunder-express.com",
             "description": "API Server"
         }
     ],
@@ -5263,6 +5263,53 @@
                         "schema": {
                             "type": "file"
                         }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "not found"
+                    },
+                    "500": {
+                        "description": "erreur serveur 500"
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
+            }
+        },
+        "/update_submenuposition": {
+            "post": {
+                "tags": [
+                    "Menu"
+                ],
+                "summary": "Add subMenu",
+                "description": "Returns subMenu.",
+                "operationId": "updateSubMenuPosition",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "name": "position",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
