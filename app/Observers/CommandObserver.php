@@ -3,6 +3,7 @@
 namespace App\Observers;
 
 use App\Jobs\Admin\SendCommandAdminNotification;
+use App\Jobs\Supplier\notifySupplierNewCommandJob;
 use App\Models\Client;
 use App\Models\Command;
 
@@ -17,6 +18,14 @@ class CommandObserver
     public function created(Command $command)
     {
         dispatch(new SendCommandAdminNotification($command,Client::find($command->client_id)));
+    }
+
+
+    public function updating(Command $command)
+    {
+        if(($command->cycle == 'VERIFY') && ($command->getOriginal('cycle') == 'PENDING') ){
+            dispatch(new notifySupplierNewCommandJob($command->supplier,$command));
+        }
     }
 
     /**

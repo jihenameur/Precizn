@@ -56,3 +56,9 @@ Broadcast::channel('.delivery.{delivery_id}', function ($delivery_id) {
         return $delivery_id;
     }
 });
+
+Broadcast::channel('.supplier.{supplier_id}', function ($supplier_id) {
+    if(Auth::check()){ // verify  role
+        return $supplier_id;
+    }
+});
