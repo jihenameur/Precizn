@@ -888,4 +888,134 @@ class CommandController extends Controller
 
 
     }
+
+    /** @OA\Post(
+     *      path="/authorizecommand",
+     *      operationId="AuthorizeCommand",
+     *      tags={"Commande"},
+     *     security={{"Authorization":{}}},
+     *      summary="authoeize commande",
+     *      description="authorize commande.",
+     *     @OA\Parameter(
+     *          name="command_id",
+     *          in="query",
+     *          required=true,
+     *
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *      ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     * @OA\Response(
+     *      response=400,
+     *      description="Bad Request"
+     *   ),
+     * @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     *  )
+     */
+    public function AuthorizeCommand(Request $request)
+    {
+        if (!Auth::user()->isAuthorized(['admin','supplier'])) {
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ], 403);
+        }
+
+        $this->validate($request,[
+            'command_id' => 'required|exists:command,id'
+        ]);
+        $res = new Result();
+        try {
+
+            $command = Command::find($request->command_id);
+            $command->cycle = 'AUTHORIZED';
+            $command->save();
+            $res->success($command);
+        } catch (\Exception $exception) {
+            if(env('APP_DEBUG')){
+                $res->fail($exception->getMessage());
+            }
+            else {$res->fail('erreur serveur 500');}
+        }
+        return new JsonResponse($res, $res->code);
+
+
+    }
+
+    /** @OA\Post(
+     *      path="/progressingcommand",
+     *      operationId="ProgressingCommand",
+     *      tags={"Commande"},
+     *     security={{"Authorization":{}}},
+     *      summary="progressing commande",
+     *      description="progressing commande.",
+     *     @OA\Parameter(
+     *          name="command_id",
+     *          in="query",
+     *          required=true,
+     *
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *      ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     * @OA\Response(
+     *      response=400,
+     *      description="Bad Request"
+     *   ),
+     * @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     *  )
+     */
+    public function ProgressingCommand(Request $request)
+    {
+        if (!Auth::user()->isAuthorized(['admin','delivery'])) {
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ], 403);
+        }
+
+        $this->validate($request,[
+            'command_id' => 'required|exists:command,id'
+        ]);
+        $res = new Result();
+        try {
+
+            $command = Command::find($request->command_id);
+            $command->cycle = 'INPROGRESS';
+            $command->save();
+            $res->success($command);
+        } catch (\Exception $exception) {
+            if(env('APP_DEBUG')){
+                $res->fail($exception->getMessage());
+            }
+            else {$res->fail('erreur serveur 500');}
+        }
+        return new JsonResponse($res, $res->code);
+
+
+    }
 }
