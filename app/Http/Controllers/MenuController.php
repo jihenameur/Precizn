@@ -66,7 +66,7 @@ class MenuController extends Controller
      */
     public function getSupplierMenu(Request $request)
     {
-        if (!Auth::user()->isAuthorized(['admin', 'supplier'])) {
+        if (!Auth::user()->isAuthorized(['admin', 'supplier','client'])) {
             return response()->json([
                 'success' => false,
                 'massage' => 'unauthorized'
@@ -142,6 +142,12 @@ class MenuController extends Controller
      */
     public function AddProductToSubMenu(Request $request)
     {
+        if (!Auth::user()->isAuthorized(['admin', 'supplier'])) {
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ], 403);
+        }
         $this->validate($request, [
             'product_id' => 'required|exists:products,id',
             'submenu_id' => 'required|exists:menus,id',
@@ -233,6 +239,12 @@ class MenuController extends Controller
      */
     public function AddSubMenu(Request $request)
     {
+        if (!Auth::user()->isAuthorized(['admin', 'supplier'])) {
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ], 403);
+        }
         $this->validate($request, [
             'supplier_id' => 'required|exists:suppliers,id',
             'name' => 'required',
@@ -343,6 +355,12 @@ class MenuController extends Controller
      */
     public function updateSubMenu(Request $request)
     {
+        if (!Auth::user()->isAuthorized(['admin', 'supplier'])) {
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ], 403);
+        }
         $this->validate($request, [
             'id' => 'required|exists:menus,id',
             'supplier_id' => 'required|exists:suppliers,id',
@@ -429,6 +447,12 @@ class MenuController extends Controller
      */
     public function updateSubMenuPosition(Request $request)
     {
+        if (!Auth::user()->isAuthorized(['admin', 'supplier'])) {
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ], 403);
+        }
         $this->validate($request, [
             'id' => 'required|exists:menus,id',
             'position' => 'required|numeric'
@@ -496,6 +520,12 @@ class MenuController extends Controller
      */
     public function updateSubMenuProducts(Request $request)
     {
+        if (!Auth::user()->isAuthorized(['admin', 'supplier'])) {
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ], 403);
+        }
         $this->validate($request, [
             'id' => 'required|exists:menus,id',
             'products.*' => 'required|exists:products,id',
