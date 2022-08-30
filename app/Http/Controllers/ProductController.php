@@ -1429,6 +1429,8 @@ class ProductController extends Controller
                         $product->files()->detach();
                     }
                         $file->products()->attach($product);
+                    $file->save();
+                    $product->refresh();
                     }
                 }
                 $res->success(new ProductResource($product));
