@@ -217,7 +217,7 @@ class MessageController extends Controller
         $this->dispatch(new NotifyNewClientMessage($fromUser, $message));
 
         $toUser  = Admin::find(1);
-        $toUser->notify(new MessageNotification($message, $fromUser));
+      //  $toUser->notify(new MessageNotification($message, $fromUser));
         // Notification::send($toUser, new MessageNotification($message,auth()->user()));
 
         $res = new Result();
