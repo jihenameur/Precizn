@@ -278,7 +278,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
      * public Messsage
      */
     Route::post('sendMessage', [MessageController::class, 'sendMessage']);
-    Route::get('getMessage', [MessageController::class, 'getMessage']);
+    Route::post('getclientmessage', [MessageController::class, 'getClientMessage']);
 
     /**
      * email verify routes

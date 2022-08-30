@@ -37,7 +37,7 @@ class MessageController extends Controller
      *      operationId="sendMessage",
      *      tags={"Message"},
      *     security={{"Authorization":{}}},
-     *      summary="create message.",  
+     *      summary="create message.",
      *    @OA\Parameter (
      *     in="query",
      *     name="id",
@@ -109,14 +109,59 @@ class MessageController extends Controller
             return ['status' => 'Message Sent!'];
         }
     }
-    public function getMessage(Request $request)
+
+    /**
+     * @OA\Post(
+     *      path="/getclientmessage",
+     *      operationId="getClientMessage",
+     *      tags={"Message"},
+     *     security={{"Authorization":{}}},
+     *      summary="create message.",
+     *  @OA\Parameter(
+     *     in="query",
+     *     name="client_id",
+     *     required=true,
+     *     description="message",
+     *     @OA\Schema( type="string" ),
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *       ),
+     *     @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=400,
+     *          description="bad request",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     *    @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     *     )
+     */
+    public function getClientMessage(Request $request)
     {
-        $messages = Message::whereHas('client', function ($q) use ($request) {
-            $q->where('id', $request['id_client']);
-        })
+        $this->validate($request,[
+            'client_id' => 'required'
+        ]);
+
+        $res = new Result();
+
+
+
+        $messages = Message::where('client_id',$request->clients_id)
             ->orderBy('date', 'desc')
             ->get();
-        return $messages;
+
+        $res->success($messages, 'sent');
+        return new JsonResponse($res, $res->code);
     }
  /**
      * @OA\Post(
@@ -124,7 +169,7 @@ class MessageController extends Controller
      *      operationId="createmessage",
      *      tags={"Message"},
      *     security={{"Authorization":{}}},
-     *      summary="create message.",  
+     *      summary="create message.",
      *  @OA\Parameter(
      *     in="query",
      *     name="message",
