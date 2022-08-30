@@ -1369,28 +1369,49 @@ class ProductController extends Controller
                     }
                 }
             }
-            if (count(json_decode($request->typeProduct))) {
-                $product->typeproduct()->detach();
-                foreach (json_decode($request->typeProduct) as $key => $value) {
-                    $typeProduct = TypeProduct::find($value);
-                    $product->typeproduct()->attach($typeProduct);
-                }
-            }
-            if (count(json_decode($request->tags))) {
-                $product->tag()->detach();
-                foreach (json_decode($request->tags) as $key => $value) {
-                    $tag = TypeProduct::find($value);
-                    $product->tag()->attach($tag);
+
+            if($request->has("typeProduct")){
+
+                if(gettype(json_decode($request->typeProduct)) == "array"){
+                    if (count(json_decode($request->typeProduct))) {
+                        $product->typeproduct()->detach();
+                        foreach (json_decode($request->typeProduct) as $key => $value) {
+                            $typeProduct = TypeProduct::find($value);
+                            $product->typeproduct()->attach($typeProduct);
+                        }
+                    }
                 }
             }
 
-                if(count(json_decode($request->option_id))) {
-                    $product->options()->detach();
-                    foreach (json_decode($request->option_id) as $key => $value) {
-                        $option = Option::find($value);
-                        $product->options()->attach($option, ['supplier_id' => $request->supplier_id]);
+            if($request->has("tags")){
+
+                if(gettype(json_decode($request->tags)) == "array"){
+                    if (count(json_decode($request->tags))) {
+                        $product->tag()->detach();
+                        foreach (json_decode($request->tags) as $key => $value) {
+                            $tag = TypeProduct::find($value);
+                            $product->tag()->attach($tag);
+                        }
                     }
                 }
+            }
+
+            if($request->has("option_id")) {
+
+                if (gettype(json_decode($request->option_id)) == "array") {
+                    if(count(json_decode($request->option_id))) {
+                        $product->options()->detach();
+                        foreach (json_decode($request->option_id) as $key => $value) {
+                            $option = Option::find($value);
+                            $product->options()->attach($option, ['supplier_id' => $request->supplier_id]);
+                        }
+                    }
+                }
+            }
+
+
+
+
             if ($images) {
                 foreach ($images as $image) {
                     $name = Str::uuid()->toString() . '.' . $image->getClientOriginalExtension();
