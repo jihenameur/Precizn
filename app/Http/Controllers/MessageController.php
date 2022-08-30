@@ -156,10 +156,9 @@ class MessageController extends Controller
 
 
 
-        $messages = Message::where('client_id',$request->clients_id)
+        $messages = Message::where('client_id',$request->client_id)
             ->orderBy('date', 'desc')
             ->get();
-
         $res->success($messages, 'sent');
         return new JsonResponse($res, $res->code);
     }
