@@ -17,6 +17,7 @@ class Kernel extends ConsoleKernel
     {
          $schedule->command('commands:assign')->everyMinute();
          $schedule->command('simulation:commands')->everyFiveMinutes();
+
     }
 
     /**

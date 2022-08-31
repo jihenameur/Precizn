@@ -49,7 +49,7 @@ class FakeCommandSimulationCommand extends Command
         $clients = Client::all();
         $supps = Supplier::all();
 
-        for ($i = 0; $i < 5; $i++) {
+        for ($i = 0; $i < 1; $i++) {
             $client = $clients[rand(1, $clients->count() - 1)];
             $command = new \App\Models\Command();
             $command->client_id = $client->id;

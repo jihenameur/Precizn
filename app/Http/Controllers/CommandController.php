@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\BaseModel\Result;
+use App\Http\Resources\Command\CommandResource;
 use App\Jobs\Admin\SendCommandAdminNotification;
 use App\Jobs\Admin\SendCommandSupplierNotification;
 use App\Jobs\SendCommandSupplierNotification as JobsSendCommandSupplierNotification;
@@ -869,7 +870,7 @@ class CommandController extends Controller
         }
 
         $this->validate($request,[
-           'command_id' => 'required|exists:command,id'
+           'command_id' => 'required|exists:commands,id'
         ]);
         $res = new Result();
         try {
@@ -934,7 +935,7 @@ class CommandController extends Controller
         }
 
         $this->validate($request,[
-            'command_id' => 'required|exists:command,id'
+            'command_id' => 'required|exists:commands,id'
         ]);
         $res = new Result();
         try {
@@ -1017,5 +1018,21 @@ class CommandController extends Controller
         return new JsonResponse($res, $res->code);
 
 
+    }
+
+    public function fetchAll()
+    {
+        $res = new Result();
+        try {
+
+            $commands = Command::whereNotiN('cycle',['SUCCESS','REJECTED'])->orderBy('created_at','ASC')->get();
+            $res->success(CommandResource::collection($commands));
+        } catch (\Exception $exception) {
+            if(env('APP_DEBUG')){
+                $res->fail($exception->getMessage());
+            }
+            else {$res->fail('erreur serveur 500');}
+        }
+        return new JsonResponse($res, $res->code);
     }
 }

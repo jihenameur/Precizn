@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\BaseModel\Result;
+use App\Http\Resources\Command\CommandDeliveryResource;
 use App\Jobs\Admin\ChangeDeliveryPositionJob;
 use App\Jobs\Delivery\AssignedCommandToDeliveryJob;
 use App\Models\Admin;
@@ -1797,6 +1798,30 @@ class DeliveryController extends Controller
                 $res->fail($exception->getMessage());
             } else {
                $res->fail('erreur serveur 500');
+            }
+
+        }
+        return new JsonResponse($res, $res->code);
+    }
+
+    public function fetchAvailableDelivery(){
+        if (!Auth::user()->isAuthorized(['admin'])) {
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ], 403);
+        }
+        $res = new Result();
+        try {
+            $delivery = Delivery::where('cycle','OFF')->where('available',1)->get();
+
+
+            $res->success(CommandDeliveryResource::collection($delivery));
+        } catch (\Exception $exception) {
+            if(env('APP_DEBUG')){
+                $res->fail($exception->getMessage());
+            } else {
+                $res->fail('erreur serveur 500');
             }
 
         }
