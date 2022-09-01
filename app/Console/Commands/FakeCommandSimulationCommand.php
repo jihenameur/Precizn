@@ -74,7 +74,7 @@ class FakeCommandSimulationCommand extends Command
                 'quantity' => rand(1, 5)
 
             ]);
-            $command->cycle = 'AUTHORIZED';
+            $command->cycle = 'PENDING';
             $command->save();
         }
         return 1;

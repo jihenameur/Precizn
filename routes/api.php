@@ -329,7 +329,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
 
     Route::get('getAllSupplier/{per_page}', [SupplierController::class, 'all']);
     Route::get('getAllDelivery/{per_page}', [DeliveryController::class, 'all']);
-    Route::get('getavailabledelivery', [DeliveryController::class, 'fetchAvailableDelivery']);
+    Route::post('getavailabledelivery', [DeliveryController::class, 'fetchAvailableDelivery']);
     Route::get('getSupplierById/{id}', [SupplierController::class, 'getById']);
     Route::get('getSupplierProducts/{per_page}', [ProductController::class, 'getSupplierProduct']);
     Route::post('getSupplierProductsClean', [ProductController::class, 'getSuppliersProductClean']);

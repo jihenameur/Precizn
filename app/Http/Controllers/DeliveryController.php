@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\BaseModel\Result;
+use App\Helpers\RedisHelper;
 use App\Http\Resources\Command\CommandDeliveryResource;
 use App\Jobs\Admin\ChangeDeliveryPositionJob;
 use App\Jobs\Delivery\AssignedCommandToDeliveryJob;
@@ -908,12 +909,13 @@ class DeliveryController extends Controller
                 ->first(); */
             $command->delivery_id = $delivery->id;
             $command->cycle  = 'ASSIGNED';
-            $command->update();
+            $command->save();
         //    $delivReq->accept = 1;
           //  $delivReq->update();
-            $delivery->available = 0;
-            $delivery->cycle = 'OFF';
-            $delivery->update();
+            $delivery->cycle = 'ON';
+            $delivery->save();
+            $redis_helper = new RedisHelper();
+            $redis_helper->incrDeliveryStack($delivery->id);
             $this->dispatch(new AssignedCommandToDeliveryJob($command) );
             $res->success("command accepted");
 
@@ -1804,19 +1806,40 @@ class DeliveryController extends Controller
         return new JsonResponse($res, $res->code);
     }
 
-    public function fetchAvailableDelivery(){
+    public function fetchAvailableDelivery(Request $request){
         if (!Auth::user()->isAuthorized(['admin'])) {
             return response()->json([
                 'success' => false,
                 'massage' => 'unauthorized'
             ], 403);
         }
+
+        $this->validate($request,[
+           'supplier_id' => 'required|exists:suppliers,id'
+        ]);
+
         $res = new Result();
         try {
-            $delivery = Delivery::where('cycle','OFF')->where('available',1)->get();
+            $redis_helper = new RedisHelper();
+            $supplier = Supplier::find($request->supplier_id);
+            $deliveries = Delivery::where('available',1)->get();
+            $distances = $this->CalculateDistance($deliveries,$supplier);
+            $i = 0;
+            $deliveries->map(function ($item) use ($distances,&$i,$redis_helper){
+                $item->distance = $distances[$i];
+                $item->stack = $redis_helper->getDeliveryStack($item->id);
+                $i++;
+                return $item;
+            });
+
+            $pre_assinged_delivery = $deliveries->sortBy([
+                fn ($a, $b) => $a['cycle'] <=> $b['cycle'],
+                fn ($a, $b) => $a['distance'] <=> $b['distance'],
+                fn ($a, $b) => $b['stack'] <=> $a['stack'],
+            ])->values();
 
 
-            $res->success(CommandDeliveryResource::collection($delivery));
+            $res->success(CommandDeliveryResource::collection($pre_assinged_delivery));
         } catch (\Exception $exception) {
             if(env('APP_DEBUG')){
                 $res->fail($exception->getMessage());
@@ -1826,5 +1849,30 @@ class DeliveryController extends Controller
 
         }
         return new JsonResponse($res, $res->code);
+    }
+
+    private function CalculateDistance($deliveries, $supplier)
+    {
+        $from_latlong = '';
+        $to_latlong = $supplier->lat . "," . $supplier->long;
+
+        foreach ($deliveries as $delivery) {
+            $from_latlong = $from_latlong . ($delivery->lat . "," . $delivery->long. "|");
+        }
+
+        $distance_data = file_get_contents(
+            'https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=' . $from_latlong . '&destinations=' . $to_latlong . '&key=AIzaSyCYRBZBDovYe4GKiOH2PRyDtTWO6ymAZXA'
+        );
+        $distance_arr = json_decode($distance_data);
+        $distances = array();
+        foreach ($distance_arr->rows as $key => $element) {
+            $distance = $element->elements[0]->distance->text;
+            $distance = preg_replace("/[^0-9.]/", "",  $distance);
+            $distance *= 1.609344;
+            $distance = number_format($distance, 1, '.', '');
+            array_push($distances, $distance);
+
+        }
+        return $distances;
     }
 }

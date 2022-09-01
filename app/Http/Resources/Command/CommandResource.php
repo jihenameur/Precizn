@@ -2,6 +2,8 @@
 
 namespace App\Http\Resources\Command;
 
+use App\Helpers\RedisHelper;
+use App\Models\Delivery;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class CommandResource extends JsonResource
@@ -14,14 +16,17 @@ class CommandResource extends JsonResource
      */
     public function toArray($request)
     {
+        $redis_hepler = new RedisHelper();
         return [
             'id' => $this->id,
             'cycle' => $this->cycle,
             'made_at' => $this->created_at,
             'supplier' => new CommandSupplierResource($this->supplier),
-            'delivery' => new CommandDeliveryResource($this->delivery),
+            'delivery' => new CommandDeliveryResource($this->delivery) ?? false,
+            'products' => CommandProductResource::collection($this->products),
             'client' => new CommandClientResource($this->client),
-            'localisation' => ["lat" => $this->lat, "long" => $this->long]
+            'localisation' => ["lat" => $this->lat, "long" => $this->long],
+            'pre_assinged_delivery' => $redis_hepler->getPreAssignedDeliveryToCommand($this->id) ? new CommandDeliveryResource(Delivery::find($redis_hepler->getPreAssignedDeliveryToCommand($this->id))) : false
         ];
     }
 }

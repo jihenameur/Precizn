@@ -16,6 +16,7 @@ class CommandSupplierResource extends JsonResource
     public function toArray($request)
     {
         return [
+            'id' => $this->id,
             'name' => $this->firstName . ' ' . $this->lastName,
             'phone' => User::where('userable_id', $this->id)->where('userable_type', 'App\Models\Client')->first()->tel ?? '#',
             'localisation' => ["lat" => $this->lat, "long" => $this->long]
