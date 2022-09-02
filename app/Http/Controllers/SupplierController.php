@@ -387,7 +387,8 @@ class SupplierController extends Controller
         try {
             $validator = Validator::make($request->all(), [
                 'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-                'type' => 'required|in:principal,couverture'
+                'type' => 'required|in:principal,couverture',
+                'supplier_id' => 'required|exists:suppliers,id'
 
             ]); // create the validations
             if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
@@ -395,7 +396,7 @@ class SupplierController extends Controller
                 // return $validator->errors();
                 return ($validator->errors());
             }
-            $supplier = Supplier::find(Auth::user()->userable_id);
+            $supplier = Supplier::find($request->supplier_id);
             if ($request->type == "principal") {
                 if ($request->file('image')) {
                     $file = $request->file('image');
@@ -496,7 +497,8 @@ class SupplierController extends Controller
         try {
             $validator = Validator::make($request->all(), [
                 'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-                'type' => 'required|in:principal,couverture'
+                'type' => 'required|in:principal,couverture',
+                'supplier_id' => 'required|exists:suppliers,id'
 
             ]); // create the validations
             if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
@@ -504,7 +506,7 @@ class SupplierController extends Controller
                 // return $validator->errors();
                 return ($validator->errors());
             }
-            $supplier = Supplier::find(Auth::user()->userable_id);
+            $supplier = Supplier::find($request->supplier_id);
             if ($request->type == "principal") {
                 if ($request->file('image')) {
                     $file = $request->file('image');

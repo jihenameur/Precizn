@@ -9,6 +9,11 @@ use Illuminate\Support\Facades\Redis;
 class RedisHelper
 {
 
+    public function flush()
+    {
+       return Redis::flushDB();
+    }
+
     public function preAssignDeliveryToCommand($delivery_id, $command_id)
     {
        return Redis::lpush('command_pre_assign_'.$command_id,$delivery_id);
@@ -16,7 +21,7 @@ class RedisHelper
 
     public function getPreAssignedDeliveryToCommand($command_id)
     {
-       return Redis::lindex('command_pre_assign_'.$command_id,-1);
+       return Redis::lindex('command_pre_assign_'.$command_id,0);
     }
 
     public function getAllPreAssignedDeliveriesToCommand($command_id)
@@ -59,9 +64,25 @@ class RedisHelper
         return Redis::set('PRE_ASSIGNED_TIME_LIMIT',$minutes);
     }
 
-    public function getPreAssignedTimeLimit($minutes = 5)
+    public function getPreAssignedTimeLimit($minutes = 1) // 5
     {
         return Redis::get('PRE_ASSIGNED_TIME_LIMIT') ?? $minutes;
+    }
+
+
+    public function getDeliveryStack($delivery_id)
+    {
+        return Redis::get('delivery_stack'.$delivery_id);
+    }
+
+    public function incrDeliveryStack($delivery_id)
+    {
+        return Redis::incr('delivery_stack'.$delivery_id);
+    }
+
+    public function decrDeliveryStack($delivery_id)
+    {
+        return Redis::decr('delivery_stack'.$delivery_id);
     }
 
 }

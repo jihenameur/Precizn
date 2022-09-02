@@ -241,6 +241,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
     /**
      * public Command
      */
+    Route::get('fetchallcommand', [CommandController::class, 'fetchAll']);
     Route::get('getAllCommand/{per_page}', [CommandController::class, 'all']);
     Route::put('updateCommand/{id}', [CommandController::class, 'update']);
     Route::get('getCommandsByKeyClientDelivery', [CommandController::class, 'getCommandsByKeyClientDelivery']);
@@ -249,6 +250,9 @@ Route::group(['middleware' => ['jwt.verify']], function () {
     Route::get('getCommandPanier/{id}', [CommandController::class, 'getCommandPanier']);
     Route::get('getCommand/{id}', [CommandController::class, 'getCommand']);
     Route::post('commandassignedadmin', [CommandController::class, 'CommandAssignedAdmin']);
+    Route::post('validatecommand', [CommandController::class, 'validateCommand']);
+    Route::post('authorizecommand', [CommandController::class, 'AuthorizeCommand']);
+    Route::post('progressingcommand', [CommandController::class, 'ProgressingCommand']);
 
     /**
      * public Coupon
@@ -275,7 +279,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
      * public Messsage
      */
     Route::post('sendMessage', [MessageController::class, 'sendMessage']);
-    Route::get('getMessage', [MessageController::class, 'getMessage']);
+    Route::post('getclientmessage', [MessageController::class, 'getClientMessage']);
 
     /**
      * email verify routes
@@ -325,6 +329,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
 
     Route::get('getAllSupplier/{per_page}', [SupplierController::class, 'all']);
     Route::get('getAllDelivery/{per_page}', [DeliveryController::class, 'all']);
+    Route::post('getavailabledelivery', [DeliveryController::class, 'fetchAvailableDelivery']);
     Route::get('getSupplierById/{id}', [SupplierController::class, 'getById']);
     Route::get('getSupplierProducts/{per_page}', [ProductController::class, 'getSupplierProduct']);
     Route::post('getSupplierProductsClean', [ProductController::class, 'getSuppliersProductClean']);

@@ -63,6 +63,8 @@ class AssignDeliveryCommand extends Command
 
             }
         });
+
+        return 0;
     }
 
     private function ComputePreAssignedCase($command)
@@ -136,17 +138,24 @@ class AssignDeliveryCommand extends Command
 
     private function GetFreeDeliveriesList($command, $pre_assigned)
     {
+        echo "----------------------";
         $supplier = Supplier::findOrFail($command->supplier_id);
-        $deliveries = Delivery::where('available',1)->where('cycle','OFF')->whereNotIn('id',$pre_assigned ? ($this->redis_helper->getAllPreAssignedDeliveriesToCommand($command->id) ?? []) : [])->get();
+        $deliveries = Delivery::where('available',1)->whereNotIn('id',$pre_assigned ? ($this->redis_helper->getAllPreAssignedDeliveriesToCommand($command->id) ?? []) : [])->get();
         $distances = $this->CalculateDistance($deliveries,$supplier);
+        var_dump($deliveries->count());
+        $this->i = 0;
         $deliveries->map(function ($item) use ($distances){
             $bucket =  (object)[
                 "model" => $item,
                 "id" => $item->id,
+                "stack" => $this->redis_helper->getDeliveryStack($item->id) ?? 0,
                 "distance" => $distances[$this->i]
             ] ;
+            $this->i++;
+            echo $this->i;
+            return $bucket;
         });
-
+        echo "----------------------";
         return $deliveries;
     }
 
@@ -154,7 +163,11 @@ class AssignDeliveryCommand extends Command
     {
         $deliveries = $this->getFreeDeliveriesList($command,$pre_assigned);
         if($deliveries->count()){
-            $pre_assinged_delivery = $deliveries->sortBy('distance')->values()->first();
+            $pre_assinged_delivery = $deliveries->sortBy([
+                fn ($a, $b) => $a['cycle'] <=> $b['cycle'],
+                fn ($a, $b) => $a['distance'] <=> $b['distance'],
+                fn ($a, $b) => $b['stack'] <=> $a['stack'],
+            ])->values()->first();
             $this->redis_helper->preAssignDeliveryToCommand($pre_assinged_delivery->id, $command->id);
             $command->cycle = 'PRE_ASSIGN';
             $command->cycle_at = Carbon::now();

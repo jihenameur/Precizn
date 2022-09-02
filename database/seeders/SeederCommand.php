@@ -26,7 +26,7 @@ class SeederCommand extends Seeder
         $clients = Client::all();
         $supps = Supplier::all();
 
-        for ($i = 0; $i < 100; $i++) {
+        for ($i = 0; $i < 2; $i++) {
             $client = $clients[rand(1, $clients->count() - 1)];
             $command = new Command();
             $command->client_id = $client->id;

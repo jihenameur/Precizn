@@ -71,7 +71,7 @@ class NewMessageFromClient implements ShouldBroadcast
         return [
             "type_event" => "NEW_CLIENT_MESSAGE",
             "message" => $this->message,
-            "client" => $this->client
+            "client" => $this->client->id
         ];
     }
 }
