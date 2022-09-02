@@ -40,6 +40,6 @@ class FlushRedis extends Command
     {
         $redis_helper = new RedisHelper();
         $redis_helper->flush();
-        return 1;
+        return 0;
     }
 }
