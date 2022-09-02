@@ -7239,6 +7239,58 @@
                 ]
             }
         },
+        "/updateimagesupplier": {
+            "post": {
+                "tags": [
+                    "Supplier"
+                ],
+                "summary": "create image supplier",
+                "description": "create image supplier",
+                "operationId": "updateimagesupplier",
+                "parameters": [
+                    {
+                        "name": "image",
+                        "in": "query",
+                        "description": "image supplier",
+                        "required": true,
+                        "schema": {
+                            "type": "file"
+                        }
+                    },
+                    {
+                        "name": "type",
+                        "in": "query",
+                        "description": "type",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "400": {
+                        "description": "Bad request. User ID must be an integer and bigger than 0"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "not found"
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
+            }
+        },
         "/getAllSupplier/{per_page}": {
             "get": {
                 "tags": [
