@@ -21,7 +21,7 @@ class RedisHelper
 
     public function getPreAssignedDeliveryToCommand($command_id)
     {
-       return Redis::lindex('command_pre_assign_'.$command_id,-1);
+       return Redis::lindex('command_pre_assign_'.$command_id,0);
     }
 
     public function getAllPreAssignedDeliveriesToCommand($command_id)

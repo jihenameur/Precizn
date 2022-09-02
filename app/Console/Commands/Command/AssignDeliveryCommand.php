@@ -63,6 +63,8 @@ class AssignDeliveryCommand extends Command
 
             }
         });
+
+        return 0;
     }
 
     private function ComputePreAssignedCase($command)
@@ -136,9 +138,12 @@ class AssignDeliveryCommand extends Command
 
     private function GetFreeDeliveriesList($command, $pre_assigned)
     {
+        echo "----------------------";
         $supplier = Supplier::findOrFail($command->supplier_id);
         $deliveries = Delivery::where('available',1)->whereNotIn('id',$pre_assigned ? ($this->redis_helper->getAllPreAssignedDeliveriesToCommand($command->id) ?? []) : [])->get();
         $distances = $this->CalculateDistance($deliveries,$supplier);
+        var_dump($deliveries->count());
+        $this->i = 0;
         $deliveries->map(function ($item) use ($distances){
             $bucket =  (object)[
                 "model" => $item,
@@ -147,9 +152,10 @@ class AssignDeliveryCommand extends Command
                 "distance" => $distances[$this->i]
             ] ;
             $this->i++;
+            echo $this->i;
             return $bucket;
         });
-
+        echo "----------------------";
         return $deliveries;
     }
 
