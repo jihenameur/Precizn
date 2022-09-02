@@ -11,6 +11,7 @@ use App\Models\Address;
 use App\Models\Admin;
 use App\Models\Client;
 use App\Models\Command;
+use App\Models\Coupon;
 use App\Models\Delivery;
 use App\Models\Panier;
 use App\Models\Product;
@@ -1034,5 +1035,82 @@ class CommandController extends Controller
             else {$res->fail('erreur serveur 500');}
         }
         return new JsonResponse($res, $res->code);
+    }
+
+    public function createCommand(Request $request)
+    {
+        $this->validate($request,[
+           "supplier_id" => "required|exists:suppliers,id",
+           "addresse_id" => "exists:addresses,id",
+           "delivery_price" => "required|numeric",
+           "mode_pay" => "required",
+            "total_price" => "required",
+            "products" =>"required",
+            "products.*.product_id" => "required|exists:products,id",
+            "products.*.quantity" => "required|numeric",
+            "tip" => "numeric",
+            "total_price_coupon" => "numeric",
+        ]);
+
+        $res = new Result();
+        if((!$request->has('addresse_id')) && (!$request->has('long')) && (!$request->has('lat')) ){
+            $res->fail("addresse_id ou long and lat are mandatory");
+            return new JsonResponse($res, $res->code);
+        }
+
+
+        try {
+            $command = new Command();
+            $command->date = now();
+            $command->supplier_id = $request->supplier_id;
+            $command->client_id = Client::find(auth()->user()->userable_id)->id;
+            if($request->has("tip")){
+                $command->tip = $request->tip;
+            }
+            $command->delivery_price = $request->delivery_price;
+            $command->mode_pay = $request->has("mode_pay") ? $request->mode_pay : 0;
+            $command->total_price = $request->has("total_price") ? $request->total_price : 0;
+            $command->total_price_coupon = $request->has("total_price_coupon") ? $request->total_price_coupon : 0;
+            if($request->has('addresse_id')){
+                $command->addresse_id = $request->addresse_id;
+                $command->lat = 0;
+                $command->long = 0;
+            }else{
+                $command->lat = $request->lat;
+                $command->long = $request->long;
+            }
+            $command->save();
+            $total = 0;
+            foreach ($request->products as $item){
+                $product = Product::find($item["product_id"]);
+                $command->products()->attach($product,["quantity" => $item["quantity"]]);
+                $total += $product->default_price * ($product->unit_limit * $item["quantity"] );
+            }
+            $command->total_price = $total;
+            if($request->has("codepromo")){
+                $coupon = Coupon::where('code_coupon',$request->codepromo)->get()->first();
+                if($coupon){
+                    if($coupon->type == 'amount'){
+                        $command->total_price_coupon = $command->total_price - $coupon->value;
+                    }else{
+                        $command->total_price_coupon = $command->total_price - (($command->total_price * $coupon->value )/100);
+                    }
+                }
+            }
+            $command->save();
+
+            $res->success($command);
+
+
+        } catch (\Exception $exception) {
+            if(env('APP_DEBUG')){
+                $res->fail($exception->getMessage());
+            }
+            else {$res->fail('erreur serveur 500');}
+        }
+        return new JsonResponse($res, $res->code);
+
+
+
     }
 }
