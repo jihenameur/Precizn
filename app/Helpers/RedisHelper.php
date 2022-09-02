@@ -9,6 +9,11 @@ use Illuminate\Support\Facades\Redis;
 class RedisHelper
 {
 
+    public function flush()
+    {
+       return Redis::flushDB();
+    }
+
     public function preAssignDeliveryToCommand($delivery_id, $command_id)
     {
        return Redis::lpush('command_pre_assign_'.$command_id,$delivery_id);

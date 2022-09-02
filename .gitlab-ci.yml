@@ -65,6 +65,7 @@ deploy-stage:
     - php artisan migrate:fresh --seed
     - php artisan l5-swagger:generate
     - php artisan queue:clear redis
+    - php artisan redis:flush
 
 
 deploy-prod:
