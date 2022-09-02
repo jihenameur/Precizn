@@ -36,7 +36,7 @@ class CommandObserver
      */
     public function updated(Command $command)
     {
-        //
+        dispatch(new SendCommandAdminNotification($command,Client::find($command->client_id)));
     }
 
     /**
