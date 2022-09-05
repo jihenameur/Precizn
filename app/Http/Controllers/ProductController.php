@@ -1218,9 +1218,9 @@ class ProductController extends Controller
      *      ),
      *     @OA\Parameter (
      *     in="query",
-     *     name="default_price",
+     *     name="price",
      *     required=false,
-     *     description="default_price",
+     *     description="price",
      *     @OA\Schema (type="decimal(8,2)")
      *      ),
      *   @OA\Parameter (
@@ -1324,7 +1324,7 @@ class ProductController extends Controller
             }
             $validator = Validator::make($request->all(), [
                 'name' => 'required',
-                'default_price' => 'required|numeric',
+                'price' => 'required|numeric',
                 'unit_type' => 'required|in:Piece,Kg,L,M'
 
             ]); // create the validations
@@ -1345,7 +1345,7 @@ class ProductController extends Controller
             }
             $product->name = $request->name;
             $product->description = $request->description;
-            $product->default_price = $request->default_price;
+            $product->default_price = $request->price;
             //$product->private = 1;
             $product->min_period_time = $request->min_period_time;
             $product->max_period_time = $request->max_period_time;
