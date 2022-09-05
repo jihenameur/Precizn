@@ -28,6 +28,7 @@ use App\Models\File;
 use App\Notifications\CommandClientNotification;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+
 /**
  * @OA\Tag(
  *     name="Supplier",
@@ -56,7 +57,8 @@ class SupplierController extends Controller
         $this->reqHelper = $reqHelper;
         $this->verificationApiController = $verificationApiController;
     }
-/**
+
+    /**
      * @OA\Post(
      *      path="/addSupplier",
      *      operationId="addSupplier",
@@ -299,7 +301,7 @@ class SupplierController extends Controller
             $role = Role::find($role_id);
             $user->roles()->attach($role);
             $categories = $request->category;
-           if (!is_array($categories)) {
+            if (!is_array($categories)) {
                 $categories = json_decode($request->category);
             }
             foreach ($categories as $key => $value) {
@@ -326,12 +328,14 @@ class SupplierController extends Controller
         } catch (\Exception $exception) {
             if (env('APP_DEBUG')) {
                 $res->fail($exception->getMessage());
+            } else {
+                $res->fail('erreur serveur 500');
             }
-            else {$res->fail('erreur serveur 500');}
         }
         return new JsonResponse($res, $res->code);
     }
- /**
+
+    /**
      * @OA\Post(
      *      path="/addimagesupplier",
      *      operationId="addimagesupplier",
@@ -436,11 +440,13 @@ class SupplierController extends Controller
         } catch (\Exception $exception) {
             if (env('APP_DEBUG')) {
                 $res->fail($exception->getMessage());
+            } else {
+                $res->fail('erreur serveur 500');
             }
-            else {$res->fail('erreur serveur 500');}
         }
         return new JsonResponse($res, $res->code);
     }
+
     /**
      * @OA\Post(
      *      path="/updateimagesupplier",
@@ -461,7 +467,14 @@ class SupplierController extends Controller
      *     name="type",
      *     required=false,
      *     description="type",
-     *     @OA\Schema (type="string")
+     *     @OA\Schema(type="string",enum={"principal", "couverture"})
+     *      ),
+     *     @OA\Parameter (
+     *     in="query",
+     *     name="supplier_id",
+     *     required=false,
+     *     description="supplier_id",
+     *     @OA\Schema(type="integer")
      *      ),
      *      @OA\Response(
      *          response=200,
@@ -496,7 +509,7 @@ class SupplierController extends Controller
         $res = new Result();
         try {
             $validator = Validator::make($request->all(), [
-                'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+                'image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
                 'type' => 'required|in:principal,couverture',
                 'supplier_id' => 'required|exists:suppliers,id'
 
@@ -507,30 +520,32 @@ class SupplierController extends Controller
                 return ($validator->errors());
             }
             $supplier = Supplier::find($request->supplier_id);
+
             if ($request->type == "principal") {
                 if ($request->file('image')) {
                     $file = $request->file('image');
                     $name = Str::uuid()->toString() . '.' . $file->getClientOriginalExtension();
                     $file->move(public_path('public/Suppliers'), $name); // your folder path
+                    $supplier->images()->wherePivot('type', $request->type)->detach();
                     $file = new File();
                     $file->name = $name;
                     $file->path = asset('public/Suppliers/' . $name);
                     $file->user_id = Auth::user()->id;
                     $file->save();
-                    $file->supplier()->detach();
                     $file->supplier()->attach($supplier, ['type' => $request->type]);
+
                 }
             } else if ($request->type == "couverture") {
                 if ($request->file('image')) {
                     $file = $request->file('image');
                     $name = Str::uuid()->toString() . '.' . $file->getClientOriginalExtension();
                     $file->move(public_path('public/SuppliersCouverture'), $name); // your folder path
+                    $supplier->images()->wherePivot('type', $request->type)->detach();
                     $file = new File();
                     $file->name = $name;
                     $file->path = asset('public/SuppliersCouverture/' . $name);
                     $file->user_id = Auth::user()->id;
                     $file->save();
-                    $file->supplier()->detach();
                     $file->supplier()->attach($supplier, ['type' => $request->type]);
                 }
             }
@@ -548,8 +563,9 @@ class SupplierController extends Controller
         } catch (\Exception $exception) {
             if (env('APP_DEBUG')) {
                 $res->fail($exception->getMessage());
+            } else {
+                $res->fail('erreur serveur 500');
             }
-            else {$res->fail('erreur serveur 500');}
         }
         return new JsonResponse($res, $res->code);
     }
@@ -558,7 +574,7 @@ class SupplierController extends Controller
      *
      * @return Collection|Model[]|mixed|void
      */
-     /**
+    /**
      * @OA\Get(
      *      path="/getAllSupplier/{per_page}",
      *      operationId="getAllSupplier",
@@ -629,8 +645,9 @@ class SupplierController extends Controller
         } catch (\Exception $exception) {
             if (env('APP_DEBUG', true)) {
                 $res->fail($exception->getMessage());
+            } else {
+                $res->fail('erreur serveur 500');
             }
-            else {$res->fail('erreur serveur 500');}
         }
         return new JsonResponse($res, $res->code);
     }
@@ -691,8 +708,9 @@ class SupplierController extends Controller
         } catch (\Exception $exception) {
             if (env('APP_DEBUG')) {
                 $res->fail($exception->getMessage());
+            } else {
+                $res->fail('erreur serveur 500');
             }
-            else {$res->fail('erreur serveur 500');}
         }
         return new JsonResponse($res, $res->code);
     }
@@ -731,8 +749,9 @@ class SupplierController extends Controller
         } catch (\Exception $exception) {
             if (env('APP_DEBUG')) {
                 $res->fail($exception->getMessage());
+            } else {
+                $res->fail('erreur serveur 500');
             }
-            else {$res->fail('erreur serveur 500');}
         }
         return new JsonResponse($res, $res->code);
     }
@@ -744,7 +763,7 @@ class SupplierController extends Controller
      * @param null $params
      * @return Supplier|mixed|void
      */
-     /**
+    /**
      * @OA\Post(
      *      path="/updateSupplier/{id}",
      *      operationId="updateSupplier",
@@ -974,13 +993,14 @@ class SupplierController extends Controller
         } catch (\Exception $exception) {
             if (env('APP_DEBUG')) {
                 $res->fail($exception->getMessage());
+            } else {
+                $res->fail('erreur serveur 500');
             }
-            else {$res->fail('erreur serveur 500');}
         }
         return new JsonResponse($res, $res->code);
     }
 
-       /**
+    /**
      * @OA\Post(
      *      path="/updatesupplierpassword/{id}",
      *      operationId="updatesupplierpassword",
@@ -1079,8 +1099,9 @@ class SupplierController extends Controller
         } catch (\Exception $exception) {
             if (env('APP_DEBUG')) {
                 $res->fail($exception->getMessage());
+            } else {
+                $res->fail('erreur serveur 500');
             }
-            else {$res->fail('erreur serveur 500');}
         }
         return new JsonResponse($res, $res->code);
     }
@@ -1112,8 +1133,9 @@ class SupplierController extends Controller
         } catch (\Exception $exception) {
             if (env('APP_DEBUG')) {
                 $res->fail($exception->getMessage());
+            } else {
+                $res->fail('erreur serveur 500');
             }
-            else {$res->fail('erreur serveur 500');}
         }
         return new JsonResponse($res, $res->code);
     }
@@ -1140,8 +1162,9 @@ class SupplierController extends Controller
         } catch (\Exception $exception) {
             if (env('APP_DEBUG')) {
                 $res->fail($exception->getMessage());
+            } else {
+                $res->fail('erreur serveur 500');
             }
-            else {$res->fail('erreur serveur 500');}
         }
         return new JsonResponse($res, $res->code);
     }
@@ -1196,8 +1219,9 @@ class SupplierController extends Controller
         } catch (\Exception $exception) {
             if (env('APP_DEBUG')) {
                 $res->fail($exception->getMessage());
+            } else {
+                $res->fail('erreur serveur 500');
             }
-            else {$res->fail('erreur serveur 500');}
         }
         return new JsonResponse($res, $res->code);
 
@@ -1280,13 +1304,14 @@ class SupplierController extends Controller
         } catch (\Exception $exception) {
             if (env('APP_DEBUG')) {
                 $res->fail($exception->getMessage());
+            } else {
+                $res->fail('erreur serveur 500');
             }
-            else {$res->fail('erreur serveur 500');}
         }
         return new JsonResponse($res, $res->code);
     }
 
-     /**
+    /**
      * @OA\Post(
      *      path="/supplieraccceptrefusecommand",
      *     tags={"Supplier"},
@@ -1359,8 +1384,8 @@ class SupplierController extends Controller
             }
             $command->update();
 
-           // $toUser->notify(new CommandClientNotification($command, $fromUser, $command->status));
-            JobsSendCommandClientNotification::dispatch($command,$fromUser,$toUser,$request->action);
+            // $toUser->notify(new CommandClientNotification($command, $fromUser, $command->status));
+            JobsSendCommandClientNotification::dispatch($command, $fromUser, $toUser, $request->action);
 
             // $toUser->notify(new CommandClientNotification($command, $fromUser, $command->status));
             JobsSendCommandClientNotification::dispatch($command, $fromUser, $toUser, $request->action);
@@ -1370,8 +1395,9 @@ class SupplierController extends Controller
         } catch (\Exception $exception) {
             if (env('APP_DEBUG')) {
                 $res->fail($exception->getMessage());
+            } else {
+                $res->fail('erreur serveur 500');
             }
-            else {$res->fail('erreur serveur 500');}
         }
         return new JsonResponse($res, $res->code);
     }
@@ -1379,7 +1405,7 @@ class SupplierController extends Controller
     /**
      * deleted supplier
      */
-     /**
+    /**
      * @OA\Delete(
      *      path="/deleteSupplier/{id}",
      *      operationId="deleteSupplier",
@@ -1442,8 +1468,9 @@ class SupplierController extends Controller
         } catch (\Exception $exception) {
             if (env('APP_DEBUG')) {
                 $res->fail($exception->getMessage());
+            } else {
+                $res->fail('erreur serveur 500');
             }
-            else {$res->fail('erreur serveur 500');}
         }
         return new JsonResponse($res, $res->code);
     }
