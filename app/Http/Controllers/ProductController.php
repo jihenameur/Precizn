@@ -25,6 +25,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+
 /**
  * @OA\Tag(
  *     name="Product",
@@ -39,7 +40,8 @@ class ProductController extends Controller
     public function __construct()
     {
     }
-/**
+
+    /**
      * @OA\Post(
      *      path="/createPublicProduct",
      *      operationId="createPublicProduct",
@@ -191,7 +193,6 @@ class ProductController extends Controller
                 }
                 $product = new Product();
                 $product->name = $request->name;
-
                 $product->description = $request->description;
                 $product->default_price = $request->default_price;
                 $product->private = 0;
@@ -234,11 +235,13 @@ class ProductController extends Controller
         } catch (\Exception $exception) {
             if (env('APP_DEBUG')) {
                 $res->fail($exception->getMessage());
+            } else {
+                $res->fail('erreur serveur 500');
             }
-            else {$res->fail('erreur serveur 500');}
         }
         return new JsonResponse($res, $res->code);
     }
+
     /**
      * @OA\Post(
      *      path="/createPrivateProduct",
@@ -340,7 +343,6 @@ class ProductController extends Controller
      *     description="typeproduct",
      *     @OA\Items(
      *              type="array",
-
      *          )),
      *  *  @OA\Parameter (
      *     in="query",
@@ -349,7 +351,6 @@ class ProductController extends Controller
      *     description="tag",
      *     @OA\Items(
      *              type="array",
-
      *          )),
      *   @OA\Parameter(
      *     in="query",
@@ -408,13 +409,13 @@ class ProductController extends Controller
                 $supplier = Supplier::find($request->supplier_id);
 
                 $product->suppliers()->attach($supplier, ['price' => $request->price]);
-                if(count(json_decode($request->option_id))) {
+                if (count(json_decode($request->option_id))) {
                     foreach (json_decode($request->option_id) as $key => $value) {
                         $option = Option::find($value);
                         $product->options()->attach($option, ['supplier_id' => $request->supplier_id]);
                     }
                 }
-                if(count(json_decode($request->menu_id))) {
+                if (count(json_decode($request->menu_id))) {
                     foreach (json_decode($request->menu_id) as $key => $value) {
                         $menu = Menu::find($value);
                         $product->menu()->attach($menu, ['supplier_id' => $request->supplier_id]);
@@ -455,7 +456,7 @@ class ProductController extends Controller
                 $supplier = Supplier::find($request->supplier_id);
 
                 $product->suppliers()->attach($supplier, ['price' => $request->price]);
-                if(count(json_decode($request->option_id))) {
+                if (count(json_decode($request->option_id))) {
                     foreach (json_decode($request->option_id) as $key => $value) {
                         $option = Option::find($value);
                         $product->options()->attach($option, ['supplier_id' => $request->supplier_id]);
@@ -469,7 +470,7 @@ class ProductController extends Controller
                     $tag = Tag::find($value);
                     $product->tag()->attach($tag);
                 }
-                if(count(json_decode($request->menu_id))) {
+                if (count(json_decode($request->menu_id))) {
                     foreach (json_decode($request->menu_id) as $key => $value) {
                         $menu = Menu::find($value);
                         $product->menu()->attach($menu, ['supplier_id' => $request->supplier_id]);
@@ -496,7 +497,7 @@ class ProductController extends Controller
         return new JsonResponse($res, $res->code);
     }
 
-     /**
+    /**
      * @OA\Post(
      *      path="/productToSupplier",
      *      operationId="productToSupplier",
@@ -583,8 +584,9 @@ class ProductController extends Controller
         } catch (\Exception $exception) {
             if (env('APP_DEBUG')) {
                 $res->fail($exception->getMessage());
+            } else {
+                $res->fail('erreur serveur 500');
             }
-            else {$res->fail('erreur serveur 500');}
         }
         return new JsonResponse($res, $res->code);
     }
@@ -595,7 +597,7 @@ class ProductController extends Controller
      * @return Collection|Model[]|mixed|void
      */
 
-      /**
+    /**
      * @OA\Get(
      *      path="/getAllProduct/{per_page}",
      *      operationId="getAllProduct",
@@ -680,13 +682,14 @@ class ProductController extends Controller
         } catch (\Exception $exception) {
             if (env('APP_DEBUG')) {
                 $res->fail($exception->getMessage());
+            } else {
+                $res->fail('erreur serveur 500');
             }
-            else {$res->fail('erreur serveur 500');}
         }
         return new JsonResponse($res, $res->code);
     }
 
-      /**
+    /**
      * @OA\Get(
      *      path="/getProduct/{id}",
      *     tags={"Product"},
@@ -743,14 +746,15 @@ class ProductController extends Controller
         } catch (\Exception $exception) {
             if (env('APP_DEBUG')) {
                 $res->fail($exception->getMessage());
+            } else {
+                $res->fail('erreur serveur 500');
             }
-            else {$res->fail('erreur serveur 500');}
         }
         return new JsonResponse($res, $res->code);
     }
 
 
-/**
+    /**
      * @OA\Get(
      *      path="/getAllPublicProduct/{per_page}",
      *      operationId="getAllPublicProduct",
@@ -789,8 +793,8 @@ class ProductController extends Controller
      *      description="erreur serveur 500"
      *   ),
      *  )
- */
-    public function getAllPublicProduct($per_page,Request $request)
+     */
+    public function getAllPublicProduct($per_page, Request $request)
     {
         if (!Auth::user()->isAuthorized(['admin', 'supplier'])) {
             return response()->json([
@@ -993,7 +997,8 @@ class ProductController extends Controller
         }
         return new JsonResponse($res, $res->code);
     }
- /**
+
+    /**
      * @OA\Get(
      *      path="/getdispoHourProductsSupplierByTag",
      *      operationId="getdispoHourProductsSupplierByTag",
@@ -1102,7 +1107,7 @@ class ProductController extends Controller
         return new JsonResponse($res, $res->code);
     }
 
-     /**
+    /**
      * @OA\Put(
      *      path="/ProductsSupplierNotAvailable/{id}",
      *      operationId="ProductsSupplierNotAvailable",
@@ -1314,8 +1319,8 @@ class ProductController extends Controller
             /** @var Product $product */
             $allRequestAttributes = $request->all();
             $product = Product::find($id);
-            if(!$product){
-                return  'product not found';
+            if (!$product) {
+                return 'product not found';
             }
             $validator = Validator::make($request->all(), [
                 'name' => 'required',
@@ -1349,19 +1354,31 @@ class ProductController extends Controller
             $product->unit_limit = $request->unit_limit;
             $product->weight = $request->weight;
             $product->dimension = $request->dimension;
-            $product->update();
+            $product->save();
+            $product->refresh();
             if ($request->start_hour != null && $request->end_hour != null) {
-                $product_hours = Product_hours::where('product_id', $product->id);
-                $product_hours->product_id = $product->id;
-                $product_hours->start_hour = $request->start_hour;
-                $product_hours->end_hour = $request->end_hour;
-                $product_hours->update();
+                $product_hours = Product_hours::where('product_id', $product->id)->first();
+                if ($product_hours) {
+                    $product_hours->product_id = $id;
+                    $product_hours->start_hour = $request->start_hour;
+                    $product_hours->end_hour = $request->end_hour;
+                    $product_hours->save();
+                    $product_hours->refresh();
+                } else {
+                    $product_hours = new Product_hours();
+                    $product_hours->product_id = $id;
+                    $product_hours->start_hour = $request->start_hour;
+                    $product_hours->end_hour = $request->end_hour;
+                    $product_hours->save();
+                    $product_hours->refresh();
+
+                }
             }
             if ($request->supplier_id) {
                 $product->suppliers()->detach();
-                    $supplier = Supplier::find($request->supplier_id);
-                    $product->suppliers()->attach($supplier ,['price' => $request->price]);
-                if(count(json_decode($request->menu_id))) {
+                $supplier = Supplier::find($request->supplier_id);
+                $product->suppliers()->attach($supplier, ['price' => $request->price]);
+                if (count(json_decode($request->menu_id))) {
                     $product->menu()->detach();
                     foreach (json_decode($request->menu_id) as $key => $value) {
                         $menu = Menu::find($value);
@@ -1369,10 +1386,9 @@ class ProductController extends Controller
                     }
                 }
             }
+            if ($request->has("typeProduct")) {
 
-            if($request->has("typeProduct")){
-
-                if(gettype(json_decode($request->typeProduct)) == "array"){
+                if (gettype(json_decode($request->typeProduct)) == "array") {
                     if (count(json_decode($request->typeProduct))) {
                         $product->typeproduct()->detach();
                         foreach (json_decode($request->typeProduct) as $key => $value) {
@@ -1383,9 +1399,9 @@ class ProductController extends Controller
                 }
             }
 
-            if($request->has("tags")){
+            if ($request->has("tags")) {
 
-                if(gettype(json_decode($request->tags)) == "array"){
+                if (gettype(json_decode($request->tags)) == "array") {
                     if (count(json_decode($request->tags))) {
                         $product->tag()->detach();
                         foreach (json_decode($request->tags) as $key => $value) {
@@ -1396,10 +1412,10 @@ class ProductController extends Controller
                 }
             }
 
-            if($request->has("option_id")) {
+            if ($request->has("option_id")) {
 
                 if (gettype(json_decode($request->option_id)) == "array") {
-                    if(count(json_decode($request->option_id))) {
+                    if (count(json_decode($request->option_id))) {
                         $product->options()->detach();
                         foreach (json_decode($request->option_id) as $key => $value) {
                             $option = Option::find($value);
@@ -1408,10 +1424,6 @@ class ProductController extends Controller
                     }
                 }
             }
-
-
-
-
             if ($images) {
                 foreach ($images as $image) {
                     $name = Str::uuid()->toString() . '.' . $image->getClientOriginalExtension();
@@ -1428,23 +1440,230 @@ class ProductController extends Controller
                         }
                         $product->files()->detach();
                     }
-                        $file->products()->attach($product);
+                    $file->products()->attach($product);
                     $file->save();
                     $product->refresh();
-                    }
                 }
-                $res->success(new ProductResource($product));
             }
-        catch
-            (\Exception $exception) {
-                if (env('APP_DEBUG')) {
-                    $res->fail($exception->getMessage());
-                }
+            $res->success(new ProductResource($product));
+        } catch
+        (\Exception $exception) {
+            if (env('APP_DEBUG')) {
                 $res->fail($exception->getMessage());
             }
+            $res->fail($exception->getMessage());
+        }
         return new JsonResponse($res, $res->code);
     }
+    /**
+     * @inheritDoc
+     *
+     * @param null $id
+     * @param null $params
+     * @return Product|mixed|void
+     */
+    /**
+     * @OA\Post(
+     *      path="/updateProductPublic/{id}",
+     *      operationId="updateProductPublic",
+     *      tags={"Product"},
+     *     security={{"Authorization":{}}},
+     *      summary="update a public product " ,
+     *      description="update a public product .",
+     *    @OA\Parameter(
+     *          name="id",
+     *          in="path",
+     *          required=true,
+     *      ),
+     *     @OA\Parameter (
+     *     in="query",
+     *     name="name",
+     *     required=true,
+     *     description="the product name.",
+     *     @OA\Schema (type="string")
+     *      ),
+     *    @OA\Parameter (
+     *     in="query",
+     *     name="description",
+     *     required=true,
+     *     description="description",
+     *     @OA\Schema (type="string")
+     *      ),
+     *     @OA\Parameter (
+     *     in="query",
+     *     name="default_price",
+     *     required=false,
+     *     description="default_price",
+     *     @OA\Schema (type="decimal(8,2)")
+     *      ),
+     *     @OA\Parameter(
+     *     in="query",
+     *     name="unit_type",
+     *     required=false,
+     *     description="unit_type",
+     *     @OA\Schema(type="string",enum={"Piece", "Kg", "L","M"})
+     *
+     *      ),
+     *     @OA\Parameter (
+     *     in="query",
+     *     name="unit_limit",
+     *     required=false,
+     *     description="unit_limit",
+     *     @OA\Schema (type="double(8,2)")
+     *      ),
+     *   @OA\Parameter (
+     *     in="query",
+     *     name="weight",
+     *     required=false,
+     *     description="weight",
+     *     @OA\Schema (type="double(8,2)")
+     *      ),
+     *   @OA\Parameter (
+     *     in="query",
+     *     name="dimension",
+     *     required=false,
+     *     description="dimension",
+     *     @OA\Schema (type="string") ),
+     *  @OA\Parameter (
+     *     in="query",
+     *     name="typeproduct",
+     *     required=false,
+     *     description="typeproduct",
+     *     @OA\Items(
+     *              type="array",
+     *          )),
+     *   @OA\Parameter (
+     *     in="query",
+     *     name="tag",
+     *     required=false,
+     *     description="tag",
+     *     @OA\Items(
+     *              type="array",
+     *          )),
+     *    @OA\Parameter(
+     *     in="query",
+     *     name="image[]",
+     *     required=false,
+     *     description="image[]",
+     *     @OA\Schema (type="file")
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *       ),
+     *     @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     *    @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     *  )
+     */
+    public function updatePublic($id, Request $request)
+    {
+        if (!Auth::user()->isAuthorized(['admin'])) {
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ], 403);
+        }
+        $res = new Result();
+        try {
+            /** @var Product $product */
+            $allRequestAttributes = $request->all();
+            $product = Product::find($id);
+            if (!$product) {
+                return 'product not found';
+            }
+            $validator = Validator::make($request->all(), [
+                'name' => 'required',
+                'default_price' => 'required|numeric',
+                'unit_type' => 'required|in:Piece,Kg,L,M'
 
+            ]); // create the validations
+
+            if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
+            {
+                return ($validator->errors());
+            }
+            $images = [];
+            if ($request->file('image')) {
+
+                if (!is_array($request->file('image'))) {
+                    //dd('test');
+                    array_push($images, $request->file('image'));
+                } else {
+                    $images = $request->file('image');
+                }
+            }
+            $product->name = $request->name;
+            $product->description = $request->description;
+            $product->default_price = $request->default_price;
+            $product->unit_type = $request->unit_type;
+            $product->unit_limit = $request->unit_limit;
+            $product->weight = $request->weight;
+            $product->dimension = $request->dimension;
+            $product->save();
+            $product->refresh();
+            if ($request->has("typeProduct")) {
+                if (gettype(json_decode($request->typeProduct)) == "array") {
+                    if (count(json_decode($request->typeProduct))) {
+                        $product->typeproduct()->detach();
+                        foreach (json_decode($request->typeProduct) as $key => $value) {
+                            $typeProduct = TypeProduct::find($value);
+                            $product->typeproduct()->attach($typeProduct);
+                        }
+                    }
+                }
+            }
+            if ($request->has("tags")) {
+                if (gettype(json_decode($request->tags)) == "array") {
+                    if (count(json_decode($request->tags))) {
+                        $product->tag()->detach();
+                        foreach (json_decode($request->tags) as $key => $value) {
+                            $tag = TypeProduct::find($value);
+                            $product->tag()->attach($tag);
+                        }
+                    }
+                }
+            }
+            if ($images) {
+                foreach ($images as $image) {
+                    $name = Str::uuid()->toString() . '.' . $image->getClientOriginalExtension();
+                    $image->move(public_path('public/Products'), $name); // your folder path
+                    $file = new File();
+                    $file->name = $name;
+                    $file->path = asset('public/Products/' . $name);
+                    $file->user_id = Auth::user()->id;
+                    $file->save();
+                    $oldImagepath = $product->files;
+                    if ($oldImagepath) {
+                        foreach ($oldImagepath as $key => $value) {
+                            unlink('public/Products/' . $value->name);
+                        }
+                        $product->files()->detach();
+                    }
+                    $file->products()->attach($product);
+                    $file->save();
+                    $product->refresh();
+                }
+            }
+            $res->success(new ProductResource($product));
+        } catch
+        (\Exception $exception) {
+            if (env('APP_DEBUG')) {
+                $res->fail($exception->getMessage());
+            }
+            $res->fail($exception->getMessage());
+        }
+        return new JsonResponse($res, $res->code);
+    }
     /**
      * @inheritDoc
      *
@@ -1551,14 +1770,14 @@ class ProductController extends Controller
     public function getSuppliersProductClean(Request $request)
     {
 
-        if (!Auth::user()->isAuthorized(['supplier','admin'])) {
+        if (!Auth::user()->isAuthorized(['supplier', 'admin'])) {
             return response()->json([
                 'success' => false,
                 'massage' => 'unauthorized'
             ], 403);
         }
-        $this->validate($request,[
-           'supplier_id' => 'required|exists:suppliers,id'
+        $this->validate($request, [
+            'supplier_id' => 'required|exists:suppliers,id'
         ]);
         $res = new Result();
         try {
@@ -1569,7 +1788,7 @@ class ProductController extends Controller
         } catch (\Exception $exception) {
             if (env('APP_DEBUG')) {
                 $res->fail($exception->getMessage());
-            }else{
+            } else {
                 $res->fail('erreur serveur 500');
             }
 

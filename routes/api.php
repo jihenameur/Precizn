@@ -92,6 +92,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
     Route::get('getAllProduct/{per_page}', [ProductController::class, 'all']);
     Route::get('getProduct/{id}', [ProductController::class, 'getProduct']);
     Route::post('updateProduct/{id}', [ProductController::class, 'update']);
+    Route::post('updateProductPublic/{id}', [ProductController::class, 'updatePublic']);
     Route::get('getdispoHourProductsSupplier/{id}', [ProductController::class, 'getdispoHourProductsSupplier']);
     Route::post('getdispoHourProductsSupplierByTag/{id}', [ProductController::class, 'getdispoHourProductsSupplierByTag']);
 
