@@ -6908,9 +6908,9 @@
                         }
                     },
                     {
-                        "name": "default_price",
+                        "name": "price",
                         "in": "query",
-                        "description": "default_price",
+                        "description": "price",
                         "required": false,
                         "schema": {
                             "type": "decimal(8,2)"
@@ -7509,7 +7509,20 @@
                         "description": "type",
                         "required": false,
                         "schema": {
-                            "type": "string"
+                            "type": "string",
+                            "enum": [
+                                "principal",
+                                "couverture"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "supplier_id",
+                        "in": "query",
+                        "description": "supplier_id",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
                         }
                     }
                 ],

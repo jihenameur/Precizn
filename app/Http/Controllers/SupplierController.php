@@ -6,6 +6,7 @@ use App\BaseModel\Result;
 use App\Helpers\ReqHelper;
 use App\Jobs\Admin\SendNewSuuplierNotification;
 use App\Models\Category;
+use App\Models\Menu;
 use App\Models\Product;
 use App\Models\Role;
 use App\Models\Supplier;
@@ -311,7 +312,12 @@ class SupplierController extends Controller
             //$cat = Category::all()->first();
             //$supplier->categorys()->attach($cat);
             $supplier->save();
-
+            $sub_menu = new Menu();
+            $sub_menu->supplier_id = $supplier->id;
+            $sub_menu->name = "menu par défaut";
+            $sub_menu->description = "menu par défaut";
+            $sub_menu->position = 1;
+            $sub_menu->save();
 
             //     return $supplier;
             // }
