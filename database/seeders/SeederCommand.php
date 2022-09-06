@@ -48,8 +48,8 @@ class SeederCommand extends Seeder
             })->get();
             $prod = $prods[rand(0, $prods->count() - 1)];
             $command->products()->attach($prod, [
-                'quantity' => rand(1, 5)
-
+                'quantity' => rand(1, 5),
+                "options"=>"[]"
             ]);
         }
 
