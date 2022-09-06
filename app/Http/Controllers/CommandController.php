@@ -1057,8 +1057,6 @@ class CommandController extends Controller
             $res->fail("addresse_id ou long and lat are mandatory");
             return new JsonResponse($res, $res->code);
         }
-
-
         try {
             $command = new Command();
             $command->date = now();
@@ -1081,9 +1079,10 @@ class CommandController extends Controller
             }
             $command->save();
             $total = 0;
+
             foreach ($request->products as $item){
                 $product = Product::find($item["product_id"]);
-                $command->products()->attach($product,["quantity" => $item["quantity"]]);
+                $command->products()->attach($product,["quantity" => $item["quantity"],"options" => json_encode($item['options'] ?? [])]);
                 $total += $product->default_price * ($product->unit_limit * $item["quantity"] );
             }
             $command->total_price = $total;
