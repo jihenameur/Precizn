@@ -951,7 +951,74 @@ class ProductController extends Controller
         }
         return new JsonResponse($res, $res->code);
     }
-
+    /**
+     * @OA\Post(
+     *      path="/getProductByTagType",
+     *      operationId="getProductByTagType",
+     *      tags={"Product"},
+     *     security={{"Authorization":{}}},
+     *      summary="get product ByTag or Type." ,
+     *      description="get product ByTag or Type.",
+     *  @OA\Parameter (
+     *     in="query",
+     *     name="type_product_id",
+     *     required=false,
+     *     description="type_product_id",
+     *     @OA\Items(
+     *              type="array",
+     *          )),
+     *  *  @OA\Parameter (
+     *     in="query",
+     *     name="tag_id",
+     *     required=false,
+     *     description="tag_id",
+     *     @OA\Items(
+     *              type="array",
+     *          )),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *       ),
+     *     @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     *    @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     *  )
+     */
+    public function getProductByTagType(Request $request)
+    {
+        if (!Auth::user()->isAuthorized(['admin','supplier', 'client'])) {
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ], 403);
+        }
+        $res = new Result();
+        try {
+            $product = Product::orWhereHas('typeproduct', function ($q) use ($request) {
+                $q->whereIn('type_product_id', $request->type_product_id);
+            })
+                ->orWhereHas('tag', function ($q) use ($request) {
+                    $q->whereIn('tag_id', $request->tag_id);
+                })
+                ->get();
+            $res->success($product);
+        } catch (\Exception $exception) {
+            if (env('APP_DEBUG')) {
+                $res->fail($exception->getMessage());
+            }
+            $res->fail('erreur serveur 500');
+        }
+        return new JsonResponse($res, $res->code);
+    }
     public function getdispoHourProductsSupplier($id)
     {
         if (!Auth::user()->isAuthorized(['admin', 'supplier', 'client'])) {
