@@ -6792,6 +6792,49 @@
                 ]
             }
         },
+        "/getProductByTagType": {
+            "post": {
+                "tags": [
+                    "Product"
+                ],
+                "summary": "get product ByTag or Type.",
+                "description": "get product ByTag or Type.",
+                "operationId": "getProductByTagType",
+                "parameters": [
+                    {
+                        "name": "type_product_id",
+                        "in": "query",
+                        "description": "type_product_id",
+                        "required": false
+                    },
+                    {
+                        "name": "tag_id",
+                        "in": "query",
+                        "description": "tag_id",
+                        "required": false
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "404": {
+                        "description": "not found"
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
+            }
+        },
         "/getdispoHourProductsSupplierByTag": {
             "get": {
                 "tags": [
