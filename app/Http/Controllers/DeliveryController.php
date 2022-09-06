@@ -1822,7 +1822,7 @@ class DeliveryController extends Controller
         ]);
 
         $res = new Result();
-        try {
+    //    try {
             $redis_helper = new RedisHelper();
             $supplier = Supplier::find($request->supplier_id);
             $deliveries = Delivery::where('available',1)->get();
@@ -1843,14 +1843,14 @@ class DeliveryController extends Controller
 
 
             $res->success(CommandDeliveryResource::collection($pre_assinged_delivery));
-        } catch (\Exception $exception) {
+    /*    } catch (\Exception $exception) {
             if(env('APP_DEBUG')){
                 $res->fail($exception->getMessage());
             } else {
                 $res->fail('erreur serveur 500');
             }
 
-        }
+        } */
         return new JsonResponse($res, $res->code);
     }
 
@@ -1869,10 +1869,14 @@ class DeliveryController extends Controller
         $distance_arr = json_decode($distance_data);
         $distances = array();
         foreach ($distance_arr->rows as $key => $element) {
-            $distance = $element->elements[0]->distance->text;
-            $distance = preg_replace("/[^0-9.]/", "",  $distance);
-            $distance *= 1.609344;
-            $distance = number_format($distance, 1, '.', '');
+            $distance = 0;
+            if($element->elements[0]->status == 'OK'){
+                $distance = $element->elements[0]->distance->text;
+                $distance = preg_replace("/[^0-9.]/", "",  $distance);
+                $distance *= 1.609344;
+                $distance = number_format($distance, 1, '.', '');
+            }
+
             array_push($distances, $distance);
 
         }
