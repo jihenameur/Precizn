@@ -22,7 +22,8 @@ class CommandDeliveryResource extends JsonResource
             'name' => $this->firstName . ' ' . $this->lastName,
             'phone' => User::where('userable_id', $this->id)->where('userable_type', 'App\Models\Client')->first()->tel ?? '#',
             'stack' => $redis_helper->getDeliveryStack($this->id),
-            'distance' => $this->distance
+            'distance' => $this->distance,
+            'localisation' => ["lat" => $this->lat, "long" => $this->long]
         ];
     }
 }
