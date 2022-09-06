@@ -19,7 +19,7 @@ class MenuResource extends JsonResource
             "name" => $this->name,
             "description" => $this->description,
             "position" => $this->position,
-            "image" => $this->image->path,
+            "image" => $this->image->path ?? null,
             'supplier_id' => $this->supplier_id,
             'products' => MenuProductResource::collection($this->products)
             ];

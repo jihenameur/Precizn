@@ -1355,6 +1355,13 @@ class ProductController extends Controller
      *     @OA\Items(
      *              type="array",
      *          )),
+     *     @OA\Parameter(
+     *     in="query",
+     *     name="image[]",
+     *     required=false,
+     *     description="image[]",
+     *     @OA\Schema (type="file")
+     *      ),
      *      @OA\Response(
      *          response=200,
      *          description="Successful operation",
