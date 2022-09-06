@@ -55,8 +55,8 @@ class DeliveryPositionChangedEvent implements ShouldBroadcast
     public function broadcastWith()
     {
         return [
-            'type_event' => "delivery_position_changed",
-            "delivery" => $this->delivery,
+            'type_event' => "DELIVERY_POSITION_CHANGED",
+            "delivery" => $this->delivery->id,
             "position" => $this->position
         ];
     }

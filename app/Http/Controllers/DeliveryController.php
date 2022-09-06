@@ -1676,6 +1676,9 @@ class DeliveryController extends Controller
             return $validator->errors();
         }
         $delivery =  Auth::user()->userable;
+        $delivery->lat = $request->lat;
+        $delivery->long = $request->long;
+        $delivery->save();
         $value = Redis::set('deliveryPostion' . $delivery->id, json_encode([
             'id' => $delivery->id,
             'lng' => $request->long,
@@ -1684,7 +1687,7 @@ class DeliveryController extends Controller
         ]));
 
         // brodcast to admins
-        event(new \App\Events\Admin\DeliveryPosition(json_decode(Redis::get('deliveryPostion' . $delivery->id))));
+      //  event(new \App\Events\Admin\DeliveryPosition(json_decode(Redis::get('deliveryPostion' . $delivery->id))));
         dispatch(new ChangeDeliveryPositionJob($delivery,json_decode(Redis::get('deliveryPostion' . $delivery->id))));
 
         return response()->json(json_decode(Redis::get('deliveryPostion' . $delivery->id)));
