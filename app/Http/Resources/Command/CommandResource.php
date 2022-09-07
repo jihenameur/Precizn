@@ -20,6 +20,7 @@ class CommandResource extends JsonResource
         return [
             'id' => $this->id,
             'cycle' => $this->cycle,
+            'cycle_at' => $this->cycle_at,
             'made_at' => $this->created_at,
             'supplier' => new CommandSupplierResource($this->supplier),
             'delivery' => new CommandDeliveryResource($this->delivery) ?? false,
