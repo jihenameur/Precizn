@@ -878,6 +878,7 @@ class CommandController extends Controller
 
             $command = Command::find($request->command_id);
             $command->cycle = 'VERIFY';
+            $command->cycle_at = now();
             $command->save();
             $res->success($command);
         } catch (\Exception $exception) {
