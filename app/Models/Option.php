@@ -12,8 +12,7 @@ class Option extends Model
     protected $fillable = [
         'name',
         'description',
-        "price",
-        "default"
+        "price"
     ];
     protected $with = [
         //'products'
@@ -26,8 +25,8 @@ class Option extends Model
                                   'product_id'
                                   );
    }
-   public function panierproducts()
+   public function supplier()
    {
-       return $this->belongsToMany(Panier_Product::class);
+       return $this->belongsTo(Supplier::class);
    }
 }

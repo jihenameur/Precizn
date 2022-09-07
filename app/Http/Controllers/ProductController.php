@@ -409,10 +409,17 @@ class ProductController extends Controller
                 $supplier = Supplier::find($request->supplier_id);
 
                 $product->suppliers()->attach($supplier, ['price' => $request->price]);
-                if (count(json_decode($request->option_id))) {
+
+                /*if (count(json_decode($request->option_id))) {
                     foreach (json_decode($request->option_id) as $key => $value) {
                         $option = Option::find($value);
-                        $product->options()->attach($option, ['supplier_id' => $request->supplier_id]);
+                        $product->options()->attach($option, ['supplier_id' => $request->supplier_id,'price' => $request->price_option,'type' => $request->type_option]);
+                    }
+                }*/
+                if($request->option_id) {
+                    foreach ($request->option_id as $item) {
+                        $option = Option::find($item["option_id"]);
+                        $product->options()->attach($option, ['supplier_id' => $request->supplier_id, 'price' => $item['price'], 'type' => $item['type_option']]);
                     }
                 }
                 if (count(json_decode($request->menu_id))) {
@@ -456,12 +463,20 @@ class ProductController extends Controller
                 $supplier = Supplier::find($request->supplier_id);
 
                 $product->suppliers()->attach($supplier, ['price' => $request->price]);
-                if (count(json_decode($request->option_id))) {
+
+               /* if (count(json_decode($request->option_id))) {
                     foreach (json_decode($request->option_id) as $key => $value) {
                         $option = Option::find($value);
                         $product->options()->attach($option, ['supplier_id' => $request->supplier_id]);
                     }
+                }*/
+
+            if($request->option_id) {
+                foreach ($request->option_id as $item) {
+                    $option = Option::find($item["option_id"]);
+                    $product->options()->attach($option, ['supplier_id' => $request->supplier_id, 'price' => $item['price'], 'type' => $item['type_option']]);
                 }
+            }
                 foreach (json_decode($request->typeProduct) as $key => $value) {
                     $typeProduct = TypeProduct::find($value);
                     $product->typeproduct()->attach($typeProduct);
