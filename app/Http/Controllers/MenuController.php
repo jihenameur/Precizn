@@ -87,7 +87,63 @@ class MenuController extends Controller
 
 
     }
-
+    /**
+     * @OA\Post(
+     *      path="/getsubmenu",
+     *      operationId="getSubMenu",
+     *      tags={"Menu"},
+     *     security={{"Authorization":{}}},
+     *      summary="Get sub Menu",
+     *      description="Returns the submenu .",
+     *     @OA\Parameter(
+     *          name="id",
+     *          in="path",
+     *          required=true,
+     *
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *      ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     * @OA\Response(
+     *      response=400,
+     *      description="Bad Request"
+     *   ),
+     * @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     * @OA\Response(
+     *      response=500,
+     *      description="erreur serveur 500"
+     *   ),
+     *  )
+     */
+    public function getSubMenu($id)
+    {
+        if (!Auth::user()->isAuthorized(['admin', 'supplier', 'client'])) {
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ], 403);
+        }
+        $res = new Result();
+        try {
+            $menu = Menu::find($id);
+            $res->success( new MenuResource($menu));
+        } catch (\Exception $exception) {
+            $res->fail($exception->getMessage());
+        }
+        return new JsonResponse($res, $res->code);
+    }
     /**
      * @OA\Post(
      *      path="/add_product_to_submenu",

@@ -33,32 +33,27 @@ class SeederOption extends Seeder
             [
                 'name' => 'Hrissa',
                 'description' => 'hrissa',
-                'price' => 0,
-                'default' => 0
+                'price' => 0
             ],
             [
                 'name' => 'Mayonnaise',
                 'description' => 'Mayonnaise',
-                'price' => 0,
-                'default' => 0
+                'price' => 0
             ],
             [
                 'name' => 'Oignons',
                 'description' => 'Oignons',
-                'price' => 0,
-                'default' => 0
+                'price' => 0
             ],
             [
                 'name' => 'Fromage',
                 'description' => 'fromage.',
-                'price' => 1,
-                'default' => 1
+                'price' => 1
             ],
             [
                 'name' => 'Jambon',
                 'description' => 'Jambon.',
-                'price' => 1,
-                'default' => 1
+                'price' => 1
             ]
         ];
         return $options;
