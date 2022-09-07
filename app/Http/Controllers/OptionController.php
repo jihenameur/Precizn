@@ -11,6 +11,8 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use phpDocumentor\Reflection\Types\Null_;
+
 /**
  * @OA\Tag(
  *     name="Option",
@@ -55,14 +57,6 @@ class OptionController extends Controller
      *    @OA\Schema(type="integer",
      *       format="bigint(20)"),
      *      ),
-     *   @OA\Parameter (
-     *     in="query",
-     *     name="default",
-     *     required=true,
-     *     description="default",
-     *    @OA\Schema(type="integer",
-     *           format="tinyint(1)"),
-     *      ),
      *      @OA\Response(
      *          response=200,
      *          description="Successful operation",
@@ -96,9 +90,7 @@ class OptionController extends Controller
         $res = new Result();
         try {
             $validator = Validator::make($request->all(), [
-                'name' => 'required',
-                'price' => 'required',
-                'default' => 'required',
+                'name' => 'required'
 
             ]); // create the validations
             if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
@@ -106,13 +98,11 @@ class OptionController extends Controller
                 return ($validator->errors());
 
             }
-
             $option = new Option();
             $option->name = $request->name;
             $option->description = $request->description;
             $option->price = $request->price;
-            $option->default = $request->default;
-
+            $option->supplier_id  = $request->supplier_id ;
             $option->save();
 
             $res->success($option);
@@ -251,9 +241,9 @@ class OptionController extends Controller
         }
         $res = new Result();
         try {
-            $option = Option::whereHas('products', function ($q) use ($request) {
-                $q->where('supplier_id', $request->supplier_id);
-            })->get();
+            $option = Option::where('supplier_id',$request->supplier_id)
+            ->orwhere('supplier_id',null)
+            ->get();
             $res->success($option);
         } catch (\Exception $exception) {
             if(env('APP_DEBUG')){
@@ -361,14 +351,6 @@ class OptionController extends Controller
      *    @OA\Schema(type="integer",
      *       format="bigint(20)"),
      *      ),
-     *   @OA\Parameter (
-     *     in="query",
-     *     name="default",
-     *     required=true,
-     *     description="default",
-     *    @OA\Schema(type="integer",
-     *           format="tinyint(1)"),
-     *      ),
      *      @OA\Response(
      *          response=200,
      *          description="Successful operation",
@@ -400,9 +382,7 @@ class OptionController extends Controller
             ],403);
         }
         $validator = Validator::make($request->all(), [
-            'name' => 'required',
-            'price' => 'required',
-            'default' => 'required',
+            'name' => 'required'
 
         ]); // create the validations
         if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
