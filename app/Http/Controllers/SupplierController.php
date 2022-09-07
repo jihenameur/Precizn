@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\BaseModel\Result;
 use App\Helpers\ReqHelper;
+use App\Http\Resources\Command\CommandResource;
 use App\Jobs\Admin\SendNewSuuplierNotification;
 use App\Models\Category;
 use App\Models\Menu;
@@ -14,6 +15,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -29,6 +31,7 @@ use App\Models\File;
 use App\Notifications\CommandClientNotification;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use DateTime;
 
 /**
  * @OA\Tag(
@@ -1407,7 +1410,113 @@ class SupplierController extends Controller
         }
         return new JsonResponse($res, $res->code);
     }
-
+    /**
+     * @OA\Get(
+     *      path="/supplier_commands/{per_page}",
+     *      operationId="supplierCommands",
+     *      tags={"Supplier"},
+     *     security={{"Authorization":{}}},
+     *      summary="supplierCommands",
+     * @OA\Parameter(
+     *          name="per_page",
+     *          in="path",
+     *          required=true,
+     *
+     *      ),
+     *     @OA\Parameter (
+     *     in="query",
+     *     name="from",
+     *     required=true,
+     *     description="from",
+     *    @OA\Schema(
+     *           type="string",
+     *           format="date-time"
+     *        ),
+     *      ),
+     *     @OA\Parameter (
+     *     in="query",
+     *     name="to",
+     *     required=true,
+     *     description="to",
+     *     @OA\Schema(
+     *           type="string",
+     *           format="date-time"
+     *        ),
+     *      ),
+     *  @OA\Parameter (
+     *     in="query",
+     *     name="supplier_id",
+     *     required=true,
+     *     description="supplier_id",
+     *     @OA\Schema (type="integer")
+     *      ),
+     * *     @OA\Parameter (
+     *     in="query",
+     *     name="action",
+     *     required=true,
+     *     description="action",
+     *     @OA\Schema (type="string")
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *       ),
+     *     @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=400,
+     *          description="bad request",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     *    @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     *     )
+     */
+    public function supplierCommands($per_page,Request $request)
+    {
+        if (!Auth::user()->isAuthorized(['admin', 'supplier'])) {
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ], 403);
+        }
+        $validator = Validator::make($request->all(), [
+            'supplier_id' => 'required',
+        ]); // create the validations
+        if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
+        {
+            return $validator->errors();
+        }
+        $res = new Result();
+        try {
+            $datefrom = $request->from ?? 'null';
+            $dateto = $request->to ?? 'null';
+            $from = new DateTime($datefrom == 'null' ? '2000-01-01' : $datefrom);
+            $to = new DateTime($dateto == 'null' ? Date::now() : $dateto);
+            $orderBy = 'created_at';
+            $orderByType = "DESC";
+            $commands = Command::where('supplier_id', $request['supplier_id'])
+                ->whereBetween('date', [$from->format('Y-m-d'), $to->format('Y-m-d')])
+                ->orderBy($orderBy, $orderByType)
+                ->paginate($per_page);
+            $res->success(CommandResource::collection($commands));
+        } catch (\Exception $exception) {
+            if(env('APP_DEBUG')){
+                $res->fail($exception->getMessage());
+            }
+            else {
+                $res->fail('erreur serveur 500');
+            }
+        }
+        return new JsonResponse($res, $res->code);
+    }
     /**
      * deleted supplier
      */

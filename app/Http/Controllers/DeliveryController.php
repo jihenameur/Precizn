@@ -560,7 +560,7 @@ class DeliveryController extends Controller
                 ->orWhere('lastName', 'like', "%$keyword%")
                 ->orderBy($orderBy, $orderByType)
                 ->get();
-            $res->success($delivery);
+            $res->success(["data"=>$delivery]);
         } catch (\Exception $exception) {
              if(env('APP_DEBUG')){
                 $res->fail($exception->getMessage());

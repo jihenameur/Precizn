@@ -81,6 +81,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
 
     Route::post('updatesupplierpassword/{id}', [SupplierController::class, 'updateSupplierPW']);
     Route::post('supplieraccceptrefusecommand', [SupplierController::class, 'supplierAccceptRefuseCommand']);
+    Route::post('supplier_commands/{per_page}', [SupplierController::class, 'supplierCommands']);
 
     /**
      * public Product
