@@ -26,6 +26,7 @@ class CommandResource extends JsonResource
             'products' => CommandProductResource::collection($this->products),
             'client' => new CommandClientResource($this->client),
             'localisation' => ["lat" => $this->lat, "long" => $this->long],
+            'total_price' =>$this->total_price,
             'pre_assinged_delivery' => $redis_hepler->getPreAssignedDeliveryToCommand($this->id) ? new CommandDeliveryResource(Delivery::find($redis_hepler->getPreAssignedDeliveryToCommand($this->id))) : false
         ];
     }
