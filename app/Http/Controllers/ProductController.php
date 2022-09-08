@@ -392,7 +392,7 @@ class ProductController extends Controller
             ], 403);
         }
         $res = new Result();
-        try {
+     //   try {
             $validator = Validator::make($request->all(), [
                 'name' => 'required',
                 'price' => 'required',
@@ -472,9 +472,9 @@ class ProductController extends Controller
                 }*/
 
             if($request->option_id) {
-                foreach ($request->option_id as $item) {
-                    $option = Option::find($item["option_id"]);
-                    $product->options()->attach($option, ['supplier_id' => $request->supplier_id, 'price' => $item['price'], 'type' => $item['type_option']]);
+                foreach (json_decode($request->option_id) as $item) {
+                    $option = Option::find($item->option_id);
+                    $product->options()->attach($option, ['supplier_id' => $request->supplier_id, 'price' => $item->price, 'type' => $item->option_type]);
                 }
             }
                 foreach (json_decode($request->typeProduct) as $key => $value) {
@@ -503,12 +503,12 @@ class ProductController extends Controller
                 }
                 $res->success($product);
             }
-        } catch (\Exception $exception) {
+     /*   } catch (\Exception $exception) {
             if (env('APP_DEBUG')) {
                 $res->fail($exception->getMessage());
             }
             $res->fail($exception->getMessage());
-        }
+        } */
         return new JsonResponse($res, $res->code);
     }
 
