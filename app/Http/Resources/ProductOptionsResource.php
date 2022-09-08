@@ -17,7 +17,8 @@ class ProductOptionsResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'price' => $this->price,
+            'price' => $this->pivot->price,
+            'type' => $this->pivot->type,
             'default'=>$this->default
         ];
     }

@@ -48,7 +48,7 @@ class Product extends Model
             'supplier_product_option',
             'product_id',
             'option_id'
-        );
+        )->withPivot('price','type');
     }
 
     public function menu()
