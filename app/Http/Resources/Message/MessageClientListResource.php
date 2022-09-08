@@ -3,6 +3,7 @@
 namespace App\Http\Resources\Message;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Str;
 
 class MessageClientListResource extends JsonResource
 {
@@ -14,6 +15,10 @@ class MessageClientListResource extends JsonResource
      */
     public function toArray($request)
     {
-        return parent::toArray($request);
+        return [
+            'id' => $this->id,
+            'name' => $this->firstname.' '.$this->lastname,
+            'expert' => Str::limit($this->messages()->get()->last()->message,20)
+        ];
     }
 }
