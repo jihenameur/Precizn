@@ -943,6 +943,21 @@ class SupplierController extends Controller
                 'massage' => 'unauthorized'
             ], 403);
         }
+        $validator = Validator::make($request->all(), [
+            'name' => 'required',
+            'firstName' => 'required',
+            'lastName' => 'required',
+            'region' => 'required',
+            'city' => 'required',
+            'postcode' => 'required'
+        ]); // create the validations
+
+
+        if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
+        {
+            // return $validator->errors();
+            return ($validator->errors());
+        }
         $res = new Result();
         try {
             $user = User::where('userable_id', $id)
@@ -957,7 +972,6 @@ class SupplierController extends Controller
                     throw new Exception("Err: address not found");
                 }
             }
-            //$user->password = bcrypt($request->password);
             $supplier->name = $request->name;
             $supplier->firstName = $request->firstName;
             $supplier->lastName = $request->lastName;
