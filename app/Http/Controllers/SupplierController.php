@@ -529,7 +529,6 @@ class SupplierController extends Controller
                 return ($validator->errors());
             }
             $supplier = Supplier::find($request->supplier_id);
-
             if ($request->type == "principal") {
                 if ($request->file('image')) {
                     $file = $request->file('image');
@@ -669,7 +668,7 @@ class SupplierController extends Controller
     /**
      * @OA\Get(
      *      path="/getSupplierById/{id}",
-     *     tags={"Client"},
+     *     tags={"Supplier"},
      *     security={{"Authorization":{}}},
      *      operationId="getSupplierById",
      *      summary="Get supplier by supplier id",

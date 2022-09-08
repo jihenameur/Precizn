@@ -226,6 +226,30 @@ class MessageController extends Controller
         return new JsonResponse($res, $res->code);
     }
 
+    public function messageClientList(Request $request)
+    {
+        $res = new Result();
+        try {
+            $ids = Message::all()->pluck('client_id')->toArray();
+            $array = array_unique($ids);
+            $clients=[];
+            foreach ($array as $key => $value) {
+                $client=Client::find($value);
+                $message=Message::where('client_id',$value)
+                    ->get('message');
+                $lastMessage=$message[count($message)-1];
+                array_push($clients,['client'=>$client,'lastMessage'=>$lastMessage]);
+            }
+            $res->success($clients);
+        } catch (\Exception $exception) {
+            if (env('APP_DEBUG')) {
+                $res->fail($exception->getMessage());
+            } else {
+                $res->fail('erreur serveur 500');
+            }
+        }
+        return new JsonResponse($res, $res->code);
+    }
     public function createReply(Request $request)
     {
         $this->validate($request, [
