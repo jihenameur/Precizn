@@ -416,7 +416,7 @@ class ProductController extends Controller
                         $product->options()->attach($option, ['supplier_id' => $request->supplier_id,'price' => $request->price_option,'type' => $request->type_option]);
                     }
                 }*/
-                if($request->option_id) {
+                if ($request->option_id) {
                     foreach ($request->option_id as $item) {
                         $option = Option::find($item["option_id"]);
                         $product->options()->attach($option, ['supplier_id' => $request->supplier_id, 'price' => $item['price'], 'type' => $item['type_option']]);
@@ -464,17 +464,19 @@ class ProductController extends Controller
 
                 $product->suppliers()->attach($supplier, ['price' => $request->price]);
 
-               /* if (count(json_decode($request->option_id))) {
-                    foreach (json_decode($request->option_id) as $key => $value) {
-                        $option = Option::find($value);
-                        $product->options()->attach($option, ['supplier_id' => $request->supplier_id]);
-                    }
-                }*/
+                /* if (count(json_decode($request->option_id))) {
+                     foreach (json_decode($request->option_id) as $key => $value) {
+                         $option = Option::find($value);
+                         $product->options()->attach($option, ['supplier_id' => $request->supplier_id]);
+                     }
+                 }*/
+
 
             if($request->option_id) {
                 foreach (json_decode($request->option_id) as $item) {
                     $option = Option::find($item->option_id);
                     $product->options()->attach($option, ['supplier_id' => $request->supplier_id, 'price' => $item->price, 'type' => $item->option_type]);
+
                 }
             }
                 foreach (json_decode($request->typeProduct) as $key => $value) {
@@ -821,7 +823,7 @@ class ProductController extends Controller
         $orderByType = "DESC";
         if ($request->has('orderBy') && $request->orderBy != null) {
             $this->validate($request, [
-                'orderBy' => 'required|in:name,default_price,available,private' // complete the akak list
+                'orderBy' => 'required|in:name,default_price,available,created_at' // complete the akak list
             ]);
             $orderBy = $request->orderBy;
 
@@ -839,18 +841,22 @@ class ProductController extends Controller
             $products = Product::where('private', 0)->orderBy($orderBy, $orderByType)->paginate($per_page);
             if ($keyword !== null) {
                 $keyword = $this->cleanKeywordSpaces($keyword);
-
-                $products = Product::where('name', 'like', "%$keyword%")
+                $products = Product::where('private', 0)
+                    ->where('name', 'like', "%$keyword%")
                     ->orderBy($orderBy, $orderByType)
                     ->get();
-
+                $res->success([
+                    'products' => ProductResource::collection($products)
+                ]);
+                return new JsonResponse($res, $res->code);
             }
+
             $res->success([
                 'par_page' => $products->count(),
                 'current_page' => $products->currentPage(),
                 'last_page' => $products->lastPage(),
                 'total' => $products->total(),
-                'products' => ProductResource::collection($products->items()),
+                'products' => ProductResource::collection($products),
             ]);
         } catch (\Exception $exception) {
             if (env('APP_DEBUG')) {
@@ -941,7 +947,7 @@ class ProductController extends Controller
      *  )
      */
 
-    public function getSupplierProduct($per_page)
+    public function getSupplierProduct($per_page,Request $request)
     {
         if (!Auth::user()->isAuthorized(['supplier'])) {
             return response()->json([
@@ -951,9 +957,8 @@ class ProductController extends Controller
         }
         $res = new Result();
         try {
-            $user = auth()->user();
-            $product = Product::whereHas('suppliers', function ($q) use ($user) {
-                $q->where('supplier_id', $user->userable_id);
+            $product = Product::whereHas('suppliers', function ($q) use ($request) {
+                $q->where('supplier_id', $request->supplier_id);
             })
                 ->where('is_deleted', false)
                 ->paginate($per_page);
@@ -966,6 +971,7 @@ class ProductController extends Controller
         }
         return new JsonResponse($res, $res->code);
     }
+
     /**
      * @OA\Post(
      *      path="/getProductByTagType",
@@ -1010,7 +1016,7 @@ class ProductController extends Controller
      */
     public function getProductByTagType(Request $request)
     {
-        if (!Auth::user()->isAuthorized(['admin','supplier', 'client'])) {
+        if (!Auth::user()->isAuthorized(['admin', 'supplier', 'client'])) {
             return response()->json([
                 'success' => false,
                 'massage' => 'unauthorized'
@@ -1034,6 +1040,7 @@ class ProductController extends Controller
         }
         return new JsonResponse($res, $res->code);
     }
+
     public function getdispoHourProductsSupplier($id)
     {
         if (!Auth::user()->isAuthorized(['admin', 'supplier', 'client'])) {

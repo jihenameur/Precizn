@@ -81,6 +81,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
 
     Route::post('updatesupplierpassword/{id}', [SupplierController::class, 'updateSupplierPW']);
     Route::post('supplieraccceptrefusecommand', [SupplierController::class, 'supplierAccceptRefuseCommand']);
+    Route::post('supplier_commands/{per_page}', [SupplierController::class, 'supplierCommands']);
 
     /**
      * public Product
@@ -283,6 +284,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
      */
     Route::post('sendMessage', [MessageController::class, 'sendMessage']);
     Route::post('getclientmessage', [MessageController::class, 'getClientMessage']);
+    Route::get('messageClientList', [MessageController::class, 'messageClientList']);
 
     /**
      * email verify routes
