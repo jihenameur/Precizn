@@ -392,7 +392,7 @@ class ProductController extends Controller
             ], 403);
         }
         $res = new Result();
-     //   try {
+        try {
             $validator = Validator::make($request->all(), [
                 'name' => 'required',
                 'price' => 'required',
@@ -505,12 +505,14 @@ class ProductController extends Controller
                 }
                 $res->success($product);
             }
-     /*   } catch (\Exception $exception) {
+        } catch (\Exception $exception) {
             if (env('APP_DEBUG')) {
                 $res->fail($exception->getMessage());
+            }else{
+                $res->fail("server error 500");
             }
-            $res->fail($exception->getMessage());
-        } */
+
+        }
         return new JsonResponse($res, $res->code);
     }
 
@@ -1507,19 +1509,15 @@ class ProductController extends Controller
                     }
                 }
             }
+            if($request->option_id) {
+                $product->options()->detach();
+                foreach (json_decode($request->option_id) as $item) {
+                    $option = Option::find($item->option_id);
+                    $product->options()->attach($option, ['supplier_id' => $request->supplier_id, 'price' => $item->price, 'type' => $item->option_type]);
 
-            if ($request->has("option_id")) {
-
-                if (gettype(json_decode($request->option_id)) == "array") {
-                    if (count(json_decode($request->option_id))) {
-                        $product->options()->detach();
-                        foreach (json_decode($request->option_id) as $key => $value) {
-                            $option = Option::find($value);
-                            $product->options()->attach($option, ['supplier_id' => $request->supplier_id]);
-                        }
-                    }
                 }
             }
+
             if ($images) {
                 foreach ($images as $image) {
                     $name = Str::uuid()->toString() . '.' . $image->getClientOriginalExtension();
