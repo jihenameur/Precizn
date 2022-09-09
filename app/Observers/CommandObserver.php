@@ -18,6 +18,7 @@ class CommandObserver
     public function created(Command $command)
     {
         dispatch(new SendCommandAdminNotification($command,Client::find($command->client_id)));
+
     }
 
 
