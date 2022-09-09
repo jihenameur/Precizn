@@ -466,10 +466,9 @@ class ProductController extends Controller
 
 
                 if ($request->option_id) {
-                    foreach ($request->option_id as $item) {
-                        $option = Option::find($item["option_id"]);
-                        $product->options()->attach($option, ['supplier_id' => $request->supplier_id, 'price' => $item["price"], 'type' => $item["option_type"], 'description' => $item['description']]);
-
+                    foreach (json_decode($request->option_id) as $item) {
+                        $option = Option::find($item->option_id);
+                        $product->options()->attach($option, ['supplier_id' => $request->supplier_id, 'price' => $item->price, 'type' => $item->option_type, 'description' => $item->description ?? '']);
                     }
                 }
                 foreach (json_decode($request->typeProduct) as $key => $value) {
