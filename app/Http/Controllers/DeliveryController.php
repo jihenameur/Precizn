@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\BaseModel\Result;
+use App\Helpers\DistanceHelper;
 use App\Helpers\RedisHelper;
 use App\Http\Resources\Command\CommandDeliveryResource;
 use App\Jobs\Admin\ChangeDeliveryPositionJob;
@@ -1826,6 +1827,7 @@ class DeliveryController extends Controller
             $redis_helper = new RedisHelper();
             $supplier = Supplier::find($request->supplier_id);
             $deliveries = Delivery::where('available',1)->get();
+
             $distances = $this->CalculateDistance($deliveries,$supplier);
             $i = 0;
             $deliveries->map(function ($item) use ($distances,&$i,$redis_helper){
@@ -1856,12 +1858,21 @@ class DeliveryController extends Controller
 
     private function CalculateDistance($deliveries, $supplier)
     {
+
+        $target = ['long' => $supplier->long, 'lat' => $supplier->lat];
+        $start_points = [];
+        foreach ($deliveries as $delivery) {
+            array_push($start_points, ['long' => $delivery->long, 'lat' => $delivery->lat]);
+        }
+        $distance_helper = new DistanceHelper();
+        return $distance_helper->calculateDistanceByLongLat($start_points, $target);
         $from_latlong = '';
         $to_latlong = $supplier->lat . "," . $supplier->long;
 
         foreach ($deliveries as $delivery) {
             $from_latlong = $from_latlong . ($delivery->lat . "," . $delivery->long. "|");
         }
+
 
         $distance_data = file_get_contents(
             'https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=' . $from_latlong . '&destinations=' . $to_latlong . '&key='.env('GOOGLE_MAP_KEY')
