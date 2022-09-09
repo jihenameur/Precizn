@@ -19,7 +19,8 @@ class ProductOptionsResource extends JsonResource
             'name' => $this->name,
             'price' => $this->pivot->price,
             'type' => $this->pivot->type,
-            'default'=>$this->default
+            'description' => $this->pivot->description,
+            //'default'=>$this->default
         ];
     }
 }
