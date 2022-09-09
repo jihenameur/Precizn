@@ -27,7 +27,8 @@
         "pusher/pusher-php-server": "^7.0",
         "symfony/symfony": "5.4.x",
         "tymon/jwt-auth": "^1.0",
-        "laravel/telescope": "^4.9"
+        "laravel/telescope": "^4.9",
+      "ext-json": "*"
     },
     "require-dev": {
         "facade/ignition": "^2.5",

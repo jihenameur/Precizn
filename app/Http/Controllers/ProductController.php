@@ -419,7 +419,7 @@ class ProductController extends Controller
                 if ($request->option_id) {
                     foreach ($request->option_id as $item) {
                         $option = Option::find($item["option_id"]);
-                        $product->options()->attach($option, ['supplier_id' => $request->supplier_id, 'price' => $item['price'], 'type' => $item['type_option']]);
+                        $product->options()->attach($option, ['supplier_id' => $request->supplier_id, 'price' => $item['price'], 'type' => $item['type_option'], 'description' => $item['description']]);
                     }
                 }
                 if (count(json_decode($request->menu_id))) {
@@ -472,13 +472,13 @@ class ProductController extends Controller
                  }*/
 
 
-            if($request->option_id) {
-                foreach (json_decode($request->option_id) as $item) {
-                    $option = Option::find($item->option_id);
-                    $product->options()->attach($option, ['supplier_id' => $request->supplier_id, 'price' => $item->price, 'type' => $item->option_type]);
+                if ($request->option_id) {
+                    foreach ($request->option_id as $item) {
+                        $option = Option::find($item["option_id"]);
+                        $product->options()->attach($option, ['supplier_id' => $request->supplier_id, 'price' => $item["price"], 'type' => $item["option_type"], 'description' => $item['description']]);
 
+                    }
                 }
-            }
                 foreach (json_decode($request->typeProduct) as $key => $value) {
                     $typeProduct = TypeProduct::find($value);
                     $product->typeproduct()->attach($typeProduct);
@@ -508,7 +508,7 @@ class ProductController extends Controller
         } catch (\Exception $exception) {
             if (env('APP_DEBUG')) {
                 $res->fail($exception->getMessage());
-            }else{
+            } else {
                 $res->fail("server error 500");
             }
 
@@ -949,7 +949,7 @@ class ProductController extends Controller
      *  )
      */
 
-    public function getSupplierProduct($per_page,Request $request)
+    public function getSupplierProduct($per_page, Request $request)
     {
         if (!Auth::user()->isAuthorized(['supplier'])) {
             return response()->json([
@@ -1016,7 +1016,7 @@ class ProductController extends Controller
      *   ),
      *  )
      */
-    public function getProductByTagType(Request $request)
+    public function getProductpubicByTagType(Request $request)
     {
         if (!Auth::user()->isAuthorized(['admin', 'supplier', 'client'])) {
             return response()->json([
@@ -1032,6 +1032,7 @@ class ProductController extends Controller
                 ->orWhereHas('tag', function ($q) use ($request) {
                     $q->whereIn('tag_id', $request->tag_id);
                 })
+                ->where('private', 0)
                 ->get();
             $res->success($product);
         } catch (\Exception $exception) {
@@ -1509,15 +1510,14 @@ class ProductController extends Controller
                     }
                 }
             }
-            if($request->option_id) {
+            if ($request->option_id) {
                 $product->options()->detach();
-                foreach (json_decode($request->option_id) as $item) {
-                    $option = Option::find($item->option_id);
-                    $product->options()->attach($option, ['supplier_id' => $request->supplier_id, 'price' => $item->price, 'type' => $item->option_type]);
+                foreach ($request->option_id as $item) {
+                    $option = Option::find($item["option_id"]);
+                    $product->options()->attach($option, ['supplier_id' => $request->supplier_id, 'price' => $item["price"], 'type' => $item["option_type"], 'description' => $item['description']]);
 
                 }
             }
-
             if ($images) {
                 foreach ($images as $image) {
                     $name = Str::uuid()->toString() . '.' . $image->getClientOriginalExtension();

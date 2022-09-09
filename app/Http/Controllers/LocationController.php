@@ -74,7 +74,7 @@ class LocationController extends Controller
      *      description="not found"
      *   ),
      *     )
-     */  
+     */
     public function GetLocationWithAdresse($street, $postcode, $city, $region)
     {
         $latlong = array();
@@ -92,7 +92,6 @@ class LocationController extends Controller
             return "Err: No access to Google service: " . $a;
         } else {
             $get = simplexml_load_string($file);
-
             if ($get->status == "OK") {
                 $lat = (float) $get->result->geometry->location->lat;
                 $long = (float) $get->result->geometry->location->lng;

@@ -231,7 +231,7 @@ class MessageController extends Controller
     {
         $res = new Result();
         try {
-            $clients = Client::whereIn('id',Message::all()->pluck('client_id')->toArray())->get();
+            $clients = Client::whereIn('id',array_unique(Message::all()->pluck('client_id')->toArray()))->get();
             $res->success(MessageClientListResource::collection($clients));
         } catch (\Exception $exception) {
             if (env('APP_DEBUG')) {

@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Message;
 
+use App\Http\Resources\FileResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Str;
 
@@ -18,6 +19,7 @@ class MessageClientListResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->firstname.' '.$this->lastname,
+            'image' => new FileResource($this->image),
             'expert' => Str::limit($this->messages()->get()->last()->message,20)
         ];
     }
