@@ -144,8 +144,9 @@ Route::group(['middleware' => ['jwt.verify']], function () {
     Route::post('addOption', [OptionController::class, 'create']);
     Route::get('getOptionByid/{id}', [OptionController::class, 'getOptionByid']);
     Route::get('getProductOptions/{id}/{per_page}', [OptionController::class, 'getProductOptions']);
-    Route::put('updateOption/{id}', [OptionController::class, 'update']);
+    Route::post('updateOption/{id}', [OptionController::class, 'update']);
     Route::post('getsupplieroptions', [OptionController::class, 'getsupplierOptions']);
+    Route::post('getsupplieroptions/{per_page}', [OptionController::class, 'getsupplierOptionsPaginate']);
 
     Route::delete('deleteOption/{id}', [OptionController::class, 'delete']);
 

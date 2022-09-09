@@ -254,6 +254,83 @@ class OptionController extends Controller
         return new JsonResponse($res, $res->code);
     }
     /**
+     * @OA\Post(
+     *      path="/getsupplieroptions/{per_page}",
+     *      operationId="getsupplieroptions",
+     *      tags={"Option"},
+     *     security={{"Authorization":{}}},
+     *      summary="Get List Of option of product from the  supplier.",
+     *      description="Returns all  option of product from the  supplier.",
+     *        @OA\Parameter(
+     *          name="per_page",
+     *          in="path",
+     *          required=true,
+     *
+     *      ),
+     *   @OA\Parameter (
+     *     in="query",
+     *     name="supplier_id",
+     *     required=true,
+     *     description="supplier_id",
+     *    @OA\Schema(type="integer",
+     *       format="bigint(20)"),
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *      ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     * @OA\Response(
+     *      response=400,
+     *      description="Bad Request"
+     *   ),
+     * @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     * @OA\Response(
+     *      response=500,
+     *      description="erreur serveur 500"
+     *   ),
+     *  )
+     */
+    public function getsupplierOptionsPaginate($per_page,Request $request)
+    {
+        if(!Auth::user()->isAuthorized(['admin','supplier'])){
+            return response()->json([
+                'success' => false,
+                'massage' => 'unauthorized'
+            ],403);
+        }
+        $validator = Validator::make($request->all(), [
+            'supplier_id' => 'required'
+        ]); // create the validations
+        if ($validator->fails())   //check all validations are fine, if not then redirect and show error messages
+        {
+            return $validator->errors();
+        }
+        $res = new Result();
+        try {
+            $option = Option::where('supplier_id',$request->supplier_id)
+                ->orwhere('supplier_id',null)
+                ->paginate($per_page);
+            $res->success($option);
+        } catch (\Exception $exception) {
+            if(env('APP_DEBUG')){
+                $res->fail($exception->getMessage());
+            }
+            else {$res->fail('erreur serveur 500');}
+        }
+        return new JsonResponse($res, $res->code);
+    }
+    /**
      * @OA\Get(
      *      path="/getOptionByid/{id}",
      *     tags={"Option"},
@@ -394,8 +471,11 @@ class OptionController extends Controller
         try {
             /** @var Option $option */
             $option = Option::find($id);
-            $option->fill($request->all());
-            $option->update();
+            $option->name=$request->name;
+            $option->description=$request->description;
+            $option->price=$request->price;
+            $option->save();
+            $option->refresh();
             $res->success($option);
         } catch (\Exception $exception) {
              if(env('APP_DEBUG')){
@@ -458,6 +538,7 @@ class OptionController extends Controller
         try {
             /** @var Option $option */
             $option = Option::find($id);
+            $option->products()->detach();
             $option->delete();
             $res->success("Deleted");
         } catch (\Exception $exception) {
