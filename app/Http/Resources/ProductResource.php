@@ -26,6 +26,7 @@ class ProductResource extends JsonResource
             'unit_type' => $this->unit_type,
             'unit_limit' => $this->unit_limit,
             'weight' => $this->weight,
+            'height' => $this->height,
             'dimension' => $this->dimension,
             'options' => ProductOptionsResource::collection($this->options),
             'image' => FileResource::collection($this->files),
