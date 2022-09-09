@@ -98,7 +98,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
     Route::post('getdispoHourProductsSupplierByTag/{id}', [ProductController::class, 'getdispoHourProductsSupplierByTag']);
 
     Route::get('getAllPublicProduct/{per_page}', [ProductController::class, 'getAllPublicProduct']);
-    Route::get('getProductByTagType', [ProductController::class, 'getProductByTagType']);
+    Route::get('getProductpubicByTagType', [ProductController::class, 'getProductpubicByTagType']);
 
     Route::delete('destroyProduct/{id}', [ProductController::class, 'delete']);
 
