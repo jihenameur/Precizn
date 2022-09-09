@@ -86,6 +86,17 @@ class AssignDeliveryCommand extends Command
 
     private function CalculateDistance($deliveries, $supplier)
     {
+
+        $target = ['long' => $supplier->long, 'lat' => $supplier->lat];
+        $start_points = [];
+        foreach ($deliveries as $delivery) {
+           array_push($start_points, ['long' => $delivery->long, 'lat' => $delivery->lat]);
+        }
+        return $this->calculateDistanceByLongLat($start_points, $target);
+
+    }
+    private function CalculateDistanceWithGoogleApi($deliveries, $supplier)
+    {
         $from_latlong = '';
         $to_latlong = $supplier->lat . "," . $supplier->long;
 
@@ -181,6 +192,19 @@ class AssignDeliveryCommand extends Command
             $redis_helper->incrDeliveryAssignTrials($command->id);
             return 1;
         }
+    }
+    private function calculateDistanceByLongLat(array $listStartPoints, array $target)
+    {
+        $distances = [];
+        foreach ($listStartPoints as $point) {
+            $theta = $point["long"] - $target["long"];
+            $dist = sin(deg2rad($point["lat"])) * sin(deg2rad($target["lat"])) + cos(deg2rad($point["lat"])) * cos(deg2rad($target["lat"])) * cos(deg2rad($theta));
+            $dist = acos($dist);
+            $dist = rad2deg($dist);
+            $miles = $dist * 60 * 1.1515;
+            array_push($distances, $miles * 1.609344);
+        }
+        return $distances;
     }
 
 }
