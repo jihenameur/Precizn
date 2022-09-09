@@ -1477,13 +1477,13 @@ class ProductController extends Controller
                 $product->suppliers()->detach();
                 $supplier = Supplier::find($request->supplier_id);
                 $product->suppliers()->attach($supplier, ['price' => $request->price]);
-                if (count(json_decode($request->menu_id))) {
+             /*   if (count(json_decode($request->menu_id))) {
                     $product->menu()->detach();
                     foreach (json_decode($request->menu_id) as $key => $value) {
                         $menu = Menu::find($value);
                         $product->menu()->attach($menu);
                     }
-                }
+                }*/
             }
             if ($request->has("typeProduct")) {
 
@@ -1510,7 +1510,7 @@ class ProductController extends Controller
                     }
                 }
             }
-            if ($request->option_id) {
+            if (json_decode($request->option_id)) {
                 $product->options()->detach();
                 foreach ($request->option_id as $item) {
                     $option = Option::find($item["option_id"]);
