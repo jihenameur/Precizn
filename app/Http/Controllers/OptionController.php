@@ -256,7 +256,7 @@ class OptionController extends Controller
     /**
      * @OA\Post(
      *      path="/getsupplieroptions/{per_page}",
-     *      operationId="getsupplieroptions",
+     *      operationId="getsupplierOptionsPaginate",
      *      tags={"Option"},
      *     security={{"Authorization":{}}},
      *      summary="Get List Of option of product from the  supplier.",
