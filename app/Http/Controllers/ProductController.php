@@ -839,11 +839,21 @@ class ProductController extends Controller
         $res = new Result();
         try {
             $keyword = $request->has('keyword') ? $request->get('keyword') : null;
-
-            $products = Product::where('private', 0)->orderBy($orderBy, $orderByType)->paginate($per_page);
-            if ($keyword !== null) {
+            $products = Product::where('private', 0)
+                ->orderBy($orderBy, $orderByType)->paginate($per_page);
+            if ($keyword !== null || $request->type_product_id || $request->tag_id) {
                 $keyword = $this->cleanKeywordSpaces($keyword);
-                $products = Product::where('private', 0)
+                $products = Product::WhereHas('typeproduct', function ($q) use ($request) {
+                    if($request->type_product_id) {
+                        $q->whereIn('type_product_id', $request->type_product_id);
+                    }
+                })
+                    ->WhereHas('tag', function ($q) use ($request) {
+                        if($request->tag_id) {
+                            $q->whereIn('tag_id', $request->tag_id);
+                        }
+                    })
+                    ->where('private', 0)
                     ->where('name', 'like', "%$keyword%")
                     ->orderBy($orderBy, $orderByType)
                     ->get();
@@ -1026,11 +1036,15 @@ class ProductController extends Controller
         }
         $res = new Result();
         try {
-            $product = Product::orWhereHas('typeproduct', function ($q) use ($request) {
-                $q->whereIn('type_product_id', $request->type_product_id);
+            $product = Product::WhereHas('typeproduct', function ($q) use ($request) {
+                if($request->type_product_id) {
+                    $q->whereIn('type_product_id', $request->type_product_id);
+                }
             })
-                ->orWhereHas('tag', function ($q) use ($request) {
-                    $q->whereIn('tag_id', $request->tag_id);
+                ->WhereHas('tag', function ($q) use ($request) {
+                    if($request->tag_id) {
+                        $q->whereIn('tag_id', $request->tag_id);
+                    }
                 })
                 ->where('private', 0)
                 ->get();
