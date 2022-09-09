@@ -299,14 +299,7 @@ class ProductController extends Controller
      *     description="max_period_time",
      *     @OA\Schema (type="integer")
      *      ),
-     * @OA\Parameter (
-     *     in="query",
-     *     name="menu_id",
-     *     required=false,
-     *     description="menu_id",
-     *     @OA\Items(
-     *              type="array",
-     *          )),
+
      *     @OA\Parameter(
      *     in="query",
      *     name="unit_type",
@@ -422,12 +415,12 @@ class ProductController extends Controller
                         $product->options()->attach($option, ['supplier_id' => $request->supplier_id, 'price' => $item['price'], 'type' => $item['type_option'], 'description' => $item['description']]);
                     }
                 }
-                if (count(json_decode($request->menu_id))) {
+               /* if (count(json_decode($request->menu_id))) {
                     foreach (json_decode($request->menu_id) as $key => $value) {
                         $menu = Menu::find($value);
                         $product->menu()->attach($menu, ['supplier_id' => $request->supplier_id]);
                     }
-                }
+                }*/
                 $res->success($product);
             } else {
                 $images = [];
@@ -487,12 +480,12 @@ class ProductController extends Controller
                     $tag = Tag::find($value);
                     $product->tag()->attach($tag);
                 }
-                if (count(json_decode($request->menu_id))) {
+               /* if (count(json_decode($request->menu_id))) {
                     foreach (json_decode($request->menu_id) as $key => $value) {
                         $menu = Menu::find($value);
                         $product->menu()->attach($menu, ['supplier_id' => $request->supplier_id]);
                     }
-                }
+                }*/
                 foreach ($images as $image) {
                     $name = Str::uuid()->toString() . '.' . $image->getClientOriginalExtension();
                     $image->move(public_path('public/Products'), $name); // your folder path
@@ -1491,13 +1484,13 @@ class ProductController extends Controller
                 $product->suppliers()->detach();
                 $supplier = Supplier::find($request->supplier_id);
                 $product->suppliers()->attach($supplier, ['price' => $request->price]);
-                if (count(json_decode($request->menu_id))) {
+                /*if (count(json_decode($request->menu_id))) {
                     $product->menu()->detach();
                     foreach (json_decode($request->menu_id) as $key => $value) {
                         $menu = Menu::find($value);
                         $product->menu()->attach($menu);
                     }
-                }
+                }*/
             }
             if ($request->has("typeProduct")) {
 
