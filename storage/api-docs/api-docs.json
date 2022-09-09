@@ -5183,6 +5183,48 @@
                 ]
             }
         },
+        "/getsubmenu": {
+            "post": {
+                "tags": [
+                    "Menu"
+                ],
+                "summary": "Get sub Menu",
+                "description": "Returns the submenu .",
+                "operationId": "getSubMenu",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "not found"
+                    },
+                    "500": {
+                        "description": "erreur serveur 500"
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
+            }
+        },
         "/add_product_to_submenu": {
             "post": {
                 "tags": [
@@ -5751,16 +5793,6 @@
                             "type": "integer",
                             "format": "bigint(20)"
                         }
-                    },
-                    {
-                        "name": "default",
-                        "in": "query",
-                        "description": "default",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "format": "tinyint(1)"
-                        }
                     }
                 ],
                 "responses": {
@@ -5881,6 +5913,58 @@
                 ]
             }
         },
+        "/getsupplieroptions/{per_page}": {
+            "post": {
+                "tags": [
+                    "Option"
+                ],
+                "summary": "Get List Of option of product from the  supplier.",
+                "description": "Returns all  option of product from the  supplier.",
+                "operationId": "getsupplierOptionsPaginate",
+                "parameters": [
+                    {
+                        "name": "per_page",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "name": "supplier_id",
+                        "in": "query",
+                        "description": "supplier_id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "bigint(20)"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "not found"
+                    },
+                    "500": {
+                        "description": "erreur serveur 500"
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
+            }
+        },
         "/getOptionByid/{id}": {
             "get": {
                 "tags": [
@@ -5958,16 +6042,6 @@
                         "schema": {
                             "type": "integer",
                             "format": "bigint(20)"
-                        }
-                    },
-                    {
-                        "name": "default",
-                        "in": "query",
-                        "description": "default",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "format": "tinyint(1)"
                         }
                     }
                 ],
@@ -7039,6 +7113,15 @@
                         "in": "query",
                         "description": "tag",
                         "required": false
+                    },
+                    {
+                        "name": "image[]",
+                        "in": "query",
+                        "description": "image[]",
+                        "required": false,
+                        "schema": {
+                            "type": "file"
+                        }
                     }
                 ],
                 "responses": {
@@ -7635,7 +7718,7 @@
         "/getSupplierById/{id}": {
             "get": {
                 "tags": [
-                    "Client"
+                    "Supplier"
                 ],
                 "summary": "Get supplier by supplier id",
                 "operationId": "getSupplierById",
@@ -8024,6 +8107,82 @@
                     },
                     "400": {
                         "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "not found"
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
+            }
+        },
+        "/supplier_commands/{per_page}": {
+            "get": {
+                "tags": [
+                    "Supplier"
+                ],
+                "summary": "supplierCommands",
+                "operationId": "supplierCommands",
+                "parameters": [
+                    {
+                        "name": "per_page",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "name": "from",
+                        "in": "query",
+                        "description": "from",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "date-time"
+                        }
+                    },
+                    {
+                        "name": "to",
+                        "in": "query",
+                        "description": "to",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "date-time"
+                        }
+                    },
+                    {
+                        "name": "supplier_id",
+                        "in": "query",
+                        "description": "supplier_id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "action",
+                        "in": "query",
+                        "description": "action",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "400": {
+                        "description": "bad request"
+                    },
+                    "403": {
+                        "description": "Forbidden"
                     },
                     "404": {
                         "description": "not found"
