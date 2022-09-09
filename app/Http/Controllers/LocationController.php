@@ -85,7 +85,7 @@ class LocationController extends Controller
         // $region = $request->region;
         $a = $street . ", " . $postcode . ", " . $city . ", " . $region;
         $address = urlencode($a);
-        $link = 'https://maps.googleapis.com/maps/api/geocode/xml?address=' . $address . '&sensor=true_or_false&key=AIzaSyCYRBZBDovYe4GKiOH2PRyDtTWO6ymAZXA';
+        $link = 'https://maps.googleapis.com/maps/api/geocode/xml?address=' . $address . '&sensor=true_or_false&key='.env('GOOGLE_MAP_KEY');
         $file = file_get_contents($link);
         if (!$file) {
             // echo "Err: No access to Google service: " . $a . "<br/>\n";
@@ -116,7 +116,7 @@ class LocationController extends Controller
         }
 
         $distance_data = file_get_contents(
-            'https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=' . $from_latlong . '&destinations=' . $to_latlong . '&key=AIzaSyCYRBZBDovYe4GKiOH2PRyDtTWO6ymAZXA'
+            'https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=' . $from_latlong . '&destinations=' . $to_latlong . '&key='.env('GOOGLE_MAP_KEY')
         );
         $distance_arr = json_decode($distance_data);
         $distances = array();
@@ -215,7 +215,7 @@ class LocationController extends Controller
             $address =
                 $lat = 0;
             $lng = 0;
-            $apikey = "AIzaSyCYRBZBDovYe4GKiOH2PRyDtTWO6ymAZXA";
+            $apikey = env('GOOGLE_MAP_KEY');
             $data_location = "https://maps.google.com/maps/api/geocode/json?key=" . $apikey . "&address=" . str_replace(" ", "+", $address) . "&sensor=false";
             $data = file_get_contents($data_location);
             usleep(200000);

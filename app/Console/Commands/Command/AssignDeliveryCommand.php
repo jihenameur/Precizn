@@ -94,7 +94,7 @@ class AssignDeliveryCommand extends Command
         }
 
         $distance_data = file_get_contents(
-            'https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=' . $from_latlong . '&destinations=' . $to_latlong . '&key=AIzaSyCYRBZBDovYe4GKiOH2PRyDtTWO6ymAZXA'
+            'https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=' . $from_latlong . '&destinations=' . $to_latlong . '&key='.env('GOOGLE_MAP_KEY')
         );
         $distance_arr = json_decode($distance_data);
         $distances = array();
