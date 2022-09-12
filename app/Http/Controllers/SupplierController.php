@@ -304,7 +304,7 @@ class SupplierController extends Controller
             $supplier = $this->model->find($supplier->id);
             $role = Role::find($role_id);
             $user->roles()->attach($role);
-            $categories = $request->category;
+       /*     $categories = $request->category;
             if (!is_array($categories)) {
                 $categories = json_decode($request->category);
             }
@@ -313,7 +313,7 @@ class SupplierController extends Controller
                 $supplier->categorys()->attach($category);
             }
             //$cat = Category::all()->first();
-            //$supplier->categorys()->attach($cat);
+            //$supplier->categorys()->attach($cat); */
             $supplier->save();
             $sub_menu = new Menu();
             $sub_menu->supplier_id = $supplier->id;
