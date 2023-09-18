@@ -8,18 +8,19 @@ use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
 
-class Admin extends Model
+class Employee extends Model
 {
-    use HasFactory,Notifiable;
-    protected $table = 'admins';
+    use HasFactory, Notifiable,SoftDeletes;
+    protected $table = 'employees';
 
     protected $fillable = [
-        'social_reason'
-      
+     'post'
+
 
     ];
     protected $with = [
-        'user'
+        'user',
+        'image'
     ];
 
     public $toClaim = [
@@ -27,15 +28,17 @@ class Admin extends Model
     ];
 
 
-
     /**
      * @return MorphOne
      */
     public function user()
     {
-        return $this->morphOne('App\Models\User', 'userable')->without('userable');
-
+        return $this->morphOne('App\Models\User', 'userable')->without('userable');;
     }
 
 
+    public function image()
+    {
+       return $this->belongsTo(File::class,'file_id');
+    }
 }

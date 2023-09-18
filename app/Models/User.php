@@ -17,7 +17,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class User extends Authenticatable implements JWTSubject, MustVerifyEmail
 {
-    use HasApiTokens, HasFactory, Notifiable,SoftDeletes;
+    use HasApiTokens, HasFactory, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -25,28 +25,27 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
      * @var array<int, string>
      */
     protected $fillable = [
+        'firstName',
+        'lastName',
         'email',
         'password',
-        'tel',
+        'phone',
         'userable_id',
         'userable_type',
-        'status_id'
+        'address'
 
     ];
     protected $visible = [
         'id',
         'email',
-        'tel',
+        'phone',
         'created_at',
         'userable'
     ];
 
     protected $with = [
 
-        //'userable',
-       // 'role',
-      //  'addresses',
-       // 'userable'
+    
     ];
 
     /**
@@ -94,15 +93,9 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
         return $this->morphTo();
     }
 
-    public function addresses()
-    {
-        return $this->hasMany(Address::class,'addresses');
-    }
+ 
 
-    public function status()
-    {
-    	return $this->belongsTo(Status::class);
-    }
+
 
     public function isAuthorized(array $roles){
 

@@ -560,55 +560,5 @@ class AdminController extends Controller
         }
         return new JsonResponse($res, $res->code);
     }
-     /**
-     * @OA\Post(
-     *      path="/getlastpostiondelivery/{id}",
-     *      operationId="getLastPostionDelivery",
-     *      tags={"Administrateur"},
-     *     security={{"Authorization":{}}},
-     *      summary="get last postion of Delivery ",
-     *      description="last position of delivery",
-     *     @OA\Parameter(
-     *          name="id",
-     *          in="path",
-     *          required=true,
-     *
-     *      ),
-     *   @OA\Response(
-     *          response=200,
-     *          description="Successful operation",
-     *       ),
-     *     @OA\Response(
-     *          response=401,
-     *          description="Unauthenticated",
-     *      ),
-     *      @OA\Response(
-     *          response=400,
-     *          description="The email has already been taken",
-     *      ),
-     *      @OA\Response(
-     *          response=403,
-     *          description="Forbidden"
-     *      ),
-     *    @OA\Response(
-     *      response=404,
-     *      description="not found"
-     *   ),
-     *
-     *     )
-     */
-    public function getLastPostionDelivery($id)
-    {
-        $res = new Result();
-        try {
-            $delivery = json_decode(Redis::get('deliveryPostion' . $id));
-            $res->success($delivery);
-        } catch (\Exception $exception) {
-             if(env('APP_DEBUG')){
-                $res->fail($exception->getMessage());
-            }
-            else {$res->fail('erreur serveur 500');}
-        }
-        return new JsonResponse($res, $res->code);
-    }
+ 
 }

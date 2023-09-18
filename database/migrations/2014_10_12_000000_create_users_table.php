@@ -21,16 +21,15 @@ class CreateUsersTable extends Migration
             $table->rememberToken();
             $table->bigInteger('userable_id')->unsigned()->nullable();
             $table->string('userable_type')->nullable();
-            //$table->softDeletes();
-
-            // $table->bigInteger('role_id')->unsigned();
-            // $table->foreign('role_id')
-            //     ->references('id')
-            //     ->on('roles')
-            //     ->onDelete('cascade');
-
-
+            $table->string('firstName');
+            $table->string('lastName');
+            $table->string('address');
+            $table->string('phone');
             $table->timestamps();
+            $table->string('role')->nullable();
+           
+
+
         });
     }
 

@@ -5,7 +5,7 @@
     "keywords": ["framework", "laravel"],
     "license": "MIT",
     "require": {
-        "php": "^7.4",
+        "php": "^7.3||^8.0",
         "barryvdh/laravel-cors": "^3.0",
         "barryvdh/laravel-dompdf": "^1.0",
         "beyondcode/laravel-websockets": "^1.13",
@@ -19,7 +19,6 @@
         "laravel/passport": "v10.4.1",
         "laravel/sanctum": "^2.11",
         "laravel/socialite": "^5.5",
-        "laravel/telescope": "^4.9",
         "laravel/tinker": "^2.5",
         "laravel/ui": "^3.4",
         "oza75/laravel-orange-sms-channel": "^0.0.2",
@@ -27,7 +26,6 @@
         "pusher/pusher-php-server": "^7.0",
         "symfony/symfony": "5.4.x",
         "tymon/jwt-auth": "^1.0",
-        "laravel/telescope": "^4.9",
       "ext-json": "*"
     },
     "require-dev": {
@@ -73,7 +71,10 @@
     "config": {
         "optimize-autoloader": true,
         "preferred-install": "dist",
-        "sort-packages": true
+        "sort-packages": true,
+        "allow-plugins": {
+            "php-http/discovery": true
+        }
     },
     "minimum-stability": "dev",
     "prefer-stable": true

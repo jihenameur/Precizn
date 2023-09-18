@@ -28,7 +28,7 @@ class MailtrapExample extends Mailable
      */
     public function build()
     {
-        return $this->from('mehdi.benjouida.webify@gmail.com', 'Mailtrap')
+        return $this->from('amjihen21@gmail.com', 'Mailtrap')
         ->subject('Mailtrap Confirmation')
         ->markdown('mails.exmpl')
         ->with([

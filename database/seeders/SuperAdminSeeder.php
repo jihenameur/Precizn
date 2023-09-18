@@ -4,7 +4,6 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\Role;
-use App\Models\Supplier;
 use App\Models\User;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Hash;
@@ -34,12 +33,14 @@ class SuperAdminSeeder extends Seeder
     {
         $SuperAdmins = [
             [
-                'gender' => '1',
                 'password' => Hash::make($this->password),
-                'email' => 'superadmin@thunder-express.com',
+                'email' => 'amjihen21@gmail.com',
                 'firstName'=>'superadmin',
                 'lastName'=>'superadmin',
-                'tel' => '+21626000000'
+                'phone' => '+21696006433',
+                'social_reason'=>'precizn',
+                'address'=>'sousse'
+        
             ]
         ];
         return $SuperAdmins;
@@ -55,12 +56,13 @@ class SuperAdminSeeder extends Seeder
         foreach ($SuperAdmins as $SuperAdmin) {
             /** @var User $user */
             $user = new  User(Arr::except($SuperAdmin, [
-           'firstName',
-           'gender',
-           'lastName']));
-           $user->status_id = 1;
-            /** @var supplier $cli */
-            $adm =  Admin::create(Arr::except($SuperAdmin, ['email', 'password','tel']));
+                'social_reason'
+           ]));
+            $adm =  Admin::create(Arr::except($SuperAdmin, ['firstName',
+            'lastName',
+            'email',
+            'password',
+            'phone','address']));
             $adm->user()->save($user);
             $adm->save();
             $role= Role::find(1);

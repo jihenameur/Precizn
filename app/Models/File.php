@@ -15,13 +15,7 @@ class File extends Model
         'path',
         'user_id '
     ];
-    public function products()
-    {
-        return $this->belongsToMany(Product::class);
-    }
-    public function supplier()
-    {
-        return $this->belongsToMany(Supplier::class)->withPivot('type');
-    }
+   
+    
 
 }
